@@ -9,10 +9,12 @@ import { groupEventsByDay } from '../lib/timeline';
 import { buildFinances } from '../lib/finance';
 import { dateToIso, isoToday } from '../lib/calendarHelpers';
 import { t, formatCurrency, featureOn, usePack } from '../config';
+import { TodayDeskScreen } from './TodayDeskScreen';
 
 interface Props {
   clients: Client[];
   onOpenClient: (id: number) => void;
+  onRefresh: () => void;
 }
 
 function addDays(iso: string, days: number): string {
@@ -32,7 +34,7 @@ function eventTypeLabel(type: AtelierEvent['type']): string {
   return t('event.typeAppointment');
 }
 
-export function TodayScreen({ clients, onOpenClient }: Props) {
+export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
   const mobile = useIsMobile();
   const px = mobile ? 20 : 40;
   const navigate = useNavigate();
@@ -85,6 +87,10 @@ export function TodayScreen({ clients, onOpenClient }: Props) {
     if (hours < 24) return `${Math.round(hours)}h`;
     return `${Math.round(hours / 24)}d`;
   };
+
+  if (!mobile) {
+    return <TodayDeskScreen clients={clients} onOpenClient={onOpenClient} onRefresh={onRefresh} />;
+  }
 
   return (
     <div style={{ flex: 1, overflow: 'auto', padding: `${mobile ? 20 : 28}px ${px}px 40px` }}>
