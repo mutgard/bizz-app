@@ -1,4 +1,4 @@
-import { createElement, useCallback, useRef, useState } from 'react';
+import { createElement, useCallback, useEffect, useRef, useState } from 'react';
 import { T } from '../tokens';
 import { t } from '../config';
 
@@ -86,6 +86,8 @@ export function useUndoable(
       ms,
     );
   }
+
+  useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
   const fire = useCallback(async () => {
     await coreRef.current!.fire();
