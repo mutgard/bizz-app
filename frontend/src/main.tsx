@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import { loadPack, type Pack } from './config'
+import { loadPack, applyTheme, type Pack } from './config'
 import { hydrateTokens } from './tokens'
 
 const root = createRoot(document.getElementById('root')!)
@@ -57,6 +57,7 @@ async function boot() {
   try {
     const pack = await loadPack()
     hydrateTokens(pack)
+    applyTheme(pack)
     applyBranding(pack)
     const { default: App } = await import('./App.tsx')
     root.render(

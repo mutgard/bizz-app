@@ -36,6 +36,38 @@
     "paidKeyword": "rebut",
     "doneKeywords": ["feta", "entregat"]
   },
+  "theme": {
+    "cssVars": {
+      "--background": "40 47% 93%",
+      "--foreground": "28 33% 12%",
+      "--muted": "37 39% 88%",
+      "--muted-foreground": "36 16% 46%",
+      "--popover": "40 47% 93%",
+      "--popover-foreground": "28 33% 12%",
+      "--border": "28 10% 82%",
+      "--input": "28 10% 82%",
+      "--ring": "38 47% 60%",
+      "--primary": "28 33% 12%",
+      "--primary-foreground": "40 47% 93%",
+      "--destructive": "357 53% 35%",
+      "--destructive-foreground": "40 47% 93%",
+      "--radius": "2px",
+      "--bg-canvas": "#E4DDD3",
+      "--bg-app": "#F3EDE3",
+      "--bg-card": "#FDFAF5",
+      "--bg-card-h": "#F7F2E9",
+      "--ink-1": "#1A1612",
+      "--ink-2": "#4A3F35",
+      "--ink-3": "#8A7E74",
+      "--ink-4": "#C2B9B0",
+      "--line": "#DDD6CB",
+      "--line-l": "#EDE8DF",
+      "--accent": "#8B6247",
+      "--font-d": "'Cormorant Garamond', Georgia, serif",
+      "--font-u": "'Jost', system-ui, sans-serif",
+      "--font-m": "'Fira Code', 'Courier New', monospace"
+    }
+  },
   "strings": {
     "nav.clients": "Clientes",
     "nav.profile": "Fitxa",

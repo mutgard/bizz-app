@@ -51,6 +51,7 @@ export interface Pack {
     paidKeyword: string;
     doneKeywords: string[];
   };
+  theme: { cssVars: Record<string, string> };
   strings: Record<string, string>;
   nav: PackNavItem[];
   features: Record<string, boolean>;
@@ -85,4 +86,14 @@ export function t(key: string): string {
 export function formatCurrency(n: number): string {
   const { currencySymbol, numberLocale } = getPack().locale;
   return `${currencySymbol}${n.toLocaleString(numberLocale)}`;
+}
+
+/** Write the pack's CSS custom properties onto :root. Runs at boot, before
+ *  App renders, so shadcn components and the mobile design system (which read
+ *  these vars) paint with pack values. */
+export function applyTheme(pack: Pack): void {
+  const root = document.documentElement;
+  for (const [name, value] of Object.entries(pack.theme.cssVars)) {
+    root.style.setProperty(name, value);
+  }
 }
