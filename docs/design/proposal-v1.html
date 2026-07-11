@@ -1,0 +1,525 @@
+<title>Juliette Atelier — Proposta de redisseny v1</title>
+<style>
+:root{
+  --board:#241b13; --board2:#2e241a; --board-ink:#f0e8d9; --board-ink2:#b3a68f; --board-line:rgba(240,232,217,.14);
+  --paper:#f6f1e7; --paper2:#ece4d4; --sheet:#fffdf8; --ink:#2b2118; --ink2:#5c5044; --ink3:#8a7d6d;
+  --hairline:rgba(43,33,24,.14); --accent:#7d2a33; --accent-soft:#f3e2e0; --gold:#c9a15a; --gold-soft:#f2e7d2; --ok:#5f6f46;
+  --serif:'Iowan Old Style','Palatino Linotype',Palatino,Georgia,serif;
+  --mono:ui-monospace,'SF Mono',SFMono-Regular,Menlo,monospace;
+  --sans:'Avenir Next','Seravek','Gill Sans',system-ui,sans-serif;
+}
+:root[data-theme="light"]{ --board:#efe7d8; --board2:#e6dbc6; --board-ink:#2b2118; --board-ink2:#6d5f4c; --board-line:rgba(43,33,24,.16); }
+@media (prefers-color-scheme: light){ :root:not([data-theme="dark"]){ --board:#efe7d8; --board2:#e6dbc6; --board-ink:#2b2118; --board-ink2:#6d5f4c; --board-line:rgba(43,33,24,.16); } }
+*{box-sizing:border-box}
+body{margin:0;background:var(--board);background-image:radial-gradient(ellipse at 20% -10%,var(--board2),transparent 60%);color:var(--board-ink);font:16px/1.55 var(--sans);padding:48px 24px 80px}
+.wrap{max-width:1360px;margin:0 auto}
+.masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:12px 28px;border-bottom:1px solid var(--board-line);padding-bottom:24px;margin-bottom:16px}
+.masthead h1{font:600 clamp(28px,4vw,42px)/1.1 var(--serif);margin:0;letter-spacing:.01em;text-wrap:balance}
+.masthead h1 em{font-style:italic;color:var(--gold)}
+.masthead .tag{font:500 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--board-ink2)}
+.lede{max-width:64ch;color:var(--board-ink2);margin:0 0 40px;font-size:15px}
+.lede strong{color:var(--board-ink)}
+.screens{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start}
+.station{width:390px;max-width:100%}
+.station h2{font:600 20px/1.2 var(--serif);margin:0 0 4px}
+.station .why{font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+.notes{margin:18px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.notes li{font-size:13.5px;color:var(--board-ink2);padding-left:18px;position:relative}
+.notes li::before{content:"";position:absolute;left:0;top:.52em;width:8px;height:1px;background:var(--gold)}
+.notes b{color:var(--board-ink);font-weight:600}
+
+/* ---------- phone chrome ---------- */
+.phone{width:390px;max-width:100%;height:760px;background:var(--paper);border-radius:28px;overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 24px 60px rgba(0,0,0,.45),0 2px 0 rgba(255,255,255,.06) inset;color:var(--ink)}
+.screen{flex:1;overflow:hidden;display:flex;flex-direction:column}
+
+/* ---------- shared app pieces ---------- */
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px;background:var(--paper)}
+.brand{font:600 17px/1 var(--serif)}.brand i{font-style:italic;color:var(--gold)}
+.appbar .date{font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.avatar{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#fff;display:grid;place-items:center;font:italic 600 14px var(--serif)}
+.body{flex:1;overflow:hidden;padding:6px 20px 16px;display:flex;flex-direction:column;gap:16px}
+h3.sect{font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ink3);margin:8px 0 0;display:flex;align-items:center;gap:10px}
+h3.sect::after{content:"";flex:1;height:1px;background:var(--hairline)}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:5px 10px;border-radius:999px;white-space:nowrap}
+.chip .dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.chip.prospect{color:var(--ink3);border:1px dashed var(--ink3);background:transparent}
+.chip.sensepaga{color:#7a5b1e;background:var(--gold-soft);border:1px solid #d8bd85}
+.chip.clienta{color:#fff;background:var(--accent);border:1px solid var(--accent)}
+.chip.entregada{color:var(--paper);background:var(--ink);border:1px solid var(--ink)}
+.tabbar{display:flex;border-top:1px solid var(--hairline);background:var(--sheet);padding:8px 6px calc(10px + 6px)}
+.tab{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink3);font:600 10px/1 var(--sans);letter-spacing:.02em;padding:4px 0;border-radius:10px}
+.tab svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tab.active{color:var(--accent)}
+.tab.active .lbl{position:relative}
+.tab.active .lbl::after{content:"";position:absolute;left:15%;right:15%;bottom:-5px;height:2px;background:var(--gold);border-radius:2px}
+.homebtn{position:absolute;left:50%;transform:translateX(-50%);bottom:4px;width:110px;height:4px;border-radius:4px;background:rgba(43,33,24,.25)}
+
+/* ---------- screen 1 : Avui ---------- */
+.hello{margin:2px 0 0}
+.hello .big{font:600 34px/1.05 var(--serif)}
+.hello .sub{color:var(--ink2);font-size:13.5px;margin-top:4px}
+.card{background:var(--sheet);border:1px solid var(--hairline);border-radius:14px;padding:14px 16px}
+.card.urgent{border-left:3px solid var(--accent)}
+.card .who{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.card .who .nm{font:600 18px/1.1 var(--serif)}
+.count{font:600 26px/1 var(--serif);color:var(--accent);font-variant-numeric:tabular-nums}
+.count small{font:500 10px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);display:block;margin-top:3px}
+.meta{color:var(--ink2);font-size:13px;margin-top:6px}
+.meta b{color:var(--accent);font-weight:600}
+.agrow{display:flex;gap:12px;align-items:center;background:var(--sheet);border:1px solid var(--hairline);border-radius:14px;padding:12px 14px}
+.agrow .hh{font:600 15px/1 var(--mono);color:var(--ink);font-variant-numeric:tabular-nums;min-width:52px}
+.agrow .hh small{display:block;font-size:9.5px;color:var(--ink3);letter-spacing:.1em;margin-top:3px}
+.agrow .what{flex:1}
+.agrow .what .t{font:600 15px/1.25 var(--sans)}
+.agrow .what .s{color:var(--ink3);font-size:12.5px;margin-top:2px}
+.pillrow{display:flex;gap:10px}
+.pill{flex:1;background:var(--paper2);border-radius:12px;padding:10px 12px;text-align:left}
+.pill .v{font:600 20px/1 var(--serif);font-variant-numeric:tabular-nums}
+.pill .v.warn{color:var(--accent)}
+.pill .k{font:500 9.5px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:4px}
+
+/* ---------- screen 2 : Clientes ---------- */
+.listhead{display:flex;align-items:center;justify-content:space-between;padding:6px 20px 0}
+.listhead .ttl{font:600 30px/1 var(--serif)}
+.listhead .n{font:500 11px var(--mono);color:var(--ink3);margin-left:8px}
+.iconbtns{display:flex;gap:8px}
+.iconbtn{width:36px;height:36px;border-radius:50%;border:1px solid var(--hairline);background:var(--sheet);display:grid;place-items:center;color:var(--ink2);font-size:17px}
+.filters{display:flex;gap:8px;padding:12px 20px 4px;overflow:hidden}
+.f{font:600 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:8px 13px;border-radius:999px;border:1px solid var(--hairline);color:var(--ink2);background:transparent;white-space:nowrap}
+.f.on{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.clist{flex:1;overflow:hidden;padding:8px 14px 0;display:flex;flex-direction:column;gap:8px}
+.crow{display:flex;align-items:center;gap:12px;background:var(--sheet);border:1px solid var(--hairline);border-radius:14px;padding:13px 14px}
+.crow .init{width:40px;height:40px;border-radius:50%;background:var(--paper2);display:grid;place-items:center;font:italic 600 15px var(--serif);color:var(--ink2);flex-shrink:0}
+.crow .mid{flex:1;min-width:0}
+.crow .nm{font:600 18px/1.15 var(--serif);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.crow .sub{display:flex;align-items:center;gap:8px;margin-top:5px;font-size:12.5px;color:var(--ink2)}
+.crow .sub .due{color:var(--accent);font-weight:600}
+.crow .dd{text-align:right;flex-shrink:0}
+.crow .dd .d{font:600 21px/1 var(--serif);font-variant-numeric:tabular-nums}
+.crow .dd .d.soon{color:var(--accent)}
+.crow .dd .d.done{color:var(--ink3)}
+.crow .dd small{font:500 9.5px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:block;margin-top:4px}
+
+/* ---------- screen 3 : Fitxa ---------- */
+.fithead{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--sheet);border-bottom:1px solid var(--hairline)}
+.back{width:34px;height:34px;border-radius:50%;border:1px solid var(--hairline);display:grid;place-items:center;color:var(--ink2);font-size:16px;flex-shrink:0}
+.fithead .nm{font:600 19px/1 var(--serif);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fbody{flex:1;overflow:hidden;padding:16px 20px;display:flex;flex-direction:column;gap:14px;position:relative}
+.hero{background:var(--ink);color:var(--paper);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between}
+.hero .d{font:600 40px/1 var(--serif)}.hero .d small{font:500 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);display:block;margin-top:4px}
+.hero .dt{text-align:right;font:500 12px/1.5 var(--mono);color:rgba(246,241,231,.75)}
+.hero .dt b{color:var(--paper);font-size:14px}
+.paycard{background:var(--sheet);border:1px solid var(--hairline);border-radius:14px;padding:14px 16px}
+.paycard .row1{display:flex;justify-content:space-between;align-items:baseline}
+.paycard .lbl2{font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3)}
+.paycard .amt{font:600 17px/1 var(--serif);font-variant-numeric:tabular-nums}
+.paycard .amt b{color:var(--accent)}
+.bar{height:6px;border-radius:6px;background:var(--paper2);margin:12px 0 8px;overflow:hidden}
+.bar i{display:block;height:100%;width:22%;background:linear-gradient(90deg,var(--gold),#b8893c);border-radius:6px}
+.paycard .foot{font-size:12.5px;color:var(--ink2)}
+.kv{background:var(--sheet);border:1px solid var(--hairline);border-radius:14px;padding:4px 16px}
+.kv .r{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--hairline);font-size:14px}
+.kv .r:last-child{border-bottom:0}
+.kv .k{color:var(--ink3)}.kv .v{font-weight:600;text-align:right}
+.advance{margin-top:auto;display:flex;justify-content:center}
+.advbtn{font:600 12px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink2);background:transparent;border:1px solid var(--hairline);border-radius:999px;padding:12px 18px}
+.scrim{position:absolute;inset:0;background:rgba(43,33,24,.45);border-radius:0}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:var(--sheet);border-radius:20px 20px 0 0;padding:22px 20px 26px;box-shadow:0 -12px 40px rgba(43,33,24,.35)}
+.sheet .grab{width:40px;height:4px;border-radius:4px;background:var(--hairline);margin:0 auto 16px}
+.sheet h4{font:600 19px/1.25 var(--serif);margin:0 0 6px}
+.sheet p{margin:0 0 18px;color:var(--ink2);font-size:13.5px}
+.sheet .acts{display:flex;flex-direction:column;gap:10px}
+.btn{font:600 13px/1 var(--sans);letter-spacing:.02em;border-radius:12px;padding:15px;text-align:center}
+.btn.primary{background:var(--accent);color:#fff}
+.btn.ghost{background:transparent;border:1px solid var(--hairline);color:var(--ink2)}
+.footer{margin-top:56px;border-top:1px solid var(--board-line);padding-top:20px;color:var(--board-ink2);font-size:13.5px;max-width:75ch}
+.footer b{color:var(--board-ink)}
+@media (max-width:900px){ body{padding:28px 12px 60px} .screens{gap:32px} }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1>Juliette <em>Atelier</em> — proposta de redisseny mòbil</h1>
+    <span class="tag">v1 · whitelabel · pack-driven</span>
+  </header>
+  <p class="lede">Tres pantalles que ataquen els dos problemes detectats — <strong>llegibilitat</strong> i <strong>navegació</strong> — mantenint la identitat paper/tinta de cada pack. Tot el color i les etiquetes surten dels tokens del pack: el mateix disseny renderitza Nordic Physio en teal sense tocar layout.</p>
+
+  <div class="screens">
+
+    <!-- ══════════ 1 · AVUI ══════════ -->
+    <section class="station">
+      <h2>Avui — la pantalla d'inici nova</h2>
+      <p class="why">El que necessita atenció, primer</p>
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <span class="brand">Juliette <i>Atelier</i></span>
+          <span class="date">Dv · 11 Jul 2026</span>
+        </div>
+        <div class="body">
+          <div class="hello">
+            <div class="big">Bon dia, Juliette</div>
+            <div class="sub">2 proves aquesta setmana · 1 boda en 25 dies</div>
+          </div>
+
+          <h3 class="sect">Urgent</h3>
+          <div class="card urgent">
+            <div class="who">
+              <span class="nm">Aina Puig</span>
+              <span class="count">25<small>dies · boda</small></span>
+            </div>
+            <div class="meta">Vestit a mida · <b>€1.800 pendents</b> · última prova sense agendar</div>
+          </div>
+
+          <h3 class="sect">Agenda d'avui</h3>
+          <div class="agrow">
+            <div class="hh">16:00<small>1h</small></div>
+            <div class="what">
+              <div class="t">Prova · Clara Ferrer</div>
+              <div class="s">Vestit princesa · 2a prova</div>
+            </div>
+            <span class="chip clienta"><span class="dot"></span>Clienta</span>
+          </div>
+          <div class="agrow">
+            <div class="hh">18:30<small>—</small></div>
+            <div class="what">
+              <div class="t">Recollida tela · Gratacós</div>
+              <div class="s">Mikado seda marfil · 3,2 m</div>
+            </div>
+          </div>
+
+          <h3 class="sect">D'un cop d'ull</h3>
+          <div class="pillrow">
+            <div class="pill"><div class="v warn">€5.100</div><div class="k">Pendent de cobrar</div></div>
+            <div class="pill"><div class="v">3</div><div class="k">Teles per comprar</div></div>
+            <div class="pill"><div class="v">3</div><div class="k">Proves setmana</div></div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <span class="tab active"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9h13v-9"/></svg><span class="lbl">Avui</span></span>
+          <span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg><span class="lbl">Clientes</span></span>
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M4 7l2.5-3h11L20 7"/><path d="M9.5 11h5"/></svg><span class="lbl">Materials</span></span>
+        </nav>
+        <span class="homebtn"></span>
+      </div></div>
+      <ul class="notes">
+        <li><b>Barra de pestanyes inferior, sempre visible</b> — substitueix la barra superior que desapareixia en fer scroll; només 3 destinacions, totes a l'abast del polze.</li>
+        <li><b>«Avui» abans que la llista</b> — urgències, agenda del dia i diners pendents en una ullada; la llista completa queda a un tap.</li>
+        <li><b>De 7 seccions a 3</b>: Teles + Per comprar → «Materials»; Agenda, Finances i Ingrés es repleguen dins «Avui» (vegeu l'última làmina).</li>
+        <li>L'urgent usa l'accent bordeus <b>només</b> per urgència; res més competeix pel color.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 2 · CLIENTES ══════════ -->
+    <section class="station">
+      <h2>Clientes — llegible d'una ullada</h2>
+      <p class="why">Una dada primària per fila</p>
+      <div class="phone"><div class="screen">
+        <div class="listhead">
+          <div><span class="ttl">Clientes</span><span class="n">6 noives</span></div>
+          <div class="iconbtns"><span class="iconbtn">⌕</span><span class="iconbtn">+</span></div>
+        </div>
+        <div class="filters">
+          <span class="f on">Totes</span><span class="f">Actives</span><span class="f">Prospect</span><span class="f">Entregades</span>
+        </div>
+        <div class="clist">
+          <div class="crow">
+            <span class="init">AP</span>
+            <div class="mid">
+              <div class="nm">Aina Puig</div>
+              <div class="sub"><span class="chip clienta"><span class="dot"></span>Clienta</span><span class="due">€1.800</span></div>
+            </div>
+            <div class="dd"><span class="d soon">25</span><small>dies · 17 mai</small></div>
+          </div>
+          <div class="crow">
+            <span class="init">BS</span>
+            <div class="mid">
+              <div class="nm">Berta Soler</div>
+              <div class="sub"><span class="chip sensepaga"><span class="dot"></span>Sense paga</span></div>
+            </div>
+            <div class="dd"><span class="d soon">39</span><small>dies · 31 mai</small></div>
+          </div>
+          <div class="crow">
+            <span class="init">CF</span>
+            <div class="mid">
+              <div class="nm">Clara Ferrer</div>
+              <div class="sub"><span class="chip clienta"><span class="dot"></span>Clienta</span><span class="due">€2.200</span></div>
+            </div>
+            <div class="dd"><span class="d">53</span><small>dies · 14 jun</small></div>
+          </div>
+          <div class="crow">
+            <span class="init">DV</span>
+            <div class="mid">
+              <div class="nm">Dolors Vidal</div>
+              <div class="sub"><span class="chip prospect">Prospect</span></div>
+            </div>
+            <div class="dd"><span class="d">67</span><small>dies · 28 jun</small></div>
+          </div>
+          <div class="crow">
+            <span class="init">ER</span>
+            <div class="mid">
+              <div class="nm">Elena Roca</div>
+              <div class="sub"><span class="chip clienta"><span class="dot"></span>Clienta</span><span class="due">€1.100</span></div>
+            </div>
+            <div class="dd"><span class="d">74</span><small>dies · 5 jul</small></div>
+          </div>
+          <div class="crow" style="opacity:.62">
+            <span class="init">FB</span>
+            <div class="mid">
+              <div class="nm">Fina Batlle</div>
+              <div class="sub"><span class="chip entregada"><span class="dot"></span>Entregada</span></div>
+            </div>
+            <div class="dd"><span class="d done">✓</span><small>12 set 2025</small></div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9h13v-9"/></svg><span class="lbl">Avui</span></span>
+          <span class="tab active"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg><span class="lbl">Clientes</span></span>
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M4 7l2.5-3h11L20 7"/><path d="M9.5 11h5"/></svg><span class="lbl">Materials</span></span>
+        </nav>
+        <span class="homebtn"></span>
+      </div></div>
+      <ul class="notes">
+        <li><b>El nom a 18px serif</b> i els dies restants com a xifra gran: les dues coses que la Juliette busca quan obre la llista.</li>
+        <li><b>Estats amb codi de color sòlid</b> — bordeus ple = clienta activa, or = falta paga i senyal, tinta = entregada, traç discontinu = prospect. Distingibles sense llegir.</li>
+        <li>El pendent de cobrar apareix <b>només si existeix</b>, en accent — l'urgent destaca perquè la resta calla.</li>
+        <li>Les entregades queden atenuades: la llista respira i el que és viu puja.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 3 · FITXA ══════════ -->
+    <section class="station">
+      <h2>Fitxa — accions segures</h2>
+      <p class="why">Canvis d'estat amb confirmació</p>
+      <div class="phone"><div class="screen">
+        <div class="fithead">
+          <span class="back">←</span>
+          <span class="nm">Aina Puig</span>
+          <span class="chip clienta"><span class="dot"></span>Clienta</span>
+        </div>
+        <div class="fbody">
+          <div class="hero">
+            <div class="d">25<small>dies · boda</small></div>
+            <div class="dt">17 mai 2026<br><b>Vestit a mida</b> · princesa modern</div>
+          </div>
+          <div class="paycard">
+            <div class="row1"><span class="lbl2">Pagaments</span><span class="amt"><b>€1.800</b> / €2.300</span></div>
+            <div class="bar"><i></i></div>
+            <div class="foot">Paga i senyal €500 rebut · saldo pendent abans de l'entrega</div>
+          </div>
+          <div class="kv">
+            <div class="r"><span class="k">Última prova</span><span class="v">12 mar 2026</span></div>
+            <div class="r"><span class="k">Teles</span><span class="v">4 · 2 per comprar</span></div>
+            <div class="r"><span class="k">Contacte</span><span class="v">+34 639 42 18 05</span></div>
+          </div>
+          <div class="advance"><span class="advbtn">Avançar estat →</span></div>
+
+          <div class="scrim"></div>
+          <div class="sheet">
+            <div class="grab"></div>
+            <h4>Marcar l'Aina com a Entregada?</h4>
+            <p>El vestit passa a l'arxiu i desapareix de les vistes actives. Podràs desfer-ho durant 10 segons.</p>
+            <div class="acts">
+              <span class="btn primary">Sí, entregada ✓</span>
+              <span class="btn ghost">Cancel·lar</span>
+            </div>
+          </div>
+        </div>
+      </div></div>
+      <ul class="notes">
+        <li><b>Capçalera compacta i fixa</b> amb nom + estat: el context no marxa mai en fer scroll.</li>
+        <li><b>«Avançar estat» ja no és un botó d'un sol tap</b> al mig del contingut: obre un full de confirmació que explica la conseqüència, amb desfer de 10 s.</li>
+        <li>Compte enrere i pagaments — les dues preguntes de sempre — ocupen la meitat superior; la resta és taula tranquil·la.</li>
+        <li>El full de confirmació és el patró per a <b>tota</b> acció irreversible (esborrar, entregar, cobrar).</li>
+      </ul>
+    </section>
+  </div>
+
+  </div>
+
+  <style>
+  /* ---------- additions: materials / agenda / finances / ingrés ---------- */
+  .screens2{display:flex;flex-wrap:wrap;gap:40px;justify-content:center;align-items:flex-start;margin-top:56px}
+  .seg{display:flex;background:var(--paper2);border-radius:10px;padding:3px}
+  .seg .s{flex:1;text-align:center;font:600 11px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;padding:9px;border-radius:8px;color:var(--ink3)}
+  .seg .s.on{background:var(--sheet);color:var(--ink);box-shadow:0 1px 2px rgba(43,33,24,.14)}
+  .suph{display:flex;justify-content:space-between;align-items:baseline;margin-top:4px}
+  .suph .n{font:600 15px/1 var(--serif)}
+  .suph .st{font:500 10.5px/1 var(--mono);color:var(--ink3)}
+  .mrow{display:flex;gap:12px;align-items:center;background:var(--sheet);border:1px solid var(--hairline);border-radius:12px;padding:12px 14px}
+  .cb{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--ink3);flex-shrink:0}
+  .cb.done{background:var(--accent);border-color:var(--accent);color:#fff;display:grid;place-items:center;font-size:13px;line-height:1}
+  .sw{width:34px;height:34px;border-radius:8px;background:var(--paper2);border:1px solid var(--hairline);flex-shrink:0}
+  .mrow .mid{flex:1;min-width:0}
+  .mrow .t{font-weight:600;font-size:14.5px}
+  .mrow .s{color:var(--ink3);font-size:12px;margin-top:2px}
+  .mrow .dd{text-align:right;font:600 12.5px/1.5 var(--mono);color:var(--ink2);white-space:nowrap}
+  .mrow .dd .soon{color:var(--accent)}
+  .totstrip{display:flex;gap:10px}
+  .dayh{font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);display:flex;align-items:center;gap:10px;margin-top:6px}
+  .dayh.today{color:var(--accent)}
+  .dayh::after{content:"";flex:1;height:1px;background:var(--hairline)}
+  .chip.prova{color:var(--ink2);border:1px solid var(--ink3);background:transparent}
+  .chip.entrega{color:#7a5b1e;background:var(--gold-soft);border:1px solid #d8bd85}
+  .chip.boda{color:#fff;background:var(--accent);border:1px solid var(--accent)}
+  .monthbar{display:flex;align-items:center;gap:10px}
+  .monthbar .m{font:600 22px/1 var(--serif);flex:1}
+  .monthbar .m small{font:500 12px var(--mono);color:var(--ink3);margin-left:6px}
+  .mbtn{font:600 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;border:1px solid var(--hairline);border-radius:999px;padding:8px 12px;color:var(--ink2);background:var(--sheet)}
+  .mbtn.dark{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .fintot{background:var(--sheet);border:1px solid var(--hairline);border-radius:14px;padding:14px 16px}
+  .fintot .r0{display:flex;gap:20px}
+  .fintot .v{font:600 21px/1 var(--serif);font-variant-numeric:tabular-nums}
+  .fintot .v.due{color:var(--accent)}
+  .fintot .k{font:500 9.5px/1.4 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin-top:4px}
+  .payc .rr{display:flex;justify-content:space-between;align-items:baseline}
+  .payc .nm2{font:600 17px/1.1 var(--serif)}
+  .payc .sub2{color:var(--ink3);font-size:12px;margin-top:3px}
+  .payc .due2{font:600 18px/1 var(--serif);color:var(--accent);font-variant-numeric:tabular-nums}
+  .payc .due2 small{display:block;font:500 9.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-top:3px;text-align:right}
+  .payc .act{display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding-top:10px;border-top:1px solid var(--hairline)}
+  .payc .pct{font:500 11px var(--mono);color:var(--ink3)}
+  .rbtn{font:600 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);border-radius:999px;padding:8px 12px}
+  .convc{border-left:3px solid var(--gold)}
+  .convc .hd{display:flex;justify-content:space-between;align-items:baseline}
+  .convc .who2{font:600 17px/1.1 var(--serif)}
+  .convc .ago{font:500 10px var(--mono);color:var(--ink3)}
+  .convc .prev{color:var(--ink2);font-size:13px;margin-top:6px;font-style:italic}
+  .convc .ok{font:600 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:#7a5b1e;margin-top:8px}
+  .bfield{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--hairline);font-size:13.5px}
+  .bfield:last-child{border-bottom:0}
+  .bfield .k{color:var(--ink3)}
+  .bfield .v{font-weight:600;text-align:right}
+  .bfield .v i{font-style:normal;color:var(--ink3);font-weight:400;font-size:11px}
+  .cta2{display:flex;gap:10px;margin-top:2px}
+  .cta2 .btn{flex:1}
+  </style>
+
+  <div class="screens screens2">
+
+    <!-- ══════════ 4 · MATERIALS ══════════ -->
+    <section class="station">
+      <h2>Materials — Teles i compra, junts</h2>
+      <p class="why">Una secció, dues vistes</p>
+      <div class="phone"><div class="screen">
+        <div class="listhead">
+          <div><span class="ttl">Materials</span><span class="n">15 teles</span></div>
+          <div class="iconbtns"><span class="iconbtn">+</span></div>
+        </div>
+        <div class="body">
+          <div class="seg"><span class="s on">Per comprar · 3</span><span class="s">Inventari · 12</span></div>
+          <div class="pillrow totstrip">
+            <div class="pill"><div class="v">6,5 m</div><div class="k">Metres</div></div>
+            <div class="pill"><div class="v">€271</div><div class="k">Cost est.</div></div>
+            <div class="pill"><div class="v">2</div><div class="k">Proveïdors</div></div>
+          </div>
+          <div class="suph"><span class="n">Gratacós</span><span class="st">2 peces · €193</span></div>
+          <div class="mrow">
+            <span class="cb"></span><span class="sw"></span>
+            <div class="mid"><div class="t">Mikado seda marfil</div><div class="s">Cos · 3,2 m · €48/m</div></div>
+            <div class="dd">Aina<br><span class="soon">25d</span></div>
+          </div>
+          <div class="mrow">
+            <span class="cb"></span><span class="sw"></span>
+            <div class="mid"><div class="t">Puntilla italiana</div><div class="s">Vora · 0,8 m · €78/m</div></div>
+            <div class="dd">Elena<br>74d</div>
+          </div>
+          <div class="suph"><span class="n">Ribes &amp; Casals</span><span class="st">1 peça · €55</span></div>
+          <div class="mrow" style="opacity:.55">
+            <span class="cb done">✓</span><span class="sw"></span>
+            <div class="mid"><div class="t" style="text-decoration:line-through">Tul francès</div><div class="s">Vel · 2,5 m · €22/m · comprada avui</div></div>
+            <div class="dd">Aina</div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9h13v-9"/></svg><span class="lbl">Avui</span></span>
+          <span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg><span class="lbl">Clientes</span></span>
+          <span class="tab active"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M4 7l2.5-3h11L20 7"/><path d="M9.5 11h5"/></svg><span class="lbl">Materials</span></span>
+        </nav>
+        <span class="homebtn"></span>
+      </div></div>
+      <ul class="notes">
+        <li><b>Teles + Per comprar es fonen</b>: un segmentat a dalt canvia entre la llista de compra (per proveïdor, amb subtotals) i l'inventari (per clienta o per tela).</li>
+        <li><b>Marcar la casella = comprada</b>: la peça es ratlla, passa a inventari i surt del comptador — la llista és per usar-la a la botiga, dreta i amb una mà.</li>
+        <li>Cada tela porta la clienta i els <b>dies fins la seva boda</b> — bordeus quan corre pressa: la compra s'ordena sola per urgència.</li>
+        <li>Els totals (metres, cost, proveïdors) sempre a la vista: el pressupost del dia de compres sense calculadora.</li>
+      </ul>
+    </section>
+
+
+    <!-- ══════════ 5 · AVUI AMPLIAT ══════════ -->
+    <section class="station">
+      <h2>Avui, ampliat — agenda, ingrés i caixa a dins</h2>
+      <p class="why">Una pantalla que absorbeix tres seccions</p>
+      <div class="phone"><div class="screen">
+        <div class="appbar">
+          <span class="brand">Juliette <i>Atelier</i></span>
+          <span class="date">Dv · 11 Jul 2026</span>
+        </div>
+        <div class="body">
+          <div class="dayh today">Avui · Divendres 11</div>
+          <div class="agrow">
+            <div class="hh">16:00<small>1h</small></div>
+            <div class="what"><div class="t">Prova · Clara Ferrer</div><div class="s">2a prova · vestit princesa</div></div>
+            <span class="chip prova">Prova</span>
+          </div>
+          <div class="dayh">Dilluns 14</div>
+          <div class="agrow">
+            <div class="hh">10:00<small>1h</small></div>
+            <div class="what"><div class="t">Última prova · Aina Puig</div><div class="s">Abans de l’entrega · boda en 25 dies</div></div>
+            <span class="chip prova">Prova</span>
+          </div>
+          <div class="dayh">Dijous 17</div>
+          <div class="agrow">
+            <div class="hh">17:00<small>—</small></div>
+            <div class="what"><div class="t">Entrega · Elena Roca</div><div class="s">Vestit bohemi</div></div>
+            <span class="chip entrega">Entrega</span>
+          </div>
+          <h3 class="sect">Ingrés nou · 1</h3>
+          <div class="card convc">
+            <div class="hd"><span class="who2">Núria Bosch</span><span class="ago">WhatsApp · fa 12 min</span></div>
+            <div class="prev">«…vull quelcom boho, molt fluid, romàntic…»</div>
+            <div class="ok">✓ Brief extret · revisar i crear clienta →</div>
+          </div>
+          <h3 class="sect">Caixa · juliol</h3>
+          <div class="fintot">
+            <div class="r0">
+              <div><div class="v">€1.400</div><div class="k">Cobrat mes</div></div>
+              <div><div class="v due">€5.100</div><div class="k">Pendent</div></div>
+              <div><div class="v">47%</div><div class="k">Del facturat</div></div>
+            </div>
+            <div class="bar" style="margin:12px 0 6px"><i style="width:47%"></i></div>
+            <div style="font:500 10.5px var(--mono);color:var(--ink3)">Registrar pagaments des d’aquí o des de la fitxa</div>
+          </div>
+        </div>
+        <nav class="tabbar">
+          <span class="tab active"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9h13v-9"/></svg><span class="lbl">Avui</span></span>
+          <span class="tab"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-3.6 4-5.4 7-5.4s5.8 1.8 7 5.4"/></svg><span class="lbl">Clientes</span></span>
+          <span class="tab"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M4 7l2.5-3h11L20 7"/><path d="M9.5 11h5"/></svg><span class="lbl">Materials</span></span>
+        </nav>
+        <span class="homebtn"></span>
+      </div></div>
+      <ul class="notes">
+        <li><b>Agenda → línia de temps dins Avui</b>: seguir baixant és veure la setmana i el mes. La graella mensual era 90% cel·les buides amb 6–10 esdeveniments/mes.</li>
+        <li><b>Ingrés → safata dins Avui</b>: la conversa nova apareix com a targeta amb el brief ja extret; tocar-la obre la fitxa proposta editable amb «Crear clienta». Res no es crea sol.</li>
+        <li><b>Finances → la caixa del mes</b> com a resum; el «registrar pagament» viu a les targetes de cobrament i a la fitxa — allà on passa l’acció. El detall complet és un informe a un tap, no una pestanya.</li>
+        <li>Nova cita: botó «+» global o des de la fitxa de la clienta — no cal una secció per crear.</li>
+      </ul>
+    </section>
+
+    <!-- ══════════ 6 · EXPLICACIÓ IA ══════════ -->
+    <section class="station">
+      <h2>Per què 3 pestanyes i no 7 seccions</h2>
+      <p class="why">Menys llocs on mirar = més ràpid</p>
+      <ul class="notes">
+        <li><b>Avui</b> és el flux (què passa, què cal fer, què entra, què es cobra). <b>Clientes</b> és l’arxiu viu (qui, en quin estat). <b>Materials</b> és l’únic inventàri físic. Tota la resta són vistes d’aquestes tres coses.</li>
+        <li>Cada secció eliminada era una <b>decisió de navegació</b> que la propietària havia de prendre amb el telèfon a la mà. Ara: obre l’app → ja hi és.</li>
+        <li>L’escriptori de recepció manté l’<b>Agenda setmanal com a 4a secció</b> — reservar hores és la seva feina i necessita veure forats lliures. El mòbil de la propietària no reserva en graella: consulta.</li>
+        <li>Els packs declaren les seccions: physio pot activar la seva pròpia 4a secció si el vertical ho demana — la barra és config, no codi.</li>
+      </ul>
+    </section>
+  </div>
+
+  <footer class="footer">
+    <b>Whitelabel per construcció.</b> Cap color ni etiqueta és fix: paper, tinta, accent, or, tipografies i strings venen del pack JSON (atelier avui, physio en teal demà). Els estats i els seus colors es declaren al pack — el disseny només fixa jerarquia, mides i patrons d'interacció. Següent pas natural: «Avui» a escriptori, agenda setmanal, i el flux d'alta de clienta.
+  </footer>
+</div>
