@@ -2,34 +2,13 @@ import type { Client } from '../types';
 import { T } from '../tokens';
 import { Label, Mono, Serif } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
-import { parsePayments } from '../lib/clientHelpers';
 import { initials } from '../lib/clientHelpers';
+import { buildFinances } from '../lib/finance';
 import { t, formatCurrency, featureOn } from '../config';
 
 interface Props {
   clients: Client[];
   onOpen: (id: number) => void;
-}
-
-interface ClientFinance {
-  client: Client;
-  priceTotal: number;
-  paid: number;
-  outstanding: number;
-  pct: number;
-}
-
-function buildFinances(clients: Client[]): ClientFinance[] {
-  return clients
-    .map(client => {
-      const { priceTotal, paid } = parsePayments(client.payments);
-      const total = priceTotal ?? 0;
-      const outstanding = Math.max(0, total - paid);
-      const pct = total > 0 ? Math.min(100, Math.round((paid / total) * 100)) : 0;
-      return { client, priceTotal: total, paid, outstanding, pct };
-    })
-    .filter(f => f.priceTotal > 0)
-    .sort((a, b) => b.outstanding - a.outstanding);
 }
 
 export function FinancesScreen({ clients, onOpen }: Props) {

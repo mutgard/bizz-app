@@ -62,7 +62,7 @@ function AtelierApp() {
 
   const routes = (
     <Routes>
-      <Route path="/" element={<TodayScreen />} />
+      <Route path="/" element={<TodayScreen clients={clients} onOpenClient={openClient} />} />
       <Route path="/clients" element={<>
         {!creating && <ClientsScreen clients={clients} onOpen={openClient} onCreate={() => setCreating(true)} />}
         {creating && mobile && <NewClientScreen onCancel={() => setCreating(false)} onSuccess={handleCreateSuccess} />}

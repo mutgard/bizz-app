@@ -3,7 +3,7 @@ const BASE = import.meta.env.VITE_API_URL ?? '';
 import type {
   Client, Fabric, ShoppingItem, IntakeData, ClientBrief, ClientCreate,
   AtelierEvent, AppointmentCreate, DeliveryCreate, PaymentCreate,
-  Lead, LeadCreate, LeadConvert, LeadMatch,
+  Lead, LeadCreate, LeadConvert, LeadMatch, Note, NoteCreate, Todo,
 } from './types';
 
 async function get<T>(path: string): Promise<T> {
@@ -98,4 +98,9 @@ export const api = {
     if (params.email) q.set('email', params.email);
     return get<LeadMatch[]>(`/leads/match?${q.toString()}`);
   },
+
+  listNotes:  (clientId: number) => get<Note[]>(`/clients/${clientId}/notes`),
+  createNote: (body: NoteCreate) => post<Note>('/notes', body),
+
+  getTodos: () => get<Todo[]>('/todos'),
 };

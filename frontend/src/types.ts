@@ -188,3 +188,25 @@ export interface LeadMatch {
   id: number;
   name: string;
 }
+
+/** Free-text interaction log entry (call, WhatsApp, email, in-person) for a client. */
+export interface Note {
+  id: number;
+  client_id: number;
+  ts: string;
+  text: string;
+}
+
+export interface NoteCreate {
+  client_id: number;
+  text: string;
+}
+
+/** Derived "Per fer" work queue entry — see backend/routes/todos.py. */
+export interface Todo {
+  type: 'schedule_fitting' | 'collect_deposit' | 'review_lead';
+  client_id: number | null;
+  client_name: string;
+  detail: string;
+  days_until: number | null;
+}
