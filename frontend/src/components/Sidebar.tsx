@@ -1,6 +1,7 @@
 import { T } from '../tokens';
 import { Label, Mono } from './primitives';
 import { t, usePack, navItems } from '../config';
+import { useIsOperator } from '../hooks/useIsOperator';
 
 interface Props {
   active: string;
@@ -11,6 +12,7 @@ interface Props {
 export function Sidebar({ active, onNav, counts }: Props) {
   const brand = usePack().brand;
   const items = navItems();
+  const isOperator = useIsOperator();
 
   return (
     <div style={{
@@ -75,6 +77,12 @@ export function Sidebar({ active, onNav, counts }: Props) {
             <div style={{ fontFamily: T.sans, fontSize: 12, color: T.paper }}>{brand.userName}</div>
             <Mono size={9} color="rgba(246,241,232,0.55)">{brand.userRole}</Mono>
           </div>
+          {/* Operator-only: visible when the browser holds a valid ADMIN_TOKEN */}
+          {isOperator && (
+            <a href="/admin" title="Backoffice" style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: T.gold, textDecoration: 'none', border: `1px solid rgba(246,241,232,0.25)`, padding: '3px 8px', borderRadius: 2 }}>
+              Admin
+            </a>
+          )}
         </div>
       </div>
     </div>

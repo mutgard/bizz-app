@@ -27,6 +27,14 @@ tenant.
   `backend/routes/admin.py` (endpoints + token auth), error-capture
   middleware in `backend/main.py`, UI in `frontend/src/pages/AdminPage.tsx`
   (route `/admin` in `App.tsx`).
+- **Navigation (role-based)**: the operator role is *holding a valid
+  ADMIN_TOKEN* — no user accounts. After connecting once on `/admin`, the
+  token lives in that browser's `localStorage`; the app sidebar then shows a
+  gold **Admin** chip (validated against `/admin/kpis` via
+  `frontend/src/hooks/useIsOperator.ts`) linking to the backoffice, and the
+  backoffice header has **Open app →** linking back. Browsers without a
+  valid token (i.e. the tenant's owner) never see the chip; `/admin` stays
+  reachable by URL but token-gated.
 
 ## Phase 2 — central backoffice (future)
 

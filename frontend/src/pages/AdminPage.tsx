@@ -81,8 +81,11 @@ export function AdminPage() {
         <span style={{ fontFamily: T.mono, fontSize: 10, letterSpacing: 1.5, textTransform: 'uppercase', opacity: 0.6, marginLeft: 8 }}>
           Backoffice · tenant: {pack.id}
         </span>
+        <a href="/" style={{ marginLeft: 'auto', color: T.paper, opacity: 0.75, fontFamily: T.mono, fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', textDecoration: 'none', padding: '4px 12px', border: '1px solid rgba(255,255,255,0.3)', borderRadius: 2 }}>
+          Open app →
+        </a>
         {authed && (
-          <button onClick={() => load(token)} style={{ marginLeft: 'auto', background: 'transparent', color: T.gold, border: `1px solid ${T.gold}`, fontFamily: T.mono, fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', padding: '4px 12px', cursor: 'pointer', borderRadius: 2 }}>
+          <button onClick={() => load(token)} style={{ background: 'transparent', color: T.gold, border: `1px solid ${T.gold}`, fontFamily: T.mono, fontSize: 10, letterSpacing: 1, textTransform: 'uppercase', padding: '4px 12px', cursor: 'pointer', borderRadius: 2 }}>
             Refresh
           </button>
         )}
