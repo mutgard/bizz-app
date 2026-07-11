@@ -14,6 +14,7 @@ import { IntakeDemoScreen } from './screens/IntakeDemoScreen';
 import { FinancesScreen } from './screens/FinancesScreen';
 import { api } from './api';
 import { BriefPage } from './pages/BriefPage';
+import { AdminPage } from './pages/AdminPage';
 import { featureOn } from './config';
 
 type Screen = 'clients' | 'profile' | 'fabrics' | 'shop' | 'roadmap' | 'intake' | 'finances';
@@ -23,6 +24,9 @@ export default function App() {
   if (pathname.startsWith('/brief/')) {
     const token = pathname.slice('/brief/'.length);
     return <BriefPage token={token} />;
+  }
+  if (pathname === '/admin') {
+    return <AdminPage />;
   }
   return <AtelierApp />;
 }
