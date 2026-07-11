@@ -216,10 +216,10 @@
     "brief.proposal": "Proposta"
   },
   "nav": [
-    { "screen": "clients", "labelKey": "nav.clients" },
+    { "screen": "clients", "labelKey": "nav.clients", "countKey": "totalClients" },
     { "screen": "profile", "labelKey": "nav.profile", "sub": true },
-    { "screen": "fabrics", "labelKey": "nav.fabrics", "feature": "fabrics" },
-    { "screen": "shop", "labelKey": "nav.shop", "accent": true, "feature": "shopping" },
+    { "screen": "fabrics", "labelKey": "nav.fabrics", "feature": "fabrics", "countKey": "totalFabrics" },
+    { "screen": "shop", "labelKey": "nav.shop", "mobileLabelKey": "common.buy", "accent": true, "feature": "shopping", "countKey": "fabricsToBuy" },
     { "screen": "roadmap", "labelKey": "nav.roadmap" },
     { "screen": "intake", "labelKey": "nav.intake", "feature": "intake" },
     { "screen": "finances", "labelKey": "nav.finances" }

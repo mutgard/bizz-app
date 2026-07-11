@@ -8,7 +8,7 @@ import { initials, parsePayments } from '../lib/clientHelpers';
 import { IntakeTab } from '../components/IntakeTab';
 import { EventList } from '../components/EventList';
 import { isoToday } from '../lib/calendarHelpers';
-import { t } from '../config';
+import { t, featureOn } from '../config';
 
 interface Props {
   client: Client;
@@ -189,7 +189,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
           ← {t('nav.clients')}
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          {!editing && briefToken && (
+          {!editing && featureOn('brief') && briefToken && (
             <button
               onClick={handleCopyLink}
               style={{
@@ -350,9 +350,9 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         </div>
       </div>
 
-      {/* Tab strip */}
+      {/* Tab strip — Ingrés tab only when the intake feature is on */}
       <div style={{ display: 'flex', borderBottom: `1px solid ${T.hairline}`, flexShrink: 0, background: T.paper }}>
-        {(['fitxa', 'ingres'] as const).map((tabKey) => {
+        {(featureOn('intake') ? ['fitxa', 'ingres'] as const : ['fitxa'] as const).map((tabKey) => {
           const labels = { fitxa: t('nav.profile'), ingres: t('nav.intake') };
           const on = tab === tabKey;
           return (
@@ -381,8 +381,8 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       {/* Scrollable content */}
       <div style={{ flex: 1, overflow: 'auto', padding: `${mobile ? 20 : 28}px ${px}px 40px`, display: tab === 'fitxa' ? 'block' : 'none' }}>
 
-        {/* Countdown card */}
-        {editing && (
+        {/* Countdown card — only when the key-date feature is on */}
+        {editing && featureOn('keyDate') && (
           <div style={{ marginBottom: 16 }}>
             <Label style={{ marginBottom: 8 }}>{t('profile.weddingDate')}</Label>
             <input
@@ -393,7 +393,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
             />
           </div>
         )}
-        {!editing && c.status !== 'entregada' && (
+        {!editing && featureOn('keyDate') && c.status !== 'entregada' && (
           <div style={{ background: T.ink, color: T.paper, padding: '18px 22px', marginBottom: 24 }}>
             <Label style={{ color: 'rgba(246,241,232,0.55)', marginBottom: 8 }}>{t('profile.countdown')} · {t('event.keyDate')}</Label>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
@@ -514,7 +514,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         </div>
 
         {/* Teles */}
-        {c.fabrics.length > 0 && (
+        {featureOn('fabrics') && c.fabrics.length > 0 && (
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
               <Label>{t('nav.fabrics')} ({c.fabrics.length})</Label>
@@ -567,7 +567,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
           <Mono size={11} color={T.accent} style={{ marginBottom: 16, display: 'block' }}>{saveError}</Mono>
         )}
       </div>
-      {tab === 'ingres' && (
+      {tab === 'ingres' && featureOn('intake') && (
         <div style={{ flex: 1, minHeight: 0, overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
           <IntakeTab clientId={c.id} />
         </div>

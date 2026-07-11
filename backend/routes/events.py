@@ -3,6 +3,7 @@ from sqlmodel import Session, select
 from typing import Optional
 from database import get_session
 from models import Appointment, Delivery, Client
+from config import get_pack
 
 router = APIRouter(prefix="/events", tags=["events"])
 
@@ -34,6 +35,8 @@ def list_events(
     session: Session = Depends(get_session),
 ):
     results = []
+    pack = get_pack()
+    features = pack.get("features", {})
 
     appt_q = select(Appointment).where(
         Appointment.date.isnot(None),
@@ -45,27 +48,30 @@ def list_events(
     for a in session.exec(appt_q).all():
         results.append(_appt_to_event(a, session))
 
-    deliv_q = select(Delivery).where(
-        Delivery.expected_date >= from_date,
-        Delivery.expected_date <= to_date,
-    )
-    if client_id is not None:
-        deliv_q = deliv_q.where(Delivery.client_id == client_id)
-    for d in session.exec(deliv_q).all():
-        results.append(_delivery_to_event(d, session))
+    if features.get("deliveries"):
+        deliv_q = select(Delivery).where(
+            Delivery.expected_date >= from_date,
+            Delivery.expected_date <= to_date,
+        )
+        if client_id is not None:
+            deliv_q = deliv_q.where(Delivery.client_id == client_id)
+        for d in session.exec(deliv_q).all():
+            results.append(_delivery_to_event(d, session))
 
-    wedding_q = select(Client).where(Client.wedding_date_iso.isnot(None))
-    if client_id is not None:
-        wedding_q = wedding_q.where(Client.id == client_id)
-    for c in session.exec(wedding_q).all():
-        if from_date <= c.wedding_date_iso <= to_date:
-            results.append({
-                "id": c.id, "type": "wedding",
-                "date": c.wedding_date_iso,
-                "title": f"Boda · {c.name}",
-                "client_id": c.id, "client_name": c.name,
-                "order_id": None, "supplier": None, "received": None,
-            })
+    if features.get("keyDate"):
+        key_date_label = pack.get("strings", {}).get("event.keyDate", "Boda")
+        wedding_q = select(Client).where(Client.wedding_date_iso.isnot(None))
+        if client_id is not None:
+            wedding_q = wedding_q.where(Client.id == client_id)
+        for c in session.exec(wedding_q).all():
+            if from_date <= c.wedding_date_iso <= to_date:
+                results.append({
+                    "id": c.id, "type": "wedding",
+                    "date": c.wedding_date_iso,
+                    "title": f"{key_date_label} · {c.name}",
+                    "client_id": c.id, "client_name": c.name,
+                    "order_id": None, "supplier": None, "received": None,
+                })
 
     results.sort(key=lambda e: e["date"])
     return results

@@ -6,7 +6,7 @@ import { T } from '../tokens';
 import { api } from '../api';
 import { Segment } from './primitives';
 import type { AtelierEvent, EventType, Client } from '../types';
-import { t } from '../config';
+import { t, featureOn } from '../config';
 
 interface Props {
   event?: AtelierEvent;         // undefined → create mode
@@ -126,8 +126,8 @@ export function EventDialog({
               <Segment
                 options={[
                   ['appointment', t('event.typeAppointment')],
-                  ['delivery',    t('event.typeDelivery')],
-                  ['wedding',     t('event.keyDate')],
+                  ...(featureOn('deliveries') ? [['delivery', t('event.typeDelivery')] as [string, string]] : []),
+                  ...(featureOn('keyDate') ? [['wedding', t('event.keyDate')] as [string, string]] : []),
                 ]}
                 value={type}
                 onChange={(v) => {

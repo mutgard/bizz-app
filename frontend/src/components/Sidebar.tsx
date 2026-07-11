@@ -1,27 +1,16 @@
 import { T } from '../tokens';
 import { Label, Mono } from './primitives';
-import { t } from '../config';
-
-type Screen = 'clients' | 'profile' | 'fabrics' | 'shop' | 'roadmap' | 'intake' | 'finances';
+import { t, usePack, navItems } from '../config';
 
 interface Props {
-  active: Screen;
-  onNav: (s: Screen) => void;
-  fabricsToBuy: number;
-  totalClients: number;
-  totalFabrics: number;
+  active: string;
+  onNav: (s: string) => void;
+  counts: Record<string, number>;
 }
 
-export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabrics }: Props) {
-  const items: { id: Screen; n: string; label: string; count: number | null; accent?: boolean; sub?: boolean }[] = [
-    { id: 'clients', n: '01', label: t('nav.clients'), count: totalClients },
-    { id: 'profile', n: '02', label: t('nav.profile'), count: null, sub: true },
-    { id: 'fabrics', n: '03', label: t('nav.fabrics'), count: totalFabrics },
-    { id: 'shop',    n: '04', label: t('nav.shop'),    count: fabricsToBuy, accent: true },
-    { id: 'roadmap', n: '05', label: t('nav.roadmap'), count: null },
-    { id: 'intake',  n: '06', label: t('nav.intake'),  count: null },
-    { id: 'finances', n: '07', label: t('nav.finances'), count: null },
-  ];
+export function Sidebar({ active, onNav, counts }: Props) {
+  const brand = usePack().brand;
+  const items = navItems();
 
   return (
     <div style={{
@@ -31,11 +20,11 @@ export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabric
     }}>
       {/* logo */}
       <div style={{ marginBottom: 44, paddingLeft: 4 }}>
-        <div style={{ fontFamily: T.serif, fontSize: 28, lineHeight: 1, color: T.paper }}>Juliette</div>
-        <div style={{ fontFamily: T.serif, fontSize: 28, fontStyle: 'italic', lineHeight: 1, color: T.gold, marginTop: 2 }}>Atelier</div>
+        <div style={{ fontFamily: T.serif, fontSize: 28, lineHeight: 1, color: T.paper }}>{brand.wordmark[0]}</div>
+        <div style={{ fontFamily: T.serif, fontSize: 28, fontStyle: 'italic', lineHeight: 1, color: T.gold, marginTop: 2 }}>{brand.wordmark[1]}</div>
         <div style={{ height: 1, background: 'rgba(246,241,232,0.2)', margin: '14px 0 10px' }} />
         <div style={{ fontFamily: T.mono, fontSize: 9, color: 'rgba(246,241,232,0.55)', letterSpacing: 1.8, textTransform: 'uppercase' }}>
-          Est. 2026 · Girona
+          {brand.tagline}
         </div>
       </div>
 
@@ -43,10 +32,11 @@ export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabric
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         {items.map(it => {
-          const on = it.id === active || (active === 'profile' && it.id === 'clients');
+          const on = it.screen === active || (active === 'profile' && it.screen === 'clients');
           const dim = it.sub;
+          const count = it.countKey ? counts[it.countKey] : undefined;
           return (
-            <div key={it.id} onClick={() => !dim && onNav(it.id)} style={{
+            <div key={it.screen} onClick={() => !dim && onNav(it.screen)} style={{
               display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px',
               background: on ? 'rgba(246,241,232,0.08)' : 'transparent',
               borderLeft: on ? `2px solid ${T.gold}` : '2px solid transparent',
@@ -54,9 +44,9 @@ export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabric
             }}>
               <span style={{ fontFamily: T.mono, fontSize: 10, color: on ? T.gold : 'rgba(246,241,232,0.5)', width: 18 }}>{it.n}</span>
               <span style={{ flex: 1, fontFamily: T.serif, fontStyle: dim ? 'italic' : 'normal', fontSize: 18, color: T.paper }}>{it.label}</span>
-              {it.count !== null && (
-                <span style={{ fontFamily: T.mono, fontSize: 10, color: it.accent && it.count ? T.gold : 'rgba(246,241,232,0.5)' }}>
-                  {String(it.count).padStart(2, '0')}
+              {count !== undefined && (
+                <span style={{ fontFamily: T.mono, fontSize: 10, color: it.accent && count ? T.gold : 'rgba(246,241,232,0.5)' }}>
+                  {String(count).padStart(2, '0')}
                 </span>
               )}
             </div>
@@ -80,10 +70,10 @@ export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabric
           </div>
         </div>
         <div style={{ marginTop: 16, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(246,241,232,0.06)' }}>
-          <div style={{ width: 28, height: 28, borderRadius: '50%', background: T.gold, color: T.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: T.serif, fontSize: 14, fontStyle: 'italic' }}>J</div>
+          <div style={{ width: 28, height: 28, borderRadius: '50%', background: T.gold, color: T.ink, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: T.serif, fontSize: 14, fontStyle: 'italic' }}>{brand.avatar}</div>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: T.sans, fontSize: 12, color: T.paper }}>Juliette M.</div>
-            <Mono size={9} color="rgba(246,241,232,0.55)">Modista</Mono>
+            <div style={{ fontFamily: T.sans, fontSize: 12, color: T.paper }}>{brand.userName}</div>
+            <Mono size={9} color="rgba(246,241,232,0.55)">{brand.userRole}</Mono>
           </div>
         </div>
       </div>

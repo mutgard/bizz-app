@@ -26,9 +26,17 @@ export interface PackField {
 export interface PackNavItem {
   screen: string;
   labelKey: string;
+  mobileLabelKey?: string;
+  countKey?: string;
   feature?: string;
   accent?: boolean;
   sub?: boolean;
+}
+
+export interface ResolvedNavItem extends PackNavItem {
+  label: string;
+  mobileLabel: string;
+  n: string;
 }
 
 export interface Pack {
@@ -86,6 +94,27 @@ export function t(key: string): string {
 export function formatCurrency(n: number): string {
   const { currencySymbol, numberLocale } = getPack().locale;
   return `${currencySymbol}${n.toLocaleString(numberLocale)}`;
+}
+
+/** Is a named feature enabled in the active pack? Missing flag = disabled. */
+export function featureOn(name: string): boolean {
+  return !!getPack().features[name];
+}
+
+/** The enabled nav items, in display order, with resolved labels + step numbers.
+ *  `n` is the 1-based index in the FULL nav list (so a screen keeps its number
+ *  even when earlier items — e.g. the profile sub-item on mobile — are hidden).
+ *  Items gated by a feature flag are dropped when that feature is off. */
+export function navItems(): ResolvedNavItem[] {
+  const pack = getPack();
+  return pack.nav
+    .map((it, i) => ({
+      ...it,
+      label: t(it.labelKey),
+      mobileLabel: t(it.mobileLabelKey ?? it.labelKey),
+      n: String(i + 1).padStart(2, '0'),
+    }))
+    .filter((it) => !it.feature || featureOn(it.feature));
 }
 
 /** Write the pack's CSS custom properties onto :root. Runs at boot, before

@@ -14,6 +14,7 @@ import { IntakeDemoScreen } from './screens/IntakeDemoScreen';
 import { FinancesScreen } from './screens/FinancesScreen';
 import { api } from './api';
 import { BriefPage } from './pages/BriefPage';
+import { featureOn } from './config';
 
 type Screen = 'clients' | 'profile' | 'fabrics' | 'shop' | 'roadmap' | 'intake' | 'finances';
 
@@ -39,8 +40,13 @@ function AtelierApp() {
 
   const fabricsToBuy = clients.flatMap(c => c.fabrics).filter(f => f.to_buy).length;
   const totalFabrics = clients.flatMap(c => c.fabrics).length;
+  const counts: Record<string, number> = {
+    totalClients: clients.length,
+    totalFabrics,
+    fabricsToBuy,
+  };
 
-  const nav = (s: Screen) => { setScreen(s); setCreating(false); if (s !== 'profile') setClientId(null); };
+  const nav = (s: string) => { setScreen(s as Screen); setCreating(false); if (s !== 'profile') setClientId(null); };
   const openClient = (id: number) => { setClientId(id); setScreen('profile'); };
   const back = () => { setScreen('clients'); setClientId(null); };
 
@@ -64,10 +70,10 @@ function AtelierApp() {
           allClients={clients}
         />
       )}
-      {screen === 'fabrics'  && <FabricsScreen clients={clients} onRefresh={refresh} />}
-      {screen === 'shop'     && <ShoppingScreen clients={clients} />}
+      {screen === 'fabrics'  && featureOn('fabrics')  && <FabricsScreen clients={clients} onRefresh={refresh} />}
+      {screen === 'shop'     && featureOn('shopping') && <ShoppingScreen clients={clients} />}
       {screen === 'roadmap'  && <RoadmapScreen clients={clients} onRefresh={refresh} />}
-      {screen === 'intake' && (
+      {screen === 'intake' && featureOn('intake') && (
         <IntakeDemoScreen
           onClientCreated={() => {
             refresh().then(() => nav('clients'));
@@ -83,7 +89,7 @@ function AtelierApp() {
   if (mobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100dvh', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-        <MobileHeader active={screen} onNav={nav} fabricsToBuy={fabricsToBuy} />
+        <MobileHeader active={screen} onNav={nav} counts={counts} />
         <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', paddingBottom: 'env(safe-area-inset-bottom)' }}>{content}</div>
       </div>
     );
@@ -91,7 +97,7 @@ function AtelierApp() {
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '232px 1fr', width: '100%', height: '100%', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-      <Sidebar active={screen} onNav={nav} fabricsToBuy={fabricsToBuy} totalClients={clients.length} totalFabrics={totalFabrics} />
+      <Sidebar active={screen} onNav={nav} counts={counts} />
       <div style={{ minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{content}</div>
       {creating && !mobile && (
         <div style={{
