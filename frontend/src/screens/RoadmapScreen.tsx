@@ -9,6 +9,7 @@ import { Mono } from '../components/primitives';
 import {
   getMonthCells, dateToIso, MONTH_NAMES_CA, DAY_NAMES_CA,
 } from '../lib/calendarHelpers';
+import { t } from '../config';
 
 interface Props {
   clients: Client[];
@@ -88,7 +89,7 @@ export function RoadmapScreen({ clients, onRefresh }: Props) {
             padding: '5px 12px', borderRadius: 2,
           }}
         >
-          Avui
+          {t('roadmap.today')}
         </button>
         <button
           onClick={() => { setCreateDate(undefined); setCreateOpen(true); }}
@@ -99,7 +100,7 @@ export function RoadmapScreen({ clients, onRefresh }: Props) {
             textTransform: 'uppercase', padding: '5px 14px', borderRadius: 2,
           }}
         >
-          <Plus size={12} /> Nou
+          <Plus size={12} /> {t('roadmap.new')}
         </button>
       </div>
 
@@ -169,7 +170,7 @@ export function RoadmapScreen({ clients, onRefresh }: Props) {
                     fontFamily: T.mono, fontSize: 9, color: T.ink3,
                     paddingLeft: 3, letterSpacing: 0.3,
                   }}>
-                    +{overflow} més
+                    +{overflow} {t('roadmap.more')}
                   </div>
                 )}
               </div>

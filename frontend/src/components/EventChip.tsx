@@ -11,6 +11,7 @@ import { api } from '../api';
 import type { AtelierEvent, Client } from '../types';
 import { formatEventDate } from '../lib/calendarHelpers';
 import { EventDialog } from './EventDialog';
+import { t } from '../config';
 
 const TYPE_BG: Record<string, string> = {
   appointment: T.accent,
@@ -116,7 +117,7 @@ export function EventChip({ event, clients, onChanged }: Props) {
                 padding: '4px 10px', borderRadius: 2,
               }}
             >
-              <Pencil size={11} /> Editar
+              <Pencil size={11} /> {t('common.edit')}
             </button>
 
             {event.type !== 'wedding' && (
@@ -129,7 +130,7 @@ export function EventChip({ event, clients, onChanged }: Props) {
                     fontFamily: T.mono, fontSize: 10, letterSpacing: 0.5,
                     padding: '4px 10px', borderRadius: 2,
                   }}>
-                    <Trash2 size={11} /> Eliminar
+                    <Trash2 size={11} /> {t('event.delete')}
                   </button>
                 </AlertDialogTrigger>
                 <AlertDialogContent style={{
@@ -137,21 +138,21 @@ export function EventChip({ event, clients, onChanged }: Props) {
                 }}>
                   <AlertDialogHeader>
                     <AlertDialogTitle style={{ fontFamily: T.serif, fontSize: 20, color: T.ink, fontWeight: 'normal' }}>
-                      Eliminar event
+                      {t('event.deleteTitle')}
                     </AlertDialogTitle>
                     <AlertDialogDescription style={{ fontFamily: T.sans, fontSize: 13, color: T.ink2 }}>
-                      Vols eliminar "{event.title}"? Aquesta acció no es pot desfer.
+                      {t('event.deletePromptPre')}"{event.title}"{t('event.deletePromptPost')}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel style={{ fontFamily: T.mono, fontSize: 11, borderRadius: 2 }}>
-                      Cancel·lar
+                      {t('common.cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction
                       onClick={handleDelete}
                       style={{ background: T.accent, color: T.paper, fontFamily: T.mono, fontSize: 11, borderRadius: 2 }}
                     >
-                      Eliminar
+                      {t('event.delete')}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>

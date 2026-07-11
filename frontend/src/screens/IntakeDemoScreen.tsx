@@ -4,6 +4,7 @@ import { api } from '../api';
 import { T } from '../tokens';
 import { Label, Mono, Serif } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { t } from '../config';
 
 interface Props {
   onClientCreated: () => void;
@@ -16,7 +17,7 @@ function WhatsAppColumn({ scenario }: { scenario: DemoScenarioWhatsApp }) {
     <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
         <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#25D366' }} />
-        <Mono size={10} color={T.ink3}>WhatsApp · Conversa</Mono>
+        <Mono size={10} color={T.ink3}>{t('intake.whatsappConversation')}</Mono>
       </div>
       {scenario.thread.map((msg, i) => {
         const isJulia = msg.role === 'julia';
@@ -39,19 +40,18 @@ function WhatsAppColumn({ scenario }: { scenario: DemoScenarioWhatsApp }) {
 
 // ── Web form column ─────────────────────────────────────────────────────────
 
-const FORM_LABELS: Record<string, string> = {
-  name: 'Nom', email: 'Email', phone: 'Telèfon',
-  wedding_date: 'Data boda', venue: 'Lloc',
-  style_notes: "Notes d'estil", budget_range: 'Pressupost',
-  how_did_you_hear: 'Com ens ha conegut',
-};
-
 function WebFormColumn({ scenario }: { scenario: DemoScenarioWebForm }) {
+  const FORM_LABELS: Record<string, string> = {
+    name: t('intake.fieldName'), email: t('common.email'), phone: t('common.phone'),
+    wedding_date: t('intake.weddingDateShort'), venue: t('common.venue'),
+    style_notes: t('intake.styleNotes'), budget_range: t('intake.budget'),
+    how_did_you_hear: t('intake.referral'),
+  };
   const date = new Date(scenario.submitted_at).toLocaleDateString('ca-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-        <div style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase' as const, color: T.paper, background: T.ink2, padding: '2px 7px', borderRadius: 999 }}>via web</div>
+        <div style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase' as const, color: T.paper, background: T.ink2, padding: '2px 7px', borderRadius: 999 }}>{t('intake.viaWeb')}</div>
         <Mono size={10} color={T.ink3}>{date}</Mono>
       </div>
       <div style={{ border: `1px solid ${T.hairline2}`, background: T.paper }}>
@@ -71,16 +71,16 @@ function WebFormColumn({ scenario }: { scenario: DemoScenarioWebForm }) {
 function BriefColumn({ scenario }: { scenario: DemoScenario }) {
   const { brief } = scenario;
   const rows: [string, string][] = [
-    ['Data boda', brief.wedding_date],
-    ['Lloc', brief.venue],
-    ['Peça', brief.garment],
-    ['Estil', brief.style],
-    ['Pressupost', brief.budget_tier],
-    ['Teles', brief.fabric_notes],
+    [t('intake.weddingDateShort'), brief.wedding_date],
+    [t('common.venue'), brief.venue],
+    [t('common.garment'), brief.garment],
+    [t('common.style'), brief.style],
+    [t('intake.budget'), brief.budget_tier],
+    [t('nav.fabrics'), brief.fabric_notes],
   ];
   return (
     <div>
-      <Label style={{ marginBottom: 12 }}>Brief extret</Label>
+      <Label style={{ marginBottom: 12 }}>{t('intake.briefExtracted')}</Label>
       {rows.map(([k, v]) => v ? (
         <div key={k} style={{ padding: '8px 0', borderBottom: `1px solid ${T.hairline}` }}>
           <Mono size={9} color={T.ink3} style={{ marginBottom: 3 }}>{k}</Mono>
@@ -89,7 +89,7 @@ function BriefColumn({ scenario }: { scenario: DemoScenario }) {
       ) : null)}
       {brief.extra_notes && (
         <div style={{ marginTop: 12, padding: '10px 12px', background: T.paper2, borderLeft: `2px solid ${T.gold}` }}>
-          <Mono size={9} color={T.ink3} style={{ marginBottom: 4 }}>Notes</Mono>
+          <Mono size={9} color={T.ink3} style={{ marginBottom: 4 }}>{t('common.notes')}</Mono>
           <div style={{ fontFamily: T.sans, fontSize: 12, color: T.ink2, lineHeight: 1.5 }}>{brief.extra_notes}</div>
         </div>
       )}
@@ -117,22 +117,22 @@ function ClientCardColumn({ scenario, onClientCreated }: { scenario: DemoScenari
       setCreated(true);
       setTimeout(() => onClientCreated(c.id), 800);
     } catch {
-      setError('Error en crear la clienta.');
+      setError(t('intake.createError'));
       setCreating(false);
     }
   };
 
   return (
     <div>
-      <Label style={{ marginBottom: 12 }}>Fitxa proposta</Label>
+      <Label style={{ marginBottom: 12 }}>{t('intake.proposedProfile')}</Label>
       <div style={{ border: `1px solid ${T.hairline2}`, padding: '16px' }}>
         <Serif size={20} italic style={{ display: 'block', marginBottom: 12 }}>{d.name}</Serif>
         {([
-          ['Boda', d.wedding_date],
-          ['Peça', d.garment],
-          ['Estil', d.garment_style],
-          d.phone ? ['Telèfon', d.phone] : null,
-          d.email ? ['Email', d.email] : null,
+          [t('event.keyDate'), d.wedding_date],
+          [t('common.garment'), d.garment],
+          [t('common.style'), d.garment_style],
+          d.phone ? [t('common.phone'), d.phone] : null,
+          d.email ? [t('common.email'), d.email] : null,
         ] as ([string, string] | null)[]).filter(Boolean).map(row => {
           const [k, v] = row as [string, string];
           return (
@@ -160,7 +160,7 @@ function ClientCardColumn({ scenario, onClientCreated }: { scenario: DemoScenari
           textTransform: 'uppercase', cursor: creating || created ? 'not-allowed' : 'pointer',
         }}
       >
-        {created ? 'Prospect afegida ✓' : creating ? 'Creant…' : 'Afegir com a prospect'}
+        {created ? t('intake.addedProspect') : creating ? t('common.creating') : t('intake.addAsProspect')}
       </button>
     </div>
   );
@@ -199,7 +199,7 @@ export function IntakeDemoScreen({ onClientCreated }: Props) {
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {/* Header */}
       <div style={{ padding: `14px ${px}px`, borderBottom: `1px solid ${T.hairline}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16 }}>
-        <Label>06 · Ingrés</Label>
+        <Label>{t('intake.stepLabel')}</Label>
         <select
           value={selectedId}
           onChange={e => setSelectedId(e.target.value)}
@@ -216,7 +216,7 @@ export function IntakeDemoScreen({ onClientCreated }: Props) {
       </div>
 
       {!scenario && (
-        <div style={{ padding: 40, fontFamily: T.mono, fontSize: 11, color: T.ink3 }}>Carregant…</div>
+        <div style={{ padding: 40, fontFamily: T.mono, fontSize: 11, color: T.ink3 }}>{t('common.loading')}</div>
       )}
 
       {scenario && !mobile && (
@@ -236,16 +236,16 @@ export function IntakeDemoScreen({ onClientCreated }: Props) {
       {scenario && mobile && (
         <>
           <div style={{ display: 'flex', borderBottom: `1px solid ${T.hairline}`, flexShrink: 0, background: T.paper }}>
-            {(['thread', 'brief', 'fitxa'] as const).map(t => {
-              const labels = { thread: 'Conversa', brief: 'Brief', fitxa: 'Fitxa' };
-              const on = mobileTab === t;
+            {(['thread', 'brief', 'fitxa'] as const).map(tabKey => {
+              const labels = { thread: t('intake.tabConversation'), brief: t('intake.tabBrief'), fitxa: t('nav.profile') };
+              const on = mobileTab === tabKey;
               return (
-                <div key={t} onClick={() => setMobileTab(t)} style={{
+                <div key={tabKey} onClick={() => setMobileTab(tabKey)} style={{
                   flex: 1, textAlign: 'center', padding: '10px 4px', cursor: 'pointer',
                   position: 'relative', fontFamily: T.serif, fontSize: 15,
                   fontStyle: on ? 'italic' : 'normal', color: on ? T.ink : T.ink3,
                 }}>
-                  {labels[t]}
+                  {labels[tabKey]}
                   {on && <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: T.accent }} />}
                 </div>
               );

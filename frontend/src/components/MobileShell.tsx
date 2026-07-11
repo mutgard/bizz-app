@@ -1,4 +1,5 @@
 import { T } from '../tokens';
+import { t } from '../config';
 
 type Screen = 'clients' | 'profile' | 'fabrics' | 'shop' | 'roadmap' | 'intake' | 'finances';
 
@@ -12,12 +13,12 @@ export function MobileHeader({ active, onNav, fabricsToBuy }: {
   fabricsToBuy: number;
 }) {
   const tabs: { id: Screen; n: string; label: string; count?: number }[] = [
-    { id: 'clients', n: '01', label: 'Clientes' },
-    { id: 'fabrics', n: '03', label: 'Teles' },
-    { id: 'shop',    n: '04', label: 'Comprar', count: fabricsToBuy },
-    { id: 'roadmap', n: '05', label: 'Agenda' },
-    { id: 'intake',   n: '06', label: 'Ingrés' },
-    { id: 'finances', n: '07', label: 'Finances' },
+    { id: 'clients', n: '01', label: t('nav.clients') },
+    { id: 'fabrics', n: '03', label: t('nav.fabrics') },
+    { id: 'shop',    n: '04', label: t('common.buy'), count: fabricsToBuy },
+    { id: 'roadmap', n: '05', label: t('nav.roadmap') },
+    { id: 'intake',   n: '06', label: t('nav.intake') },
+    { id: 'finances', n: '07', label: t('nav.finances') },
   ];
 
   return (
@@ -33,15 +34,15 @@ export function MobileHeader({ active, onNav, fabricsToBuy }: {
 
       {/* Tab strip — indicator at bottom edge, pointing into content */}
       <div style={{ display: 'flex', borderTop: `1px solid rgba(246,241,232,0.12)` }}>
-        {tabs.map(t => {
-          const on = t.id === active || (active === 'profile' && t.id === 'clients');
+        {tabs.map(tab => {
+          const on = tab.id === active || (active === 'profile' && tab.id === 'clients');
           return (
-            <div key={t.id} onClick={() => onNav(t.id)} style={{ flex: 1, textAlign: 'center', padding: '8px 4px 10px', cursor: 'pointer', position: 'relative' }}>
-              <div style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, color: on ? T.gold : 'rgba(246,241,232,0.4)', marginBottom: 3 }}>{t.n}</div>
+            <div key={tab.id} onClick={() => onNav(tab.id)} style={{ flex: 1, textAlign: 'center', padding: '8px 4px 10px', cursor: 'pointer', position: 'relative' }}>
+              <div style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, color: on ? T.gold : 'rgba(246,241,232,0.4)', marginBottom: 3 }}>{tab.n}</div>
               <div style={{ fontFamily: T.serif, fontSize: 16, color: on ? T.paper : 'rgba(246,241,232,0.65)', fontStyle: on ? 'italic' : 'normal', position: 'relative', display: 'inline-block' }}>
-                {t.label}
-                {t.count !== undefined && t.count > 0 && (
-                  <span style={{ position: 'absolute', top: -4, right: -14, background: T.gold, color: T.ink, fontFamily: T.mono, fontSize: 8, padding: '1px 5px', borderRadius: 999, lineHeight: 1.3 }}>{t.count}</span>
+                {tab.label}
+                {tab.count !== undefined && tab.count > 0 && (
+                  <span style={{ position: 'absolute', top: -4, right: -14, background: T.gold, color: T.ink, fontFamily: T.mono, fontSize: 8, padding: '1px 5px', borderRadius: 999, lineHeight: 1.3 }}>{tab.count}</span>
                 )}
               </div>
               {on && <div style={{ position: 'absolute', bottom: 0, left: '25%', right: '25%', height: 2, background: T.gold }} />}

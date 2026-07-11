@@ -8,6 +8,7 @@ import { initials, parsePayments } from '../lib/clientHelpers';
 import { IntakeTab } from '../components/IntakeTab';
 import { EventList } from '../components/EventList';
 import { isoToday } from '../lib/calendarHelpers';
+import { t } from '../config';
 
 interface Props {
   client: Client;
@@ -176,7 +177,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       onRefresh();
       setEditing(false);
     } catch {
-      setSaveError('Error en guardar. Torna-ho a provar.');
+      setSaveError(t('profile.saveError'));
     }
   };
 
@@ -185,7 +186,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       {/* Back bar */}
       <div style={{ padding: `10px ${px}px`, borderBottom: `1px solid ${T.hairline}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <button onClick={onBack} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 10, letterSpacing: 0.8, textTransform: 'uppercase', color: T.ink2, padding: 0, display: 'flex', alignItems: 'center', gap: 6 }}>
-          ← Clientes
+          ← {t('nav.clients')}
         </button>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           {!editing && briefToken && (
@@ -198,7 +199,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                 color: copied ? T.accent : T.ink3,
               }}
             >
-              {copied ? 'Copiat ✓' : 'Copiar link'}
+              {copied ? t('profile.copied') : t('profile.copyLink')}
             </button>
           )}
           {!editing && (
@@ -210,7 +211,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                 textTransform: 'uppercase', padding: 0, color: T.ink3,
               }}
             >
-              Editar
+              {t('common.edit')}
             </button>
           )}
           {editing && (
@@ -223,7 +224,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   textTransform: 'uppercase', padding: 0, color: T.ink3,
                 }}
               >
-                Cancel·lar
+                {t('common.cancel')}
               </button>
               <button
                 onClick={saveEdit}
@@ -233,11 +234,11 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   textTransform: 'uppercase', padding: 0, color: T.accent,
                 }}
               >
-                Guardar
+                {t('common.save')}
               </button>
             </>
           )}
-          <Label style={{ color: T.ink3 }}>02 · Fitxa</Label>
+          <Label style={{ color: T.ink3 }}>{t('profile.stepLabel')}</Label>
         </div>
       </div>
 
@@ -317,7 +318,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                     display: 'inline-flex', alignItems: 'center', gap: 6,
                   }}
                 >
-                  Avançar → {nextStage.label}
+                  {t('profile.advance')} → {nextStage.label}
                 </button>
               )}
 
@@ -334,9 +335,9 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
           {editing ? (
             <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}>
               <input value={draft.phone} onChange={e => setDraft(d => ({ ...d, phone: e.target.value }))}
-                placeholder="Telèfon" style={{ ...fieldInput, fontFamily: T.mono, fontSize: 12, color: T.ink2 }} />
+                placeholder={t('common.phone')} style={{ ...fieldInput, fontFamily: T.mono, fontSize: 12, color: T.ink2 }} />
               <input value={draft.email} onChange={e => setDraft(d => ({ ...d, email: e.target.value }))}
-                placeholder="Email" type="email" style={{ ...fieldInput, fontFamily: T.mono, fontSize: 12, color: T.ink2 }} />
+                placeholder={t('common.email')} type="email" style={{ ...fieldInput, fontFamily: T.mono, fontSize: 12, color: T.ink2 }} />
             </div>
           ) : (
             (c.phone || c.email) ? (
@@ -351,13 +352,13 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
 
       {/* Tab strip */}
       <div style={{ display: 'flex', borderBottom: `1px solid ${T.hairline}`, flexShrink: 0, background: T.paper }}>
-        {(['fitxa', 'ingres'] as const).map((t) => {
-          const labels = { fitxa: 'Fitxa', ingres: 'Ingrés' };
-          const on = tab === t;
+        {(['fitxa', 'ingres'] as const).map((tabKey) => {
+          const labels = { fitxa: t('nav.profile'), ingres: t('nav.intake') };
+          const on = tab === tabKey;
           return (
             <div
-              key={t}
-              onClick={() => setTab(t)}
+              key={tabKey}
+              onClick={() => setTab(tabKey)}
               style={{
                 padding: '10px 20px',
                 cursor: 'pointer',
@@ -368,7 +369,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                 color: on ? T.ink : T.ink3,
               }}
             >
-              {labels[t]}
+              {labels[tabKey]}
               {on && (
                 <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 2, background: T.accent }} />
               )}
@@ -383,7 +384,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         {/* Countdown card */}
         {editing && (
           <div style={{ marginBottom: 16 }}>
-            <Label style={{ marginBottom: 8 }}>Data de boda</Label>
+            <Label style={{ marginBottom: 8 }}>{t('profile.weddingDate')}</Label>
             <input
               type="date"
               value={draft.wedding_date_iso}
@@ -394,14 +395,14 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         )}
         {!editing && c.status !== 'entregada' && (
           <div style={{ background: T.ink, color: T.paper, padding: '18px 22px', marginBottom: 24 }}>
-            <Label style={{ color: 'rgba(246,241,232,0.55)', marginBottom: 8 }}>Compte enrere · Boda</Label>
+            <Label style={{ color: 'rgba(246,241,232,0.55)', marginBottom: 8 }}>{t('profile.countdown')} · {t('event.keyDate')}</Label>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: 6 }}>
                 <Serif size={52} italic style={{ color: T.paper }}>{past ? `−${Math.abs(c.days_until)}` : c.days_until}</Serif>
-                <Mono size={11} color="rgba(246,241,232,0.55)">dies</Mono>
+                <Mono size={11} color="rgba(246,241,232,0.55)">{t('common.days')}</Mono>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <Mono size={10} color="rgba(246,241,232,0.55)">Data</Mono>
+                <Mono size={10} color="rgba(246,241,232,0.55)">{t('common.date')}</Mono>
                 <div style={{ fontFamily: T.mono, fontSize: 13, color: T.gold, marginTop: 2 }}>{c.wedding_date}</div>
               </div>
             </div>
@@ -412,7 +413,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         {(priceTotal !== null || c.payments.length === 0) && (
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-              <Label>Pagaments</Label>
+              <Label>{t('common.payments')}</Label>
               <Mono size={10}>{paid > 0 ? `€${paid.toLocaleString()}` : '—'} / {priceTotal !== null && priceTotal > 0 ? `€${priceTotal.toLocaleString()}` : '—'}</Mono>
             </div>
             {priceTotal !== null && (
@@ -443,7 +444,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                       <Mono size={10} color={T.ink3}>{p.label}</Mono>
                       <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                         <Mono size={10} color={T.ink}>{p.value}</Mono>
-                        <button onClick={() => startEditPayment(p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.ink3, padding: 0, opacity: 0.6 }}>Editar</button>
+                        <button onClick={() => startEditPayment(p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.ink3, padding: 0, opacity: 0.6 }}>{t('common.edit')}</button>
                         <button onClick={() => deletePayment(p.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.accent, padding: 0, opacity: 0.7 }}>✕</button>
                       </div>
                     </div>
@@ -457,16 +458,16 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   <input
                     value={newPayment.label}
                     onChange={e => setNewPayment(d => ({ ...d, label: e.target.value }))}
-                    placeholder="Concepte"
+                    placeholder={t('profile.paymentConcept')}
                     style={{ flex: 1, border: 'none', borderBottom: `1px solid ${T.hairline2}`, background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, padding: '2px 0' }}
                   />
                   <input
                     value={newPayment.value}
                     onChange={e => setNewPayment(d => ({ ...d, value: e.target.value }))}
-                    placeholder="€500 rebut"
+                    placeholder={t('profile.paymentExample')}
                     style={{ flex: 1, border: 'none', borderBottom: `1px solid ${T.hairline2}`, background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, textAlign: 'right', padding: '2px 0' }}
                   />
-                  <button onClick={addPayment} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.accent, padding: 0, letterSpacing: 0.6 }}>+ Afegir</button>
+                  <button onClick={addPayment} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.accent, padding: 0, letterSpacing: 0.6 }}>+ {t('common.add')}</button>
                   <button onClick={() => { setAddingPayment(false); setNewPayment({ label: '', value: '' }); }} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.ink3, padding: 0 }}>✕</button>
                 </div>
               ) : (
@@ -474,7 +475,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   onClick={() => setAddingPayment(true)}
                   style={{ marginTop: 8, background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase', color: T.ink3, padding: 0, display: 'block' }}
                 >
-                  + Pagament
+                  + {t('profile.payment')}
                 </button>
               )}
             </div>
@@ -483,11 +484,11 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
 
         {/* Peça */}
         <div style={{ marginBottom: 24 }}>
-          <Label style={{ marginBottom: 10 }}>Peça</Label>
+          <Label style={{ marginBottom: 10 }}>{t('common.garment')}</Label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             {([
-              ['Tipus', 'garment', c.garment],
-              ['Estil', 'garment_style', c.garment_style],
+              [t('common.type'), 'garment', c.garment],
+              [t('common.style'), 'garment_style', c.garment_style],
             ] as [string, 'garment' | 'garment_style', string][]).map(([label, key, val]) => (
               <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
                 <Mono size={10} color={T.ink3}>{label}</Mono>
@@ -505,7 +506,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
             ))}
             {!editing && c.measurements_date && (
               <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-                <Mono size={10} color={T.ink3}>Data mides</Mono>
+                <Mono size={10} color={T.ink3}>{t('profile.measurementsDate')}</Mono>
                 <Mono size={10} color={T.ink}>{c.measurements_date}</Mono>
               </div>
             )}
@@ -516,8 +517,8 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         {c.fabrics.length > 0 && (
           <div style={{ marginBottom: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 10 }}>
-              <Label>Teles ({c.fabrics.length})</Label>
-              <button onClick={onOpenFabrics} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase', color: T.ink3, padding: 0 }}>Veure totes →</button>
+              <Label>{t('nav.fabrics')} ({c.fabrics.length})</Label>
+              <button onClick={onOpenFabrics} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase', color: T.ink3, padding: 0 }}>{t('profile.viewAll')} →</button>
             </div>
             {c.fabrics.map((f, i) => (
               <div key={f.id} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '10px 0', borderBottom: i < c.fabrics.length - 1 ? `1px dashed ${T.hairline}` : 'none' }}>
@@ -527,7 +528,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   <div style={{ fontFamily: T.sans, fontSize: 12, fontWeight: 500, color: T.ink }}>{f.name}</div>
                   <Mono size={9} color={T.ink3}>{f.use} · {f.qty} · {f.price}</Mono>
                 </div>
-                {f.to_buy && <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: T.accent, border: `1px solid ${T.accent}`, padding: '2px 5px', flexShrink: 0 }}>Comprar</span>}
+                {f.to_buy && <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: 0.5, textTransform: 'uppercase', color: T.accent, border: `1px solid ${T.accent}`, padding: '2px 5px', flexShrink: 0 }}>{t('common.buy')}</span>}
               </div>
             ))}
           </div>
@@ -544,12 +545,12 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         {/* Notes */}
         {(editing || c.notes) && (
           <div style={{ marginBottom: 24 }}>
-            <Label style={{ marginBottom: 8 }}>Notes</Label>
+            <Label style={{ marginBottom: 8 }}>{t('common.notes')}</Label>
             {editing ? (
               <textarea
                 value={draft.notes}
                 onChange={e => setDraft(d => ({ ...d, notes: e.target.value }))}
-                placeholder="Notes sobre la clienta…"
+                placeholder={t('common.notesPlaceholder')}
                 rows={4}
                 style={{
                   width: '100%', border: `1px solid ${T.hairline}`, background: 'transparent',

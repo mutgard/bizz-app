@@ -5,6 +5,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { PageHeader } from '../components/PageHeader';
 import { Badge, Mono } from '../components/primitives';
 import { initials, parsePayments } from '../lib/clientHelpers';
+import { t, formatCurrency } from '../config';
 
 interface Props { clients: Client[]; onOpen: (id: number) => void; onCreate: () => void; }
 
@@ -74,7 +75,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
         border: `1px solid ${T.hairline2}`, background: T.vellum,
         cursor: 'pointer', borderRadius: 2,
       }}
-      title="Nova clienta"
+      title={t('newClient.title')}
     >
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke={T.ink2} strokeWidth="1.6" strokeLinecap="round">
         <path d="M7 1v12M1 7h12"/>
@@ -87,7 +88,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
       <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke={T.ink3} strokeWidth="1.5">
         <circle cx="5" cy="5" r="3.5"/><path d="M8 8l2.5 2.5" strokeLinecap="round"/>
       </svg>
-      <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Cerca…"
+      <input value={search} onChange={e => setSearch(e.target.value)} placeholder={t('clients.search')}
         style={{ border: 'none', background: 'none', fontFamily: T.sans, fontSize: 13, color: T.ink, outline: 'none', width: '100%' }} />
     </div>
   );
@@ -113,20 +114,20 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
   if (!mobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-        <PageHeader eyebrow="Atelier · Taller" title="Clientes" subtitle={`${clients.length} noives`} right={<>{searchBox}{plusButton}</>} />
+        <PageHeader eyebrow={t('clients.eyebrow')} title={t('nav.clients')} subtitle={`${clients.length} ${t('clients.brides')}`} right={<>{searchBox}{plusButton}</>} />
         <div style={{ padding: `14px ${px}px 0`, flexShrink: 0 }}>{chips}</div>
         <div style={{ flex: 1, overflow: 'auto', padding: `0 ${px}px 32px` }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16 }}>
             <thead>
               <tr>
                 {([
-                  { label: 'Clienta', key: 'name' as SortKey },
-                  { label: 'Peça', key: null },
-                  { label: 'Estat', key: 'status' as SortKey },
-                  { label: 'Boda', key: null },
-                  { label: 'Dies', key: 'days_until' as SortKey },
-                  { label: 'Teles', key: null },
-                  { label: 'Pendent', key: null },
+                  { label: t('common.client'), key: 'name' as SortKey },
+                  { label: t('common.garment'), key: null },
+                  { label: t('clients.colStatus'), key: 'status' as SortKey },
+                  { label: t('event.keyDate'), key: null },
+                  { label: t('clients.colDays'), key: 'days_until' as SortKey },
+                  { label: t('nav.fabrics'), key: null },
+                  { label: t('common.pending'), key: null },
                 ]).map(({ label, key }) => (
                   <th key={label}
                     onClick={key ? () => toggleSort(key) : undefined}
@@ -184,7 +185,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
                         if (priceTotal === null || priceTotal === 0) return <Mono size={11} color={T.ink3}>—</Mono>;
                         const outstanding = Math.max(0, priceTotal - paid);
                         return outstanding > 0
-                          ? <Mono size={11} color={T.gold}>€{outstanding.toLocaleString('ca-ES')}</Mono>
+                          ? <Mono size={11} color={T.gold}>{formatCurrency(outstanding)}</Mono>
                           : <Mono size={11} color={T.ink3}>✓</Mono>;
                       })()}
                     </td>
@@ -194,7 +195,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
             </tbody>
           </table>
           {list.length === 0 && (
-            <div style={{ textAlign: 'center', padding: '60px 0', fontFamily: T.serif, fontSize: 22, fontStyle: 'italic', color: T.ink3 }}>Cap resultat</div>
+            <div style={{ textAlign: 'center', padding: '60px 0', fontFamily: T.serif, fontSize: 22, fontStyle: 'italic', color: T.ink3 }}>{t('clients.empty')}</div>
           )}
         </div>
       </div>
@@ -203,7 +204,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <PageHeader eyebrow="Atelier" title="Clientes" subtitle={`${clients.length}`} right={<>{searchBox}{plusButton}</>} />
+      <PageHeader eyebrow="Atelier" title={t('nav.clients')} subtitle={`${clients.length}`} right={<>{searchBox}{plusButton}</>} />
       <div style={{ padding: '10px 20px 0', flexShrink: 0 }}>{chips}</div>
       <div style={{ flex: 1, overflow: 'auto', padding: '10px 16px 24px' }}>
         {list.map(c => {
@@ -241,13 +242,13 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Badge status={c.status} size="sm" />
-                {c.fabrics.length > 0 && <Mono size={9} color={T.ink3}>{c.fabrics.length} teles</Mono>}
+                {c.fabrics.length > 0 && <Mono size={9} color={T.ink3}>{c.fabrics.length} {t('clients.fabricsCount')}</Mono>}
               </div>
             </div>
           );
         })}
         {list.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '48px 0', fontFamily: T.serif, fontSize: 18, fontStyle: 'italic', color: T.ink3 }}>Cap resultat</div>
+          <div style={{ textAlign: 'center', padding: '48px 0', fontFamily: T.serif, fontSize: 18, fontStyle: 'italic', color: T.ink3 }}>{t('clients.empty')}</div>
         )}
       </div>
     </div>

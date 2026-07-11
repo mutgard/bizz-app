@@ -4,6 +4,7 @@ import { Label, Mono, Serif } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { parsePayments } from '../lib/clientHelpers';
 import { initials } from '../lib/clientHelpers';
+import { t, formatCurrency } from '../config';
 
 interface Props {
   clients: Client[];
@@ -46,40 +47,40 @@ export function FinancesScreen({ clients, onOpen }: Props) {
 
       {/* Header */}
       <div style={{ padding: `${mobile ? 20 : 28}px ${px}px`, borderBottom: `1px solid ${T.hairline}`, flexShrink: 0 }}>
-        <Mono size={9} color={T.ink3} style={{ letterSpacing: 1.2, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>Atelier · Finances</Mono>
-        <Serif size={mobile ? 32 : 40} italic>Pagaments</Serif>
-        <Mono size={10} color={T.ink3} style={{ display: 'block', marginTop: 4 }}>{finances.length} comandes actives</Mono>
+        <Mono size={9} color={T.ink3} style={{ letterSpacing: 1.2, textTransform: 'uppercase', display: 'block', marginBottom: 4 }}>{t('finances.eyebrow')}</Mono>
+        <Serif size={mobile ? 32 : 40} italic>{t('common.payments')}</Serif>
+        <Mono size={10} color={T.ink3} style={{ display: 'block', marginTop: 4 }}>{finances.length} {t('finances.activeOrders')}</Mono>
       </div>
 
       {/* Summary card */}
       <div style={{ padding: `16px ${px}px`, borderBottom: `1px solid ${T.hairline}`, flexShrink: 0 }}>
         <div style={{ display: 'flex', gap: mobile ? 20 : 40, flexWrap: 'wrap' }}>
           <div>
-            <Label style={{ marginBottom: 4 }}>Total facturado</Label>
-            <Serif size={28} italic>€{grandTotal.toLocaleString('ca-ES')}</Serif>
+            <Label style={{ marginBottom: 4 }}>{t('finances.totalInvoiced')}</Label>
+            <Serif size={28} italic>{formatCurrency(grandTotal)}</Serif>
           </div>
           <div>
-            <Label style={{ marginBottom: 4 }}>Cobrat</Label>
-            <Serif size={28} italic style={{ color: T.accent }}>€{totalPaid.toLocaleString('ca-ES')}</Serif>
+            <Label style={{ marginBottom: 4 }}>{t('common.paid')}</Label>
+            <Serif size={28} italic style={{ color: T.accent }}>{formatCurrency(totalPaid)}</Serif>
           </div>
           <div>
-            <Label style={{ marginBottom: 4 }}>Pendent</Label>
+            <Label style={{ marginBottom: 4 }}>{t('common.pending')}</Label>
             <Serif size={28} italic style={{ color: totalOutstanding > 0 ? T.gold : T.ink3 }}>
-              €{totalOutstanding.toLocaleString('ca-ES')}
+              {formatCurrency(totalOutstanding)}
             </Serif>
           </div>
         </div>
         <div style={{ marginTop: 12, height: 5, background: T.hairline, borderRadius: 3 }}>
           <div style={{ height: '100%', width: `${overallPct}%`, background: overallPct >= 100 ? T.accent : T.gold, borderRadius: 3, transition: 'width 0.3s' }} />
         </div>
-        <Mono size={9} color={T.ink3} style={{ marginTop: 4, display: 'block' }}>{overallPct}% cobrat</Mono>
+        <Mono size={9} color={T.ink3} style={{ marginTop: 4, display: 'block' }}>{overallPct}% {t('finances.collected')}</Mono>
       </div>
 
       {/* Client list */}
       <div style={{ flex: 1, overflow: 'auto', padding: `0 ${px}px 40px` }}>
         {finances.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 0', fontFamily: T.serif, fontSize: 20, fontStyle: 'italic', color: T.ink3 }}>
-            Cap comanda amb pagaments registrats
+            {t('finances.empty')}
           </div>
         )}
 
@@ -87,7 +88,7 @@ export function FinancesScreen({ clients, onOpen }: Props) {
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16 }}>
             <thead>
               <tr>
-                {['Clienta', 'Boda', 'Total', 'Cobrat', 'Pendent', 'Progrés'].map(h => (
+                {[t('common.client'), t('event.keyDate'), t('common.total'), t('common.paid'), t('common.pending'), t('finances.progress')].map(h => (
                   <th key={h} style={{ textAlign: 'left', padding: '8px 12px 8px 0', fontFamily: T.mono, fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: T.ink3, borderBottom: `1px solid ${T.hairline}`, fontWeight: 400 }}>{h}</th>
                 ))}
               </tr>
@@ -106,11 +107,11 @@ export function FinancesScreen({ clients, onOpen }: Props) {
                     </div>
                   </td>
                   <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>{c.wedding_date}</Mono></td>
-                  <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>€{priceTotal.toLocaleString('ca-ES')}</Mono></td>
-                  <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11} color={T.accent}>€{paid.toLocaleString('ca-ES')}</Mono></td>
+                  <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>{formatCurrency(priceTotal)}</Mono></td>
+                  <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11} color={T.accent}>{formatCurrency(paid)}</Mono></td>
                   <td style={{ padding: '13px 12px 13px 0' }}>
                     <Mono size={11} color={outstanding > 0 ? T.gold : T.ink3}>
-                      {outstanding > 0 ? `€${outstanding.toLocaleString('ca-ES')}` : '✓'}
+                      {outstanding > 0 ? formatCurrency(outstanding) : '✓'}
                     </Mono>
                   </td>
                   <td style={{ padding: '13px 0', width: 120 }}>
@@ -136,15 +137,15 @@ export function FinancesScreen({ clients, onOpen }: Props) {
               </div>
               <div style={{ textAlign: 'right' }}>
                 <Mono size={10} color={outstanding > 0 ? T.gold : T.ink3} style={{ display: 'block' }}>
-                  {outstanding > 0 ? `Pendent €${outstanding.toLocaleString('ca-ES')}` : 'Pagat ✓'}
+                  {outstanding > 0 ? `${t('common.pending')} ${formatCurrency(outstanding)}` : t('finances.paidStatus')}
                 </Mono>
-                <Mono size={9} color={T.ink3}>Total €{priceTotal.toLocaleString('ca-ES')}</Mono>
+                <Mono size={9} color={T.ink3}>{t('common.total')} {formatCurrency(priceTotal)}</Mono>
               </div>
             </div>
             <div style={{ height: 4, background: T.hairline, borderRadius: 2 }}>
               <div style={{ height: '100%', width: `${pct}%`, background: pct >= 100 ? T.accent : T.gold, borderRadius: 2 }} />
             </div>
-            <Mono size={9} color={T.ink3} style={{ marginTop: 4, display: 'block' }}>{pct}% cobrat · €{paid.toLocaleString('ca-ES')} de €{priceTotal.toLocaleString('ca-ES')}</Mono>
+            <Mono size={9} color={T.ink3} style={{ marginTop: 4, display: 'block' }}>{pct}% {t('finances.collected')} · {formatCurrency(paid)} {t('finances.of')} {formatCurrency(priceTotal)}</Mono>
           </div>
         ))}
       </div>

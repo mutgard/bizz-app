@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import type { ClientBrief } from '../types';
 import { api } from '../api';
 import { T } from '../tokens';
+import { t } from '../config';
 
 export function BriefPage({ token }: { token: string }) {
   const [brief, setBrief] = useState<ClientBrief | null | 'loading'>('loading');
@@ -24,16 +25,16 @@ export function BriefPage({ token }: { token: string }) {
         fontFamily: T.mono, fontSize: 11, letterSpacing: 1.2,
         textTransform: 'uppercase' as const, color: T.ink3,
       }}>
-        Aquest link no és vàlid.
+        {t('brief.invalid')}
       </div>
     );
   }
 
   const rows: [string, string][] = [
-    ['Lloc', brief.venue],
-    ['Peça', brief.garment],
-    ['Estil', brief.style],
-    ['Teles', brief.fabric_notes],
+    [t('common.venue'), brief.venue],
+    [t('common.garment'), brief.garment],
+    [t('common.style'), brief.style],
+    [t('nav.fabrics'), brief.fabric_notes],
   ];
 
   return (
@@ -61,7 +62,7 @@ export function BriefPage({ token }: { token: string }) {
             fontFamily: T.mono, fontSize: 11, letterSpacing: 1.2,
             textTransform: 'uppercase' as const, color: T.ink3, marginTop: 12,
           }}>
-            Proposta · {brief.wedding_date}
+            {t('brief.proposal')} · {brief.wedding_date}
           </div>
         </div>
 

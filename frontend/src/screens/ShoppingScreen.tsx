@@ -4,6 +4,7 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { PageHeader } from '../components/PageHeader';
 import { Label, Mono, Serif, Swatch } from '../components/primitives';
 import { parseQty, parsePrice } from '../lib/clientHelpers';
+import { t } from '../config';
 
 interface Props { clients: Client[]; }
 
@@ -25,21 +26,21 @@ export function ShoppingScreen({ clients }: Props) {
 
   const totalMetres = items.reduce((s, f) => s + parseQty(f.qty), 0);
   const totalCost = items.reduce((s, f) => s + parsePrice(f.price) * parseQty(f.qty), 0);
-  const suppliers = new Set(items.map(f => f.supplier || 'Sense proveïdor')).size;
+  const suppliers = new Set(items.map(f => f.supplier || t('shopping.noSupplier'))).size;
 
   const bySup: Record<string, ShoppingItem[]> = {};
-  items.forEach(f => (bySup[f.supplier || 'Sense proveïdor'] ||= []).push(f));
+  items.forEach(f => (bySup[f.supplier || t('shopping.noSupplier')] ||= []).push(f));
 
   const stats = [
-    { l: 'Peces', v: String(items.length) },
-    { l: 'Metres', v: `${totalMetres.toFixed(1)} m` },
-    { l: 'Cost est.', v: `€${Math.round(totalCost).toLocaleString()}` },
-    { l: 'Proveïdors', v: String(suppliers) },
+    { l: t('shopping.pieces'), v: String(items.length) },
+    { l: t('shopping.metres'), v: `${totalMetres.toFixed(1)} m` },
+    { l: t('shopping.costEst'), v: `€${Math.round(totalCost).toLocaleString()}` },
+    { l: t('shopping.suppliers'), v: String(suppliers) },
   ];
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <PageHeader eyebrow="Llista de compra" title="Per comprar" subtitle={items.length > 0 ? `${items.length} peces` : undefined} />
+      <PageHeader eyebrow={t('shopping.eyebrow')} title={t('nav.shop')} subtitle={items.length > 0 ? `${items.length} ${t('shopping.piecesLower')}` : undefined} />
 
       {/* Stats strip */}
       <div style={{ display: 'flex', borderBottom: `1px solid ${T.hairline}`, flexShrink: 0 }}>
@@ -53,7 +54,7 @@ export function ShoppingScreen({ clients }: Props) {
 
       <div style={{ flex: 1, overflow: 'auto', padding: `16px ${px}px 32px` }}>
         {items.length === 0
-          ? <div style={{ textAlign: 'center', padding: '60px 0', fontFamily: T.serif, fontSize: 22, fontStyle: 'italic', color: T.ink3 }}>Cap tela per comprar</div>
+          ? <div style={{ textAlign: 'center', padding: '60px 0', fontFamily: T.serif, fontSize: 22, fontStyle: 'italic', color: T.ink3 }}>{t('shopping.empty')}</div>
           : Object.entries(bySup).map(([sup, fs]) => {
               const urgent = fs.some(f => f.daysUntil > 0 && f.daysUntil < 35);
               return (
@@ -61,8 +62,8 @@ export function ShoppingScreen({ clients }: Props) {
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', paddingBottom: 8, borderBottom: `2px solid ${urgent ? T.accent : T.ink}` }}>
                     <span style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 600, color: urgent ? T.accent : T.ink }}>{sup}</span>
                     <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-                      {urgent && <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: 0.8, textTransform: 'uppercase', color: T.accent, border: `1px solid ${T.accent}`, padding: '2px 6px' }}>Urgent</span>}
-                      <Mono size={10} color={T.ink3}>{fs.length} peça{fs.length > 1 ? 's' : ''}</Mono>
+                      {urgent && <span style={{ fontFamily: T.mono, fontSize: 8, letterSpacing: 0.8, textTransform: 'uppercase', color: T.accent, border: `1px solid ${T.accent}`, padding: '2px 6px' }}>{t('shopping.urgent')}</span>}
+                      <Mono size={10} color={T.ink3}>{fs.length} {t('shopping.piece')}{fs.length > 1 ? 's' : ''}</Mono>
                     </div>
                   </div>
                   {fs.map((f, i) => (
@@ -73,7 +74,7 @@ export function ShoppingScreen({ clients }: Props) {
                         <Mono size={10} color={T.ink3}>{f.qty} · {f.price}</Mono>
                         <div style={{ marginTop: 2 }}>
                           <Mono size={9} color={T.ink3}>
-                            per {f.clientName.split(' ')[0]} · {f.daysUntil > 0 ? `${f.daysUntil}d` : `fa ${Math.abs(f.daysUntil)}d`}
+                            {t('shopping.for')} {f.clientName.split(' ')[0]} · {f.daysUntil > 0 ? `${f.daysUntil}d` : `${t('shopping.ago')} ${Math.abs(f.daysUntil)}d`}
                           </Mono>
                         </div>
                       </div>

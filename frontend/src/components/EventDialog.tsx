@@ -6,6 +6,7 @@ import { T } from '../tokens';
 import { api } from '../api';
 import { Segment } from './primitives';
 import type { AtelierEvent, EventType, Client } from '../types';
+import { t } from '../config';
 
 interface Props {
   event?: AtelierEvent;         // undefined → create mode
@@ -36,10 +37,10 @@ export function EventDialog({
     (isEdit && event?.client_id !== null && event?.client_id !== undefined);
 
   const validate = (): string => {
-    if (!date) return 'La data és obligatòria';
-    if (type !== 'wedding' && !title.trim()) return 'El títol és obligatori';
-    if (type === 'delivery' && !supplier.trim()) return 'El proveïdor és obligatori';
-    if (type === 'wedding' && clientId === '') return 'La clienta és obligatòria';
+    if (!date) return t('event.dateRequired');
+    if (type !== 'wedding' && !title.trim()) return t('event.titleRequired');
+    if (type === 'delivery' && !supplier.trim()) return t('event.supplierRequired');
+    if (type === 'wedding' && clientId === '') return t('event.clientRequired');
     return '';
   };
 
@@ -83,7 +84,7 @@ export function EventDialog({
       }
       onSuccess();
     } catch {
-      setError('Ha ocorregut un error. Torna-ho a provar.');
+      setError(t('event.saveError'));
     } finally {
       setSaving(false);
     }
@@ -112,7 +113,7 @@ export function EventDialog({
           <DialogTitle style={{
             fontFamily: T.serif, fontSize: 22, color: T.ink, fontWeight: 'normal',
           }}>
-            {isEdit ? 'Editar event' : 'Nou event'}
+            {isEdit ? t('event.editTitle') : t('event.newTitle')}
           </DialogTitle>
         </DialogHeader>
 
@@ -121,12 +122,12 @@ export function EventDialog({
           {/* Type selector — hidden in edit mode */}
           {!isEdit && (
             <div>
-              <span style={labelStyle}>Tipus</span>
+              <span style={labelStyle}>{t('common.type')}</span>
               <Segment
                 options={[
-                  ['appointment', 'Cita'],
-                  ['delivery',    'Entrega'],
-                  ['wedding',     'Boda'],
+                  ['appointment', t('event.typeAppointment')],
+                  ['delivery',    t('event.typeDelivery')],
+                  ['wedding',     t('event.keyDate')],
                 ]}
                 value={type}
                 onChange={(v) => {
@@ -139,7 +140,7 @@ export function EventDialog({
 
           {/* Date */}
           <div>
-            <label style={labelStyle}>Data</label>
+            <label style={labelStyle}>{t('common.date')}</label>
             <input
               type="date" value={date}
               onChange={(e) => setDate(e.target.value)}
@@ -151,12 +152,12 @@ export function EventDialog({
           {type !== 'wedding' && (
             <div>
               <label style={labelStyle}>
-                {type === 'delivery' ? 'Descripció' : 'Títol'}
+                {type === 'delivery' ? t('event.description') : t('event.title')}
               </label>
               <input
                 type="text" value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder={type === 'delivery' ? 'Ex: Mikado seda 3m' : 'Ex: Primera prova'}
+                placeholder={type === 'delivery' ? t('event.deliveryPlaceholder') : t('event.titlePlaceholder')}
                 style={inputStyle}
               />
             </div>
@@ -164,7 +165,7 @@ export function EventDialog({
 
           {/* Client selector */}
           <div>
-            <label style={labelStyle}>Clienta</label>
+            <label style={labelStyle}>{t('common.client')}</label>
             {clientLocked ? (
               <div style={{ ...inputStyle, color: T.ink2 }}>
                 {clients.find((c) => c.id === clientId)?.name ?? '—'}
@@ -177,7 +178,7 @@ export function EventDialog({
                 }
                 style={{ ...inputStyle, cursor: 'pointer' }}
               >
-                <option value="">— Sense clienta —</option>
+                <option value="">{t('event.noClient')}</option>
                 {clients.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
@@ -188,11 +189,11 @@ export function EventDialog({
           {/* Supplier — delivery only */}
           {type === 'delivery' && (
             <div>
-              <label style={labelStyle}>Proveïdor</label>
+              <label style={labelStyle}>{t('event.supplier')}</label>
               <input
                 type="text" value={supplier}
                 onChange={(e) => setSupplier(e.target.value)}
-                placeholder="Ex: Gratacós"
+                placeholder={t('event.supplierPlaceholder')}
                 style={inputStyle}
               />
             </div>
@@ -201,11 +202,11 @@ export function EventDialog({
           {/* Order ID — appointment only */}
           {type === 'appointment' && (
             <div>
-              <label style={labelStyle}>Comanda (opcional)</label>
+              <label style={labelStyle}>{t('event.order')}</label>
               <input
                 type="text" value={orderId ?? ''}
                 onChange={(e) => setOrderId(e.target.value)}
-                placeholder="Ex: ORD-2026-001"
+                placeholder={t('event.orderPlaceholder')}
                 style={inputStyle}
               />
             </div>
@@ -228,7 +229,7 @@ export function EventDialog({
               textTransform: 'uppercase', cursor: 'pointer', borderRadius: 2,
             }}
           >
-            Cancel·lar
+            {t('common.cancel')}
           </button>
           <button
             onClick={handleSubmit}
@@ -242,7 +243,7 @@ export function EventDialog({
               border: 'none',
             }}
           >
-            {saving ? 'Guardant...' : isEdit ? 'Guardar' : 'Crear'}
+            {saving ? t('event.saving') : isEdit ? t('common.save') : t('common.create')}
           </button>
         </DialogFooter>
       </DialogContent>

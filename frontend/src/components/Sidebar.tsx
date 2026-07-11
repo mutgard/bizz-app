@@ -1,5 +1,6 @@
 import { T } from '../tokens';
 import { Label, Mono } from './primitives';
+import { t } from '../config';
 
 type Screen = 'clients' | 'profile' | 'fabrics' | 'shop' | 'roadmap' | 'intake' | 'finances';
 
@@ -13,13 +14,13 @@ interface Props {
 
 export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabrics }: Props) {
   const items: { id: Screen; n: string; label: string; count: number | null; accent?: boolean; sub?: boolean }[] = [
-    { id: 'clients', n: '01', label: 'Clientes',    count: totalClients },
-    { id: 'profile', n: '02', label: 'Fitxa',       count: null, sub: true },
-    { id: 'fabrics', n: '03', label: 'Teles',       count: totalFabrics },
-    { id: 'shop',    n: '04', label: 'Per comprar', count: fabricsToBuy, accent: true },
-    { id: 'roadmap', n: '05', label: 'Agenda',      count: null },
-    { id: 'intake',  n: '06', label: 'Ingrés',      count: null },
-    { id: 'finances', n: '07', label: 'Finances',   count: null },
+    { id: 'clients', n: '01', label: t('nav.clients'), count: totalClients },
+    { id: 'profile', n: '02', label: t('nav.profile'), count: null, sub: true },
+    { id: 'fabrics', n: '03', label: t('nav.fabrics'), count: totalFabrics },
+    { id: 'shop',    n: '04', label: t('nav.shop'),    count: fabricsToBuy, accent: true },
+    { id: 'roadmap', n: '05', label: t('nav.roadmap'), count: null },
+    { id: 'intake',  n: '06', label: t('nav.intake'),  count: null },
+    { id: 'finances', n: '07', label: t('nav.finances'), count: null },
   ];
 
   return (
@@ -38,7 +39,7 @@ export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabric
         </div>
       </div>
 
-      <Label style={{ color: 'rgba(246,241,232,0.45)', marginBottom: 10, paddingLeft: 4 }}>Taller</Label>
+      <Label style={{ color: 'rgba(246,241,232,0.45)', marginBottom: 10, paddingLeft: 4 }}>{t('nav.section')}</Label>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
         {items.map(it => {
@@ -67,15 +68,15 @@ export function Sidebar({ active, onNav, fabricsToBuy, totalClients, totalFabric
 
       {/* footer */}
       <div style={{ borderTop: '1px solid rgba(246,241,232,0.14)', paddingTop: 16, marginTop: 20 }}>
-        <Label style={{ color: 'rgba(246,241,232,0.45)', marginBottom: 8 }}>Aquesta setmana</Label>
+        <Label style={{ color: 'rgba(246,241,232,0.45)', marginBottom: 8 }}>{t('common.thisWeek')}</Label>
         <div style={{ display: 'flex', gap: 16 }}>
           <div>
             <div style={{ fontFamily: T.serif, fontSize: 24, color: T.paper }}>3</div>
-            <Mono size={9} color="rgba(246,241,232,0.55)">Proves</Mono>
+            <Mono size={9} color="rgba(246,241,232,0.55)">{t('common.fittings')}</Mono>
           </div>
           <div>
             <div style={{ fontFamily: T.serif, fontSize: 24, color: T.paper }}>2</div>
-            <Mono size={9} color="rgba(246,241,232,0.55)">Entregues</Mono>
+            <Mono size={9} color="rgba(246,241,232,0.55)">{t('common.deliveries')}</Mono>
           </div>
         </div>
         <div style={{ marginTop: 16, padding: '10px 12px', display: 'flex', alignItems: 'center', gap: 10, background: 'rgba(246,241,232,0.06)' }}>

@@ -5,6 +5,7 @@ import { T } from '../tokens';
 import { Label, Mono } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { initials } from '../lib/clientHelpers';
+import { t } from '../config';
 
 interface Props {
   onCancel: () => void;
@@ -79,7 +80,7 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
       });
       onSuccess(newClient.id);
     } catch {
-      setError('Error en crear la clienta. Torna-ho a provar.');
+      setError(t('newClient.createError'));
       setSubmitting(false);
     }
   };
@@ -90,9 +91,9 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
       {/* Nav bar */}
       <div style={{ padding: `10px ${px}px`, borderBottom: `1px solid ${T.hairline}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <button onClick={onCancel} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 10, letterSpacing: 0.8, textTransform: 'uppercase', color: T.ink2, padding: 0 }}>
-          ← Cancel·lar
+          ← {t('common.cancel')}
         </button>
-        <Label style={{ color: T.ink3 }}>Nova clienta</Label>
+        <Label style={{ color: T.ink3 }}>{t('newClient.title')}</Label>
       </div>
 
       {/* Scrollable body */}
@@ -112,10 +113,10 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
             <input
               value={name}
               onChange={e => { setName(e.target.value); if (e.target.value.trim()) setNameError(false); }}
-              placeholder="Nom de la clienta"
+              placeholder={t('newClient.namePlaceholder')}
               style={{ ...fieldInput(nameError), fontFamily: T.serif, fontSize: mobile ? 28 : 36, fontStyle: 'italic', letterSpacing: -0.5 }}
             />
-            {nameError && <Mono size={9} color={T.accent} style={{ marginTop: 4, display: 'block' }}>El nom és obligatori</Mono>}
+            {nameError && <Mono size={9} color={T.accent} style={{ marginTop: 4, display: 'block' }}>{t('newClient.nameRequired')}</Mono>}
 
             <div style={{ marginTop: 12 }}>
               <select
@@ -137,9 +138,9 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
             </div>
 
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Telèfon"
+              <input value={phone} onChange={e => setPhone(e.target.value)} placeholder={t('common.phone')}
                 style={{ ...fieldInput(), fontFamily: T.mono, fontSize: 12, color: T.ink2 }} />
-              <input value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" type="email"
+              <input value={email} onChange={e => setEmail(e.target.value)} placeholder={t('common.email')} type="email"
                 style={{ ...fieldInput(), fontFamily: T.mono, fontSize: 12, color: T.ink2 }} />
             </div>
           </div>
@@ -147,27 +148,27 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
 
         {/* Boda */}
         <div style={{ marginBottom: 24 }}>
-          <Label style={{ marginBottom: 10 }}>Boda</Label>
+          <Label style={{ marginBottom: 10 }}>{t('event.keyDate')}</Label>
           <input
             type="date"
             value={weddingDateISO}
             onChange={e => { setWeddingDateISO(e.target.value); if (e.target.value) setDateError(false); }}
             style={{ ...fieldInput(dateError), fontFamily: T.mono, fontSize: 13, color: T.ink, padding: '6px 0' }}
           />
-          {dateError && <Mono size={9} color={T.accent} style={{ marginTop: 4, display: 'block' }}>La data de boda és obligatòria</Mono>}
+          {dateError && <Mono size={9} color={T.accent} style={{ marginTop: 4, display: 'block' }}>{t('newClient.dateRequired')}</Mono>}
         </div>
 
         {/* Peça */}
         <div style={{ marginBottom: 24 }}>
-          <Label style={{ marginBottom: 10 }}>Peça</Label>
+          <Label style={{ marginBottom: 10 }}>{t('common.garment')}</Label>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-              <Mono size={10} color={T.ink3}>Tipus</Mono>
+              <Mono size={10} color={T.ink3}>{t('common.type')}</Mono>
               <input value={garment} onChange={e => setGarment(e.target.value)} placeholder="—"
                 style={{ border: 'none', background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, textAlign: 'right', width: '60%' }} />
             </div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-              <Mono size={10} color={T.ink3}>Estil</Mono>
+              <Mono size={10} color={T.ink3}>{t('common.style')}</Mono>
               <input value={garmentStyle} onChange={e => setGarmentStyle(e.target.value)} placeholder="—"
                 style={{ border: 'none', background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, textAlign: 'right', width: '60%' }} />
             </div>
@@ -176,11 +177,11 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
 
         {/* Notes */}
         <div style={{ marginBottom: 32 }}>
-          <Label style={{ marginBottom: 10 }}>Notes</Label>
+          <Label style={{ marginBottom: 10 }}>{t('common.notes')}</Label>
           <textarea
             value={notes}
             onChange={e => setNotes(e.target.value)}
-            placeholder="Notes sobre la clienta…"
+            placeholder={t('common.notesPlaceholder')}
             rows={4}
             style={{
               width: '100%', border: `1px solid ${T.hairline}`, background: 'transparent',
@@ -206,7 +207,7 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
             cursor: submitting ? 'not-allowed' : 'pointer',
           }}
         >
-          {submitting ? 'Creant…' : 'Crear clienta'}
+          {submitting ? t('common.creating') : t('newClient.submit')}
         </button>
       </div>
     </div>

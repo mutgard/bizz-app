@@ -4,30 +4,20 @@ import { api } from '../api';
 import { T } from '../tokens';
 import { Label, Mono, Rule } from './primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
-
-const FORM_LABELS: Record<string, string> = {
-  name: 'Nom',
-  email: 'Email',
-  phone: 'Telèfon',
-  wedding_date: 'Data boda',
-  venue: 'Lloc',
-  style_notes: "Notes d'estil",
-  budget_range: 'Pressupost',
-  how_did_you_hear: 'Com ens ha conegut',
-};
+import { t } from '../config';
 
 function BriefPanel({ brief }: { brief: IntakeBrief }) {
   const rows: [string, string][] = [
-    ['Data boda', brief.wedding_date],
-    ['Lloc', brief.venue],
-    ['Peça', brief.garment],
-    ['Estil', brief.style],
-    ['Pressupost', brief.budget_tier],
-    ['Teles', brief.fabric_notes],
+    [t('intake.weddingDateShort'), brief.wedding_date],
+    [t('common.venue'), brief.venue],
+    [t('common.garment'), brief.garment],
+    [t('common.style'), brief.style],
+    [t('intake.budget'), brief.budget_tier],
+    [t('nav.fabrics'), brief.fabric_notes],
   ];
   return (
     <div>
-      <Label style={{ marginBottom: 12 }}>Resum</Label>
+      <Label style={{ marginBottom: 12 }}>{t('intake.summary')}</Label>
       {rows.map(([k, v]) => v ? (
         <div key={k} style={{ padding: '8px 0', borderBottom: `1px solid ${T.hairline}` }}>
           <Mono size={9} color={T.ink3} style={{ marginBottom: 3 }}>{k}</Mono>
@@ -36,7 +26,7 @@ function BriefPanel({ brief }: { brief: IntakeBrief }) {
       ) : null)}
       {brief.extra_notes && (
         <div style={{ marginTop: 12, padding: '10px 12px', background: T.paper2, borderLeft: `2px solid ${T.gold}` }}>
-          <Mono size={9} color={T.ink3} style={{ marginBottom: 4 }}>Notes</Mono>
+          <Mono size={9} color={T.ink3} style={{ marginBottom: 4 }}>{t('common.notes')}</Mono>
           <div style={{ fontFamily: T.sans, fontSize: 12, color: T.ink2, lineHeight: 1.5 }}>{brief.extra_notes}</div>
         </div>
       )}
@@ -79,11 +69,21 @@ function WhatsAppView({ intake }: { intake: WhatsAppIntake }) {
 }
 
 function WebFormView({ intake }: { intake: WebFormIntake }) {
+  const FORM_LABELS: Record<string, string> = {
+    name: t('intake.fieldName'),
+    email: t('common.email'),
+    phone: t('common.phone'),
+    wedding_date: t('intake.weddingDateShort'),
+    venue: t('common.venue'),
+    style_notes: t('intake.styleNotes'),
+    budget_range: t('intake.budget'),
+    how_did_you_hear: t('intake.referral'),
+  };
   const date = new Date(intake.submitted_at).toLocaleDateString('ca-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-        <div style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase' as const, color: T.paper, background: T.ink2, padding: '2px 7px', borderRadius: 999 }}>via web</div>
+        <div style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase' as const, color: T.paper, background: T.ink2, padding: '2px 7px', borderRadius: 999 }}>{t('intake.viaWeb')}</div>
         <Mono size={10} color={T.ink3}>{date}</Mono>
       </div>
       <div style={{ border: `1px solid ${T.hairline2}`, background: T.paper }}>
@@ -109,13 +109,13 @@ export function IntakeTab({ clientId }: { clientId: number }) {
   }, [clientId]);
 
   if (data === 'loading') {
-    return <div style={{ padding: 40, fontFamily: T.mono, fontSize: 11, color: T.ink3 }}>Carregant…</div>;
+    return <div style={{ padding: 40, fontFamily: T.mono, fontSize: 11, color: T.ink3 }}>{t('common.loading')}</div>;
   }
 
   if (data === null) {
     return (
       <div style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-        <Mono size={11} color={T.ink3}>Sense dades d'ingrés</Mono>
+        <Mono size={11} color={T.ink3}>{t('intake.noData')}</Mono>
       </div>
     );
   }
