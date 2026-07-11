@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { BASE } from '../config';
 
-// "Role" without user accounts: the operator is whoever holds this instance's
-// ADMIN_TOKEN (entered once on /admin, kept in localStorage). We validate it
-// against the admin API so a stale/wrong token doesn't grant the role.
+// Backoffice role detection: valid when the browser holds a working credential
+// for THIS tenant — a user JWT (from /auth/login) or the instance ADMIN_TOKEN.
+// Validated against /auth/me so stale credentials don't grant the role.
 let cached: boolean | null = null;
 
 export function useIsOperator(): boolean {
@@ -11,9 +11,13 @@ export function useIsOperator(): boolean {
 
   useEffect(() => {
     if (cached !== null) { setIsOp(cached); return; }
-    const token = localStorage.getItem('admin_token');
-    if (!token) { cached = false; return; }
-    fetch(`${BASE}/admin/kpis`, { headers: { 'X-Admin-Token': token } })
+    const jwt = localStorage.getItem('admin_jwt');
+    const tok = localStorage.getItem('admin_token');
+    if (!jwt && !tok) { cached = false; return; }
+    const headers: Record<string, string> = jwt
+      ? { Authorization: `Bearer ${jwt}` }
+      : { 'X-Admin-Token': tok! };
+    fetch(`${BASE}/auth/me`, { headers })
       .then(r => { cached = r.ok; setIsOp(r.ok); })
       .catch(() => { cached = false; });
   }, []);

@@ -64,6 +64,15 @@ class Payment(SQLModel, table=True):
     value: str
     client: Optional[Client] = Relationship(back_populates="payments")
 
+class User(SQLModel, table=True):
+    """Per-tenant backoffice user. Roles: 'admin' (KPIs, errors, config, user
+    management) or 'manager' (KPIs only). No cross-tenant identity."""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    email: str = Field(index=True, unique=True)
+    name: str = ""
+    role: str = "manager"
+    password_hash: str
+
 class Delivery(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     client_id: Optional[int] = Field(default=None, foreign_key="client.id")

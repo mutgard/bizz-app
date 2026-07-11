@@ -5,35 +5,21 @@ configuration. Auth: set env ADMIN_TOKEN on the instance; callers send it as
 "X-Admin-Token: <token>" or "Authorization: Bearer <token>". These endpoints
 double as the remote API a future central backoffice (Phase 2) pulls from.
 """
-import os
 import re
 import sys
 import datetime
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends
 from sqlmodel import Session, select
 
 from database import get_session, DATABASE_URL
 from models import Client, Appointment, Payment
 from config import get_pack, active_pack_id
+from routes.auth import require_role
 import monitor
 
 router = APIRouter(prefix="/admin", tags=["admin"])
-
-
-def require_admin(
-    authorization: Optional[str] = Header(None),
-    x_admin_token: Optional[str] = Header(None),
-) -> None:
-    expected = os.getenv("ADMIN_TOKEN")
-    if not expected:
-        raise HTTPException(status_code=503, detail="Admin API disabled: ADMIN_TOKEN not configured")
-    supplied = x_admin_token
-    if not supplied and authorization and authorization.startswith("Bearer "):
-        supplied = authorization[len("Bearer "):]
-    if supplied != expected:
-        raise HTTPException(status_code=401, detail="Invalid admin token")
 
 
 _NUM = re.compile(r"(\d[\d.,]*)")
@@ -64,7 +50,7 @@ def _parse_amount(text: str) -> Optional[float]:
         return None
 
 
-@router.get("/kpis", dependencies=[Depends(require_admin)])
+@router.get("/kpis", dependencies=[Depends(require_role("admin", "manager"))])
 def kpis(session: Session = Depends(get_session)):
     pack = get_pack()
     paid_kw = pack["locale"]["paidKeyword"].lower()
@@ -103,7 +89,7 @@ def kpis(session: Session = Depends(get_session)):
     }
 
 
-@router.get("/errors", dependencies=[Depends(require_admin)])
+@router.get("/errors", dependencies=[Depends(require_role("admin"))])
 def errors():
     return {
         "uptime_seconds": monitor.uptime_seconds(),
@@ -112,7 +98,7 @@ def errors():
     }
 
 
-@router.get("/config", dependencies=[Depends(require_admin)])
+@router.get("/config", dependencies=[Depends(require_role("admin"))])
 def tenant_config():
     return {
         "pack_id": active_pack_id(),

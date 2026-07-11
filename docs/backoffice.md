@@ -8,13 +8,33 @@ instance. Phased design.
 Each instance ships its own backoffice; the operator holds one credential per
 tenant.
 
-- **Enable**: set env `ADMIN_TOKEN=<secret>` on the instance. Unset → the
-  admin API answers `503` (disabled).
-- **UI**: open `https://<instance>/admin`, paste the token (stored in
-  `localStorage`). The page inherits the tenant's pack theme and shows the
-  tenant id in the header.
+### Users & roles (per tenant, no global identity)
+
+Each instance keeps its own `users` table (SQLite) — there is no cross-tenant
+identity. Two roles:
+
+| Role | Access |
+|---|---|
+| `admin` | KPIs, errors, config, user management |
+| `manager` | KPIs only |
+
+- **Bootstrap**: set env `ADMIN_TOKEN=<secret>` on the instance — it always
+  acts as `admin` (break-glass, so deleting the last admin user can never
+  lock you out). Sign in with it once and create users from the Users
+  section (or `POST /auth/users`).
+- **Sessions**: `POST /auth/login {email,password}` → 12h JWT (HS256, secret
+  = env `AUTH_SECRET`, falling back to `ADMIN_TOKEN`). Passwords are PBKDF2
+  (stdlib). Deleting or demoting a user invalidates their JWT immediately —
+  the role claim is re-checked against the DB on every request.
+- **Auth endpoints**: `POST /auth/login`, `GET /auth/me`,
+  `GET|POST /auth/users`, `DELETE /auth/users/{id}` (user management is
+  admin-only).
+- **UI**: `/admin` shows an email/password sign-in (plus the token bootstrap
+  field). Managers see KPIs only; admins see everything incl. the Users
+  section.
 - **API** (also the remote surface for Phase 2). Auth via
-  `X-Admin-Token: <token>` or `Authorization: Bearer <token>`:
+  `Authorization: Bearer <jwt>` — or `X-Admin-Token`/Bearer with the
+  instance token:
   - `GET /admin/kpis` — client count, clients by status (pack vocabulary),
     payments count, invoiced / collected / outstanding (parsed with the
     pack's `paidKeyword`), upcoming appointments, uptime.

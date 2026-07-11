@@ -28,9 +28,10 @@ def client_fixture(tmp_path, monkeypatch):
     monitor.reset()
 
 
-def test_admin_disabled_without_env(client, monkeypatch):
+def test_admin_unauthorized_without_env(client, monkeypatch):
+    # no ADMIN_TOKEN and no users → nothing can authenticate
     monkeypatch.delenv("ADMIN_TOKEN")
-    assert client.get("/admin/kpis").status_code == 503
+    assert client.get("/admin/kpis").status_code == 401
 
 
 def test_admin_rejects_bad_token(client):

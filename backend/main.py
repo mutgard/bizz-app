@@ -6,6 +6,7 @@ from database import create_db, run_migrations
 from config import get_pack
 import monitor
 from routes.admin import router as admin_router
+from routes.auth import router as auth_router
 from routes.config import router as config_router
 from routes.clients import router as clients_router
 from routes.fabrics import router as fabrics_router
@@ -55,6 +56,7 @@ def on_startup():
             run_seed(s)
 
 app.include_router(admin_router)
+app.include_router(auth_router)
 app.include_router(config_router)
 app.include_router(clients_router)
 app.include_router(fabrics_router)
