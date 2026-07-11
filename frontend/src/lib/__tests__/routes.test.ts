@@ -2,9 +2,13 @@ import { describe, it, expect } from 'vitest';
 import { pathForScreen, screenForPath } from '../../routes';
 
 describe('pathForScreen', () => {
-  it('maps legacy screen keys to paths', () => {
+  it('maps current and legacy screen keys to paths', () => {
     expect(pathForScreen('clients')).toBe('/clients');
+    expect(pathForScreen('agenda')).toBe('/agenda');
     expect(pathForScreen('roadmap')).toBe('/agenda');
+    expect(pathForScreen('materials')).toBe('/materials');
+    expect(pathForScreen('fabrics')).toBe('/materials');
+    expect(pathForScreen('shop')).toBe('/materials');
     expect(pathForScreen('finances')).toBe('/caixa');
     expect(pathForScreen('today')).toBe('/');
   });
@@ -18,7 +22,9 @@ describe('screenForPath', () => {
     expect(screenForPath('/clients')).toBe('clients');
     expect(screenForPath('/clients/42')).toBe('clients');
   });
-  it('maps other known paths back to their screen key', () => {
-    expect(screenForPath('/agenda')).toBe('roadmap');
+  it('maps other known paths back to their canonical screen key', () => {
+    expect(screenForPath('/agenda')).toBe('agenda');
+    expect(screenForPath('/materials')).toBe('materials');
+    expect(screenForPath('/caixa')).toBe('caixa');
   });
 });

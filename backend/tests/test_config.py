@@ -24,3 +24,27 @@ def test_config_has_required_shape():
         "prospect", "sense-paga", "clienta", "entregada"
     ]
     assert pack["locale"]["code"] == "ca"
+
+
+def test_config_nav_is_3_tab_4_section_ia():
+    # Task 3: nav collapses to today/clients/profile/materials/agenda —
+    # 3 mobile tabs (today, clients, materials; profile is a sub-screen and
+    # agenda is desktopOnly) / 4 desktop sections (today, clients, materials, agenda).
+    pack = client.get("/config").json()
+    nav = pack["nav"]
+    assert [item["screen"] for item in nav] == [
+        "today", "clients", "profile", "materials", "agenda",
+    ]
+    by_screen = {item["screen"]: item for item in nav}
+    assert by_screen["profile"]["sub"] is True
+    assert by_screen["agenda"]["desktopOnly"] is True
+    assert by_screen["materials"]["feature"] == "fabrics"
+    for key in ("nav.today", "nav.clients", "nav.profile", "nav.materials", "nav.agenda"):
+        assert key in pack["strings"], f"missing string key {key}"
+    for key in (
+        "materials.toBuyTab", "materials.inventoryTab",
+        "avui.greeting", "avui.todaySection", "avui.urgentSection",
+        "avui.glanceSection", "avui.inboxSection", "avui.caixaSection", "avui.todo",
+        "caixa.title",
+    ):
+        assert key in pack["strings"], f"missing string key {key}"

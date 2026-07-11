@@ -77,6 +77,9 @@
     "nav.roadmap": "Calendar",
     "nav.intake": "Inbox",
     "nav.finances": "Billing",
+    "nav.today": "Today",
+    "nav.materials": "Materials",
+    "nav.agenda": "Calendar",
     "nav.section": "Clinic",
     "event.keyDate": "Key date",
     "status.all": "All",
@@ -123,6 +126,9 @@
     "profile.paymentConcept": "Concept",
     "profile.paymentExample": "€60 paid",
     "profile.payment": "Payment",
+    "materials.toBuyTab": "To buy",
+    "materials.inventoryTab": "Inventory",
+
     "finances.eyebrow": "Nordic Physio · Billing",
     "finances.activeOrders": "active cases",
     "finances.totalInvoiced": "Total invoiced",
@@ -134,6 +140,16 @@
     "roadmap.today": "Today",
     "roadmap.new": "New",
     "roadmap.more": "more",
+
+    "avui.greeting": "Good morning",
+    "avui.todaySection": "Today",
+    "avui.urgentSection": "Urgent",
+    "avui.glanceSection": "At a glance",
+    "avui.inboxSection": "Inbox",
+    "avui.caixaSection": "Billing",
+    "avui.todo": "To-do",
+
+    "caixa.title": "Billing",
     "event.dateRequired": "The date is required",
     "event.titleRequired": "The title is required",
     "event.clientRequired": "The patient is required",
@@ -179,11 +195,11 @@
     "inbox.toClient": "→ client"
   },
   "nav": [
-    { "screen": "clients", "labelKey": "nav.clients", "countKey": "totalClients" },
-    { "screen": "profile", "labelKey": "nav.profile", "sub": true },
-    { "screen": "roadmap", "labelKey": "nav.roadmap" },
-    { "screen": "intake", "labelKey": "nav.intake", "feature": "intake" },
-    { "screen": "finances", "labelKey": "nav.finances" }
+    { "screen": "today",     "labelKey": "nav.today",     "countKey": "todosOpen" },
+    { "screen": "clients",   "labelKey": "nav.clients",   "countKey": "totalClients" },
+    { "screen": "profile",   "labelKey": "nav.profile",   "sub": true },
+    { "screen": "materials", "labelKey": "nav.materials", "feature": "fabrics", "accent": true, "countKey": "fabricsToBuy" },
+    { "screen": "agenda",    "labelKey": "nav.agenda",    "desktopOnly": true }
   ],
   "features": {
     "fabrics": false,

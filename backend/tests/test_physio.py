@@ -31,6 +31,27 @@ def test_physio_pack_loads(physio_client):
     assert pack["features"]["fabrics"] is False
 
 
+def test_physio_pack_nav_shape(physio_client):
+    # Backend serves the raw pack nav (unfiltered); the frontend's navItems()
+    # drops the "materials" item client-side because features.fabrics is False.
+    pack = physio_client.get("/config").json()
+    nav = pack["nav"]
+    assert [item["screen"] for item in nav] == [
+        "today", "clients", "profile", "materials", "agenda",
+    ]
+    by_screen = {item["screen"]: item for item in nav}
+    assert by_screen["materials"]["feature"] == "fabrics"
+    assert by_screen["agenda"]["desktopOnly"] is True
+    for key in (
+        "nav.today", "nav.materials", "nav.agenda",
+        "materials.toBuyTab", "materials.inventoryTab",
+        "avui.greeting", "avui.todaySection", "avui.urgentSection",
+        "avui.glanceSection", "avui.inboxSection", "avui.caixaSection", "avui.todo",
+        "caixa.title",
+    ):
+        assert key in pack["strings"], f"missing string key {key}"
+
+
 def test_physio_client_crud_with_custom(physio_client):
     # a physio status is valid; an atelier status is not
     r = physio_client.post("/clients", json={

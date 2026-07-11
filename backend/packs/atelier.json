@@ -78,6 +78,9 @@
     "nav.roadmap": "Agenda",
     "nav.intake": "Ingrés",
     "nav.finances": "Finances",
+    "nav.today": "Avui",
+    "nav.materials": "Materials",
+    "nav.agenda": "Agenda",
     "nav.section": "Taller",
     "event.keyDate": "Boda",
     "status.all": "Totes",
@@ -159,6 +162,9 @@
     "shopping.for": "per",
     "shopping.ago": "fa",
 
+    "materials.toBuyTab": "Per comprar",
+    "materials.inventoryTab": "Inventari",
+
     "finances.eyebrow": "Atelier · Finances",
     "finances.activeOrders": "comandes actives",
     "finances.totalInvoiced": "Total facturado",
@@ -171,6 +177,16 @@
     "roadmap.today": "Avui",
     "roadmap.new": "Nou",
     "roadmap.more": "més",
+
+    "avui.greeting": "Bon dia",
+    "avui.todaySection": "Per avui",
+    "avui.urgentSection": "Urgent",
+    "avui.glanceSection": "D'un cop d'ull",
+    "avui.inboxSection": "Ingrés",
+    "avui.caixaSection": "Caixa",
+    "avui.todo": "Per fer",
+
+    "caixa.title": "Caixa",
 
     "intake.fieldName": "Nom",
     "intake.weddingDateShort": "Data boda",
@@ -244,13 +260,11 @@
     "brief.proposal": "Proposta"
   },
   "nav": [
-    { "screen": "clients", "labelKey": "nav.clients", "countKey": "totalClients" },
-    { "screen": "profile", "labelKey": "nav.profile", "sub": true },
-    { "screen": "fabrics", "labelKey": "nav.fabrics", "feature": "fabrics", "countKey": "totalFabrics" },
-    { "screen": "shop", "labelKey": "nav.shop", "mobileLabelKey": "common.buy", "accent": true, "feature": "shopping", "countKey": "fabricsToBuy" },
-    { "screen": "roadmap", "labelKey": "nav.roadmap" },
-    { "screen": "intake", "labelKey": "nav.intake", "feature": "intake" },
-    { "screen": "finances", "labelKey": "nav.finances" }
+    { "screen": "today",     "labelKey": "nav.today",     "countKey": "todosOpen" },
+    { "screen": "clients",   "labelKey": "nav.clients",   "countKey": "totalClients" },
+    { "screen": "profile",   "labelKey": "nav.profile",   "sub": true },
+    { "screen": "materials", "labelKey": "nav.materials", "feature": "fabrics", "accent": true, "countKey": "fabricsToBuy" },
+    { "screen": "agenda",    "labelKey": "nav.agenda",    "desktopOnly": true }
   ],
   "features": {
     "fabrics": true,

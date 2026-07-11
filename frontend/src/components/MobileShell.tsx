@@ -11,8 +11,9 @@ export function MobileHeader({ active, onNav, counts }: {
   counts: Record<string, number>;
 }) {
   const brand = usePack().brand;
-  // Tab strip omits sub-screens (e.g. profile — reached by tapping a client).
-  const tabs = navItems().filter(it => !it.sub);
+  // Tab strip omits sub-screens (e.g. profile — reached by tapping a client)
+  // and desktopOnly items (e.g. Agenda — a desktop-only section on this pack).
+  const tabs = navItems({ mobile: true }).filter(it => !it.sub);
 
   return (
     <div style={{ background: T.ink, color: T.paper, flexShrink: 0 }}>

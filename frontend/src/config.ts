@@ -40,6 +40,7 @@ export interface PackNavItem {
   feature?: string;
   accent?: boolean;
   sub?: boolean;
+  desktopOnly?: boolean;
 }
 
 export interface ResolvedNavItem extends PackNavItem {
@@ -143,8 +144,10 @@ export function listFields(): PackField[] {
 /** The enabled nav items, in display order, with resolved labels + step numbers.
  *  `n` is the 1-based index in the FULL nav list (so a screen keeps its number
  *  even when earlier items — e.g. the profile sub-item on mobile — are hidden).
- *  Items gated by a feature flag are dropped when that feature is off. */
-export function navItems(): ResolvedNavItem[] {
+ *  Items gated by a feature flag are dropped when that feature is off.
+ *  Pass `{ mobile: true }` to additionally drop `desktopOnly` items (e.g. Agenda,
+ *  which only appears as a desktop section, not a mobile tab). */
+export function navItems(opts?: { mobile?: boolean }): ResolvedNavItem[] {
   const pack = getPack();
   return pack.nav
     .map((it, i) => ({
@@ -153,7 +156,8 @@ export function navItems(): ResolvedNavItem[] {
       mobileLabel: t(it.mobileLabelKey ?? it.labelKey),
       n: String(i + 1).padStart(2, '0'),
     }))
-    .filter((it) => !it.feature || featureOn(it.feature));
+    .filter((it) => !it.feature || featureOn(it.feature))
+    .filter((it) => !(opts?.mobile && it.desktopOnly));
 }
 
 /** Write the pack's CSS custom properties onto :root. Runs at boot, before

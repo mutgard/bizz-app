@@ -1,18 +1,22 @@
 // Legacy screen-key <-> URL path mapping. Keeps the pack config's nav items
 // (which speak in `screen` keys) working with react-router paths.
 
+// Canonical screen keys (matching current nav `screen` values) are listed
+// first so screenForPath's reverse lookup resolves to them; legacy aliases
+// resolve to the same path for pathForScreen but must not win the reverse
+// lookup (nav highlighting keys off the canonical screen name).
 export const SCREEN_PATHS: Record<string, string> = {
   today: '/',
   clients: '/clients',
   profile: '/clients',      // sub-screen; row click appends /:id
-  fabrics: '/fabrics',      // legacy — collapses into /materials in Task 3
-  shop: '/shop',            // legacy — collapses into /materials in Task 3
   materials: '/materials',
-  roadmap: '/agenda',
   agenda: '/agenda',
   intake: '/intake',
-  finances: '/caixa',
   caixa: '/caixa',
+  fabrics: '/materials',    // legacy alias — collapsed into /materials
+  shop: '/materials',       // legacy alias — collapsed into /materials
+  roadmap: '/agenda',       // legacy alias — renamed to /agenda
+  finances: '/caixa',       // legacy alias
 };
 
 export function pathForScreen(screen: string): string {

@@ -7,8 +7,8 @@ import { Sidebar } from './components/Sidebar';
 import { MobileHeader } from './components/MobileShell';
 import { ClientsScreen } from './screens/ClientsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
-import { FabricsScreen } from './screens/FabricsScreen';
-import { ShoppingScreen } from './screens/ShoppingScreen';
+import { TodayScreen } from './screens/TodayScreen';
+import { MaterialsScreen } from './screens/MaterialsScreen';
 import { NewClientScreen } from './screens/NewClientScreen';
 import { RoadmapScreen } from './screens/RoadmapScreen';
 import { InboxScreen } from './screens/InboxScreen';
@@ -61,14 +61,13 @@ function AtelierApp() {
 
   const routes = (
     <Routes>
-      <Route path="/" element={<Navigate to="/clients" replace />} />
+      <Route path="/" element={<TodayScreen />} />
       <Route path="/clients" element={<>
         {!creating && <ClientsScreen clients={clients} onOpen={openClient} onCreate={() => setCreating(true)} />}
         {creating && mobile && <NewClientScreen onCancel={() => setCreating(false)} onSuccess={handleCreateSuccess} />}
       </>} />
       <Route path="/clients/:id" element={<ProfileRoute clients={clients} onRefresh={refresh} onOpenFabrics={() => nav('fabrics')} />} />
-      {featureOn('fabrics') && <Route path="/fabrics" element={<FabricsScreen clients={clients} onRefresh={refresh} />} />}
-      {featureOn('shopping') && <Route path="/shop" element={<ShoppingScreen clients={clients} />} />}
+      {featureOn('fabrics') && <Route path="/materials" element={<MaterialsScreen clients={clients} onRefresh={refresh} />} />}
       <Route path="/agenda" element={<RoadmapScreen clients={clients} onRefresh={refresh} />} />
       {featureOn('intake') && (
         <Route path="/intake" element={
