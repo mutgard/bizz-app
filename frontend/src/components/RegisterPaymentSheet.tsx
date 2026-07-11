@@ -6,6 +6,7 @@ import { T } from '../tokens';
 import { api } from '../api';
 import type { Client } from '../types';
 import { parsePayments } from '../lib/clientHelpers';
+import { planPaymentRegistration } from '../lib/paymentPlan';
 import { t, getPack } from '../config';
 
 interface Props {
@@ -23,11 +24,18 @@ interface Props {
  * `paidKeyword` count toward `paid` — so a still-pending row (e.g. "Saldo
  * €1.800 pendent") is exactly what makes up `outstanding`. Simply POSTing a
  * new paid row for that same amount would double count it (total AND paid
- * both grow by the same figure, leaving outstanding unchanged). So before
- * recording the new receipt we retire the pending row(s) that make up the
- * amount being collected — deleting the ones fully covered, shrinking the
- * one that's only partially covered — then create one payment (the actual
- * "money in" record) for the amount received.
+ * both grow by the same figure, leaving outstanding unchanged). So we retire
+ * the pending row(s) that make up the amount being collected — deleting the
+ * ones fully covered, shrinking the one that's only partially covered — in
+ * addition to creating one payment (the actual "money in" record) for the
+ * amount received. The pure arithmetic (which rows to retire, how, and the
+ * receipt's value) lives in `lib/paymentPlan.ts` so it can be unit tested.
+ *
+ * Ordering: the receipt is created FIRST, the pending rows are retired
+ * SECOND. A failure creating the receipt leaves nothing changed (safe to
+ * retry). A failure retiring a row happens only after the receipt already
+ * exists — recoverable (worst case outstanding is briefly double-counted
+ * until the retirement finishes on a retry), never a silent loss of debt.
  */
 export function RegisterPaymentSheet({ client, open, onClose, onSaved }: Props) {
   const { priceTotal, paid } = parsePayments(client.payments);
@@ -42,36 +50,41 @@ export function RegisterPaymentSheet({ client, open, onClose, onSaved }: Props) 
   const handleSubmit = async () => {
     const amt = Math.round(parseFloat(amount));
     if (!amt || amt <= 0) { setError(t('event.dateRequired')); return; }
+
+    const { currencySymbol, numberLocale } = getPack().locale;
+    const plan = planPaymentRegistration(client.payments, amt, paidKeyword, currencySymbol, numberLocale);
+    if (plan.clampedAmount <= 0) { setError(t('event.dateRequired')); return; }
+
     setSaving(true);
     setError('');
+
     try {
-      let remaining = amt;
-      for (const p of client.payments) {
-        if (remaining <= 0) break;
-        const m = p.value.match(/€([\d.,]+)/);
-        if (!m) continue;
-        if (p.value.toLowerCase().includes(paidKeyword)) continue; // already settled
-        const lineAmount = parseFloat(m[1].replace(/\./g, '').replace(',', '.'));
-        if (isNaN(lineAmount) || lineAmount <= 0) continue;
-        if (lineAmount <= remaining + 0.01) {
-          await api.deletePayment(p.id);
-          remaining -= lineAmount;
-        } else {
-          const newAmount = Math.round(lineAmount - remaining);
-          await api.updatePayment(p.id, { value: p.value.replace(m[0], `€${newAmount}`) });
-          remaining = 0;
-        }
-      }
       await api.createPayment({
         client_id: client.id,
         label: label.trim() || t('finances.paymentLabel'),
-        value: `€${amt} · ${paidKeyword}`,
+        value: plan.receiptValue,
       });
-      onSaved();
+    } catch {
+      // Nothing changed server-side yet — safe to just show the error and let the owner retry.
+      setError(t('event.saveError'));
+      setSaving(false);
+      return;
+    }
+
+    try {
+      for (const action of plan.retire) {
+        if (action.kind === 'delete') {
+          await api.deletePayment(action.id);
+        } else {
+          await api.updatePayment(action.id, { value: action.newValue });
+        }
+      }
     } catch {
       setError(t('event.saveError'));
     } finally {
       setSaving(false);
+      // The receipt already exists server-side — refetch true state even on a partial failure.
+      onSaved();
     }
   };
 

@@ -176,6 +176,7 @@
     "event.editTitle": "Edit event",
     "event.newTitle": "New event",
     "event.typeAppointment": "Appointment",
+    "event.typeDelivery": "Delivery",
     "event.title": "Title",
     "event.titlePlaceholder": "e.g. Follow-up session",
     "event.noClient": "— No patient —",
