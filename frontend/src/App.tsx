@@ -3,7 +3,8 @@ import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from 're
 import type { Client } from './types';
 import { T } from './tokens';
 import { useIsMobile } from './hooks/useIsMobile';
-import { Sidebar } from './components/Sidebar';
+import { TopBar } from './components/TopBar';
+import { BottomTabBar } from './components/BottomTabBar';
 import { MobileHeader } from './components/MobileShell';
 import { ClientsScreen } from './screens/ClientsScreen';
 import { ProfileScreen } from './screens/ProfileScreen';
@@ -85,16 +86,17 @@ function AtelierApp() {
   if (mobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100dvh', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-        <MobileHeader active={active} onNav={nav} counts={counts} />
-        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', paddingBottom: 'env(safe-area-inset-bottom)' }}>{routes}</div>
+        <MobileHeader />
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{routes}</div>
+        <BottomTabBar active={active} onNav={nav} counts={counts} />
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '232px 1fr', width: '100%', height: '100%', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-      <Sidebar active={active} onNav={nav} counts={counts} />
-      <div style={{ minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{routes}</div>
+    <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: T.paper, color: T.ink, fontFamily: T.sans }}>
+      <TopBar active={active} onNav={nav} counts={counts} onNewClient={() => setCreating(true)} />
+      <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{routes}</div>
       {creating && !mobile && (
         <div style={{
           position: 'fixed', inset: 0, zIndex: 100,
