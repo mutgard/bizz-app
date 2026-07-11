@@ -101,7 +101,17 @@ export interface WebFormIntake {
   documents: IntakeDocument[];
 }
 
-export type IntakeData = WhatsAppIntake | WebFormIntake;
+export interface LeadIntake {
+  source: 'lead';
+  channel: string;
+  received_at: string;
+  message: string;
+  fields: Record<string, string>;
+  brief: null;
+  documents: [];
+}
+
+export type IntakeData = WhatsAppIntake | WebFormIntake | LeadIntake;
 
 export interface ClientBrief {
   client_name: string;
@@ -141,47 +151,40 @@ export interface DeliveryCreate {
   received?: boolean;
 }
 
-export interface DemoScenarioSummary {
-  id: string;
-  label: string;
-}
-
-export interface DemoClientDefaults {
-  name: string;
-  wedding_date: string;
-  wedding_date_iso: string;
-  days_until: number;
-  status: ClientStatus;
-  garment: string;
-  garment_style: string;
-  phone: string;
-  email: string;
-  notes: string;
-}
-
-export interface DemoScenarioWhatsApp {
-  id: string;
-  label: string;
-  source: 'whatsapp';
-  thread: WhatsAppMessage[];
-  brief: IntakeBrief;
-  client_defaults: DemoClientDefaults;
-}
-
-export interface DemoScenarioWebForm {
-  id: string;
-  label: string;
-  source: 'web_form';
-  submitted_at: string;
-  form_data: Record<string, string>;
-  brief: IntakeBrief;
-  client_defaults: DemoClientDefaults;
-}
-
-export type DemoScenario = DemoScenarioWhatsApp | DemoScenarioWebForm;
-
 export interface PaymentCreate {
   client_id: number;
   label: string;
   value: string;
+}
+
+export interface Lead {
+  id: number;
+  channel: 'phone' | 'walkin' | 'whatsapp' | 'email' | 'booking';
+  name: string;
+  phone: string;
+  email: string;
+  notes: string;
+  fields: Record<string, string>;
+  status: 'open' | 'converted' | 'dismissed';
+  created_at: string;
+  converted_client_id: number | null;
+}
+
+export interface LeadCreate {
+  channel: Lead['channel'];
+  name?: string;
+  phone?: string;
+  email?: string;
+  notes?: string;
+  fields?: Record<string, string>;
+}
+
+export interface LeadConvert {
+  client: ClientCreate;
+  appointment?: { title: string; date: string };
+}
+
+export interface LeadMatch {
+  id: number;
+  name: string;
 }

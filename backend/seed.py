@@ -1,7 +1,7 @@
 """Run once: python3 seed.py — inserts prototype sample data.
 The seed set is chosen by the active pack (ACTIVE_PACK)."""
 from database import create_db, engine
-from models import Client, Fabric, Appointment, Payment, Delivery
+from models import Client, Fabric, Appointment, Payment, Delivery, Lead
 from config import active_pack_id
 from sqlmodel import Session
 
@@ -183,6 +183,56 @@ PHYSIO_SEED = [
 
 SEEDS = {"atelier": ATELIER_SEED, "physio": PHYSIO_SEED}
 
+# Leads: open inbound contacts not yet converted to clients. Atelier leads are
+# condensed from the retired demo-scenario threads (boho/classic/destination).
+ATELIER_LEAD_SEEDS = [
+    Lead(
+        channel="whatsapp", name="Núria Bosch", phone="", email="",
+        notes=("Busca vestit boho fluid per a cerimònia exterior en un mas "
+               "(80 convidats), el novembre. Mànigues llargues de gasa, escot "
+               "paraula d'honor i cola catedralícia. Pressupost al voltant de 2.000€."),
+        fields={"wedding_date_iso": "2026-11-14", "garment": "Vestit a mida",
+                "garment_style": "Boho fluido"},
+        status="open", created_at="2026-07-10T18:12:00",
+    ),
+    Lead(
+        channel="whatsapp", name="Carmen Iglesias", phone="", email="",
+        notes=("Busca vestido clásico sirena con encaje para boda de junio "
+               "(iglesia + finca). Escote en V con encaje, sin mangas, cola "
+               "semilarga. Presupuesto entre 3.000 y 3.500€."),
+        fields={"wedding_date_iso": "2026-06-20", "garment": "Vestit a mida",
+                "garment_style": "Sirena clàssic"},
+        status="open", created_at="2026-07-11T09:30:00",
+    ),
+    Lead(
+        channel="email", name="Sophie Laurent",
+        phone="+33 6 12 34 56 78", email="sophie.laurent@mail.fr",
+        notes=("Destination wedding a la Costa Brava (platja exterior) el 12 "
+               "de setembre. Busca un vestit columna minimalista, sense vol ni "
+               "encaix. Pressupost 2.500–3.000€, ens ha conegut per Instagram."),
+        fields={"wedding_date_iso": "2026-09-12", "garment": "Vestit a mida",
+                "garment_style": "Columna minimalista"},
+        status="open", created_at="2026-07-09T14:05:00",
+    ),
+]
+
+PHYSIO_LEAD_SEEDS = [
+    Lead(
+        channel="phone", name="Pere Soler", phone="+34 611 22 33 44", email="",
+        notes="Knee pain after running, wants an assessment",
+        fields={"treatment": "Post-op knee"},
+        status="open", created_at="2026-07-10T10:00:00",
+    ),
+    Lead(
+        channel="walkin", name="Anna Riu", phone="", email="",
+        notes="Walked in asking about back pain sessions",
+        fields={"treatment": "Lower-back rehab"},
+        status="open", created_at="2026-07-11T11:20:00",
+    ),
+]
+
+LEAD_SEEDS = {"atelier": ATELIER_LEAD_SEEDS, "physio": PHYSIO_LEAD_SEEDS}
+
 def run_seed(s: Session):
     for entry in SEEDS.get(active_pack_id(), ATELIER_SEED):
         c = entry["client"]
@@ -196,6 +246,9 @@ def run_seed(s: Session):
         for d in entry["deliveries"]:
             d.client_id = c.id; s.add(d)
         s.commit()
+    for lead in LEAD_SEEDS.get(active_pack_id(), ATELIER_LEAD_SEEDS):
+        s.add(lead)
+    s.commit()
 
 if __name__ == "__main__":
     create_db()

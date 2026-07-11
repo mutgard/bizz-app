@@ -4,7 +4,7 @@ import { api } from '../api';
 import { T } from '../tokens';
 import { Label, Mono } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
-import { initials } from '../lib/clientHelpers';
+import { initials, computeDaysUntil, formatWeddingDate } from '../lib/clientHelpers';
 import { DynamicFields } from '../components/DynamicFields';
 import { t, clientStatuses, featureOn, itemFields, clientFieldsLabel } from '../config';
 import type { PackField } from '../config';
@@ -12,15 +12,6 @@ import type { PackField } from '../config';
 interface Props {
   onCancel: () => void;
   onSuccess: (clientId: number) => void;
-}
-
-function computeDaysUntil(iso: string): number {
-  return Math.round((new Date(iso).getTime() - Date.now()) / 86400000);
-}
-
-function formatWeddingDate(iso: string): string {
-  const [y, m, d] = iso.split('-');
-  return `${d}.${m}.${y}`;
 }
 
 export function NewClientScreen({ onCancel, onSuccess }: Props) {

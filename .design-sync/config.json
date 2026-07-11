@@ -1,0 +1,6 @@
+{
+  "projectId": "eadc7f76-ee3b-4502-8db8-92ad8c548696",
+  "projectName": "PoC design",
+  "mode": "app-screenshot-references",
+  "notes": "Not a component-library sync. Project seeded with screenshots of the running whitelabel app + design brief (see .design-sync/NOTES.md). Never touch the fundcraft Design System projects."
+}

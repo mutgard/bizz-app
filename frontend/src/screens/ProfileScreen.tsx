@@ -53,7 +53,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
   useEffect(() => {
     if (!c) return;
     api.getIntake(c.id)
-      .then(data => setBriefToken(data?.token ?? null))
+      .then(data => setBriefToken(data && data.source !== 'lead' ? data.token ?? null : null))
       .catch(() => setBriefToken(null));
   }, [c?.id]);
 

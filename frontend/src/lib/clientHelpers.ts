@@ -39,3 +39,12 @@ export function getNextFitting(appointments: Appointment[]): string {
 export function fabricsToBuyCount(fabrics: Fabric[]): number {
   return fabrics.filter(f => f.to_buy).length;
 }
+
+export function computeDaysUntil(iso: string): number {
+  return Math.round((new Date(iso).getTime() - Date.now()) / 86400000);
+}
+
+export function formatWeddingDate(iso: string): string {
+  const [y, m, d] = iso.split('-');
+  return `${d}.${m}.${y}`;
+}

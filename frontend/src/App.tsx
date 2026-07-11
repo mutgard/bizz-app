@@ -10,7 +10,7 @@ import { FabricsScreen } from './screens/FabricsScreen';
 import { ShoppingScreen } from './screens/ShoppingScreen';
 import { NewClientScreen } from './screens/NewClientScreen';
 import { RoadmapScreen } from './screens/RoadmapScreen';
-import { IntakeDemoScreen } from './screens/IntakeDemoScreen';
+import { InboxScreen } from './screens/InboxScreen';
 import { FinancesScreen } from './screens/FinancesScreen';
 import { api } from './api';
 import { BriefPage } from './pages/BriefPage';
@@ -78,10 +78,9 @@ function AtelierApp() {
       {screen === 'shop'     && featureOn('shopping') && <ShoppingScreen clients={clients} />}
       {screen === 'roadmap'  && <RoadmapScreen clients={clients} onRefresh={refresh} />}
       {screen === 'intake' && featureOn('intake') && (
-        <IntakeDemoScreen
-          onClientCreated={() => {
-            refresh().then(() => nav('clients'));
-          }}
+        <InboxScreen
+          onClientCreated={(id) => refresh().then(() => openClient(id))}
+          onOpenClient={openClient}
         />
       )}
       {screen === 'finances' && (

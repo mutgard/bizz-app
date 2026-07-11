@@ -3,7 +3,7 @@ const BASE = import.meta.env.VITE_API_URL ?? '';
 import type {
   Client, Fabric, ShoppingItem, IntakeData, ClientBrief, ClientCreate,
   AtelierEvent, AppointmentCreate, DeliveryCreate, PaymentCreate,
-  DemoScenarioSummary, DemoScenario,
+  Lead, LeadCreate, LeadConvert, LeadMatch,
 } from './types';
 
 async function get<T>(path: string): Promise<T> {
@@ -85,6 +85,17 @@ export const api = {
     return r.json();
   },
 
-  listDemoScenarios: () => get<DemoScenarioSummary[]>('/demo-scenarios'),
-  getDemoScenario:   (id: string) => get<DemoScenario>(`/demo-scenarios/${id}`),
+  listLeads:   (status: 'open' | 'converted' | 'dismissed' | 'all' = 'open') =>
+    get<Lead[]>(`/leads?status=${status}`),
+  createLead:  (body: LeadCreate) => post<Lead>('/leads', body),
+  patchLead:   (id: number, body: Partial<LeadCreate> & { status?: Lead['status'] }) =>
+    patch<Lead>(`/leads/${id}`, body),
+  convertLead: (id: number, body: LeadConvert) =>
+    post<{ client: Client; lead: Lead }>(`/leads/${id}/convert`, body),
+  matchLeads:  (params: { phone?: string; email?: string }) => {
+    const q = new URLSearchParams();
+    if (params.phone) q.set('phone', params.phone);
+    if (params.email) q.set('email', params.email);
+    return get<LeadMatch[]>(`/leads/match?${q.toString()}`);
+  },
 };

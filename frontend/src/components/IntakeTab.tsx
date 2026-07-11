@@ -1,10 +1,18 @@
 import { useState, useEffect } from 'react';
-import type { IntakeData, WhatsAppIntake, WebFormIntake, IntakeBrief } from '../types';
+import type { IntakeData, WhatsAppIntake, WebFormIntake, LeadIntake, IntakeBrief } from '../types';
 import { api } from '../api';
 import { T } from '../tokens';
 import { Label, Mono, Rule } from './primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { formatEventDate } from '../lib/calendarHelpers';
 import { t } from '../config';
+
+/** Resolve an inbox channel label from the pack strings, falling back to the raw value. */
+function channelLabel(channel: string): string {
+  const key = `inbox.channel.${channel}`;
+  const label = t(key);
+  return label === key ? channel : label;
+}
 
 function BriefPanel({ brief }: { brief: IntakeBrief }) {
   const rows: [string, string][] = [
@@ -98,6 +106,39 @@ function WebFormView({ intake }: { intake: WebFormIntake }) {
   );
 }
 
+function LeadView({ intake }: { intake: LeadIntake }) {
+  const date = formatEventDate(intake.received_at.slice(0, 10));
+  const fieldEntries = Object.entries(intake.fields);
+  return (
+    <div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+        <Mono size={10} color={T.ink3} style={{ textTransform: 'uppercase', letterSpacing: 0.8 }}>{channelLabel(intake.channel)}</Mono>
+        <Mono size={10} color={T.ink3}>{date}</Mono>
+      </div>
+      {intake.message && (
+        <div style={{
+          padding: '9px 12px', background: T.paper2, color: T.ink,
+          borderRadius: '12px 12px 12px 2px',
+          fontFamily: T.sans, fontSize: 13, lineHeight: 1.5,
+          marginBottom: fieldEntries.length > 0 ? 16 : 0,
+        }}>
+          {intake.message}
+        </div>
+      )}
+      {fieldEntries.length > 0 && (
+        <div style={{ border: `1px solid ${T.hairline2}`, background: T.paper }}>
+          {fieldEntries.map(([k, v], i) => (
+            <div key={k} style={{ display: 'flex', gap: 16, padding: '10px 14px', borderBottom: i < fieldEntries.length - 1 ? `1px solid ${T.hairline}` : 'none', flexWrap: 'wrap' as const }}>
+              <Mono size={10} color={T.ink3} style={{ width: 120, flexShrink: 0 }}>{k}</Mono>
+              <Mono size={13} color={T.ink} style={{ flex: 1 }}>{v}</Mono>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function IntakeTab({ clientId }: { clientId: number }) {
   const [data, setData] = useState<IntakeData | null | 'loading'>('loading');
   const mobile = useIsMobile();
@@ -122,7 +163,18 @@ export function IntakeTab({ clientId }: { clientId: number }) {
 
   const sourceView = data.source === 'whatsapp'
     ? <WhatsAppView intake={data} />
-    : <WebFormView intake={data} />;
+    : data.source === 'web_form'
+    ? <WebFormView intake={data} />
+    : <LeadView intake={data} />;
+
+  // Lead intakes have no extracted brief — the source pane is the whole story.
+  if (data.source === 'lead') {
+    return (
+      <div style={{ padding: mobile ? '20px 20px 40px' : '28px 32px 40px' }}>
+        {sourceView}
+      </div>
+    );
+  }
 
   if (mobile) {
     return (

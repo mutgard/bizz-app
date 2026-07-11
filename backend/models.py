@@ -81,3 +81,17 @@ class Delivery(SQLModel, table=True):
     expected_date: str               # ISO YYYY-MM-DD
     received: bool = False
     client: Optional[Client] = Relationship(back_populates="deliveries")
+
+class Lead(SQLModel, table=True):
+    """Unconverted inbound contact — phone/walk-in/whatsapp/email/booking —
+    before it becomes a Client."""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    channel: str                    # 'phone' | 'walkin' | 'whatsapp' | 'email' | 'booking'
+    name: str = ""
+    phone: str = ""
+    email: str = ""
+    notes: str = ""
+    fields: Optional[dict] = Field(default=None, sa_column=Column(JSON))
+    status: str = "open"            # 'open' | 'converted' | 'dismissed'
+    created_at: str = ""            # ISO datetime, set server-side
+    converted_client_id: Optional[int] = Field(default=None, foreign_key="client.id")

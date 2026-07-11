@@ -16,8 +16,8 @@ from routes.brief import router as brief_router
 from routes.appointments import router as appointments_router
 from routes.deliveries import router as deliveries_router
 from routes.events import router as events_router
-from routes.demo import router as demo_router
 from routes.payments import router as payments_router
+from routes.leads import router as leads_router
 
 app = FastAPI(title=f"{get_pack()['brand']['name']} API")
 
@@ -66,8 +66,8 @@ app.include_router(brief_router)
 app.include_router(appointments_router)
 app.include_router(deliveries_router)
 app.include_router(events_router)
-app.include_router(demo_router)
 app.include_router(payments_router)
+app.include_router(leads_router)
 
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse

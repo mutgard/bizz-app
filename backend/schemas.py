@@ -92,3 +92,50 @@ class DeliveryPatch(BaseModel):
     description: Optional[str] = None
     expected_date: Optional[str] = None
     received: Optional[bool] = None
+
+_LEAD_CHANNELS = {"phone", "walkin", "whatsapp", "email", "booking"}
+_LEAD_STATUSES = {"open", "converted", "dismissed"}
+
+def _validate_lead_channel(v: Optional[str]) -> Optional[str]:
+    if v is None:
+        return v
+    if v not in _LEAD_CHANNELS:
+        raise ValueError(f"channel must be one of {sorted(_LEAD_CHANNELS)}, got {v!r}")
+    return v
+
+def _validate_lead_status(v: Optional[str]) -> Optional[str]:
+    if v is None:
+        return v
+    if v not in _LEAD_STATUSES:
+        raise ValueError(f"status must be one of {sorted(_LEAD_STATUSES)}, got {v!r}")
+    return v
+
+class LeadCreate(BaseModel):
+    channel: str
+    name: str = ""
+    phone: str = ""
+    email: str = ""
+    notes: str = ""
+    fields: dict = {}
+
+    _check_channel = field_validator("channel")(_validate_lead_channel)
+
+class LeadPatch(BaseModel):
+    channel: Optional[str] = None
+    name: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    notes: Optional[str] = None
+    fields: Optional[dict] = None
+    status: Optional[str] = None
+
+    _check_channel = field_validator("channel")(_validate_lead_channel)
+    _check_status = field_validator("status")(_validate_lead_status)
+
+class LeadConvertAppointment(BaseModel):
+    title: str
+    date: str
+
+class LeadConvert(BaseModel):
+    client: ClientCreate
+    appointment: Optional[LeadConvertAppointment] = None

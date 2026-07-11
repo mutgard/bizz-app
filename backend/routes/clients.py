@@ -35,8 +35,7 @@ def list_clients(session: Session = Depends(get_session)):
     clients = session.exec(select(Client)).all()
     return [_serialize(c, session) for c in clients]
 
-@router.post("", status_code=201)
-def create_client(body: ClientCreate, session: Session = Depends(get_session)):
+def _create_client(body: ClientCreate, session: Session) -> Client:
     c = Client(name=body.name, wedding_date=body.wedding_date,
                days_until=body.days_until, status=body.status,
                wedding_date_iso=body.wedding_date_iso,
@@ -54,6 +53,11 @@ def create_client(body: ClientCreate, session: Session = Depends(get_session)):
                            qty=f.qty, price=f.price, to_buy=f.to_buy,
                            supplier=f.supplier))
     session.commit(); session.refresh(c)
+    return c
+
+@router.post("", status_code=201)
+def create_client(body: ClientCreate, session: Session = Depends(get_session)):
+    c = _create_client(body, session)
     return _serialize(c, session)
 
 @router.get("/{client_id}")
