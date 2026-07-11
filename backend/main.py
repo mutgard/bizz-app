@@ -1,6 +1,9 @@
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import create_db, run_migrations
+from config import get_pack
+from routes.config import router as config_router
 from routes.clients import router as clients_router
 from routes.fabrics import router as fabrics_router
 from routes.shopping import router as shopping_router
@@ -12,11 +15,13 @@ from routes.events import router as events_router
 from routes.demo import router as demo_router
 from routes.payments import router as payments_router
 
-app = FastAPI(title="Juliette Atelier API")
+app = FastAPI(title=f"{get_pack()['brand']['name']} API")
 
+_cors_origins = os.getenv("CORS_ORIGINS", "http://localhost:5173").split(",")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "https://*.railway.app"],
+    allow_origins=[o.strip() for o in _cors_origins if o.strip()],
+    allow_origin_regex=r"https://.*\.railway\.app",
     allow_credentials=True, allow_methods=["*"], allow_headers=["*"],
 )
 
@@ -32,6 +37,7 @@ def on_startup():
         if not s.exec(select(Client)).first():
             run_seed(s)
 
+app.include_router(config_router)
 app.include_router(clients_router)
 app.include_router(fabrics_router)
 app.include_router(shopping_router)

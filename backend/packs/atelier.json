@@ -1,0 +1,85 @@
+{
+  "id": "atelier",
+  "brand": {
+    "name": "Juliette Atelier",
+    "wordmark": ["Juliette", "Atelier"],
+    "tagline": "Est. 2026 · Girona",
+    "avatar": "J",
+    "userName": "Juliette M.",
+    "userRole": "Modista",
+    "colors": {
+      "paper": "#f6f1e8",
+      "paper2": "#eee6d5",
+      "paper3": "#e4dbc6",
+      "vellum": "#fbf7ed",
+      "sheet": "#ffffff",
+      "ink": "#2a1f14",
+      "ink2": "#5a4a38",
+      "ink3": "#8a7a64",
+      "hairline": "rgba(42,31,20,0.12)",
+      "hairline2": "rgba(42,31,20,0.22)",
+      "accent": "#8a2a2f",
+      "accent2": "#b8504e",
+      "gold": "#c9a86a"
+    },
+    "fonts": {
+      "serif": "\"Instrument Serif\", Georgia, serif",
+      "mono": "\"IBM Plex Mono\", ui-monospace, SFMono-Regular, Menlo, monospace",
+      "sans": "\"Inter\", -apple-system, BlinkMacSystemFont, system-ui, sans-serif",
+      "googleUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap"
+    }
+  },
+  "locale": {
+    "code": "ca",
+    "numberLocale": "ca-ES",
+    "currencySymbol": "€",
+    "paidKeyword": "rebut",
+    "doneKeywords": ["feta", "entregat"]
+  },
+  "strings": {
+    "nav.clients": "Clientes",
+    "nav.profile": "Fitxa",
+    "nav.fabrics": "Teles",
+    "nav.shop": "Per comprar",
+    "nav.roadmap": "Agenda",
+    "nav.intake": "Ingrés",
+    "nav.finances": "Finances",
+    "nav.section": "Taller",
+    "event.keyDate": "Boda"
+  },
+  "nav": [
+    { "screen": "clients", "labelKey": "nav.clients" },
+    { "screen": "profile", "labelKey": "nav.profile", "sub": true },
+    { "screen": "fabrics", "labelKey": "nav.fabrics", "feature": "fabrics" },
+    { "screen": "shop", "labelKey": "nav.shop", "accent": true, "feature": "shopping" },
+    { "screen": "roadmap", "labelKey": "nav.roadmap" },
+    { "screen": "intake", "labelKey": "nav.intake", "feature": "intake" },
+    { "screen": "finances", "labelKey": "nav.finances" }
+  ],
+  "features": {
+    "fabrics": true,
+    "shopping": true,
+    "intake": true,
+    "brief": true,
+    "deliveries": true,
+    "keyDate": true
+  },
+  "statuses": {
+    "client": [
+      { "key": "prospect",   "label": "Prospect",             "bg": "transparent", "bd": "#8a7a64", "fg": "#5a4a38", "dot": "◌", "dash": true,  "terminal": false },
+      { "key": "sense-paga", "label": "Sense paga i senyal",  "bg": "#f6efdc",     "bd": "#c9a86a", "fg": "#6b5420", "dot": "◐", "dash": false, "terminal": false },
+      { "key": "clienta",    "label": "Clienta",              "bg": "#eadad5",     "bd": "#8a2a2f", "fg": "#6b1f22", "dot": "●", "dash": false, "terminal": false },
+      { "key": "entregada",  "label": "Entregada",            "bg": "#2a1f14",     "bd": "#2a1f14", "fg": "#f6f1e8", "dot": "✓", "dash": false, "terminal": true }
+    ]
+  },
+  "entities": {
+    "client": {
+      "fields": [
+        { "key": "wedding_date_iso", "type": "date", "label": "Data de boda", "storage": "column", "required": true, "isKeyDate": true, "showInList": true },
+        { "key": "garment",          "type": "text", "label": "Peça",         "storage": "column", "showInList": true },
+        { "key": "garment_style",    "type": "text", "label": "Estil",        "storage": "column" },
+        { "key": "measurements_date","type": "date", "label": "Data mides",   "storage": "column" }
+      ]
+    }
+  }
+}

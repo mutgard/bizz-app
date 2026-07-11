@@ -115,7 +115,7 @@ function ClientCardColumn({ scenario, onClientCreated }: { scenario: DemoScenari
         garment_style: d.garment_style, phone: d.phone, email: d.email, notes: d.notes,
       });
       setCreated(true);
-      setTimeout(() => onClientCreated(), 800);
+      setTimeout(() => onClientCreated(c.id), 800);
     } catch {
       setError('Error en crear la clienta.');
       setCreating(false);

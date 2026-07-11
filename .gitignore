@@ -3,3 +3,8 @@ __pycache__/
 *.pyo
 .env
 .worktrees/
+.venv/
+node_modules/
+*.db
+backend/static/
+frontend/dist/
