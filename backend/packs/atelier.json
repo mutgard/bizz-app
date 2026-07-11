@@ -243,11 +243,12 @@
   },
   "entities": {
     "client": {
+      "fieldsLabel": "Peça",
       "fields": [
-        { "key": "wedding_date_iso", "type": "date", "label": "Data de boda", "storage": "column", "required": true, "isKeyDate": true, "showInList": true },
-        { "key": "garment",          "type": "text", "label": "Peça",         "storage": "column", "showInList": true },
-        { "key": "garment_style",    "type": "text", "label": "Estil",        "storage": "column" },
-        { "key": "measurements_date","type": "date", "label": "Data mides",   "storage": "column" }
+        { "key": "wedding_date_iso", "type": "date", "label": "Data de boda", "storage": "column", "required": true, "isKeyDate": true, "showInList": true, "listLabel": "Boda" },
+        { "key": "garment",          "type": "text", "label": "Tipus",        "storage": "column", "editable": true, "showInList": true, "listLabel": "Peça" },
+        { "key": "garment_style",    "type": "text", "label": "Estil",        "storage": "column", "editable": true },
+        { "key": "measurements_date","type": "date", "label": "Data mides",   "storage": "column", "editable": false, "hideWhenEmpty": true }
       ]
     }
   }

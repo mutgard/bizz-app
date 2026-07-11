@@ -62,6 +62,29 @@ def test_patch_client_invalid_status_rejected(client):
     r2 = client.patch(f"/clients/{cid}", json={"status": "bogus"})
     assert r2.status_code == 422
 
+def test_custom_fields_round_trip(client):
+    r = client.post("/clients", json={
+        "name": "Custom", "status": "prospect",
+        "custom": {"treatment": "Physio", "referring_doctor": "Dr. X"},
+        "appointments": [], "payments": [], "fabrics": []
+    })
+    assert r.status_code == 201
+    cid = r.json()["id"]
+    assert r.json()["custom"] == {"treatment": "Physio", "referring_doctor": "Dr. X"}
+    # patch merges, not replaces
+    r2 = client.patch(f"/clients/{cid}", json={"custom": {"treatment": "Rehab"}})
+    assert r2.status_code == 200
+    assert r2.json()["custom"] == {"treatment": "Rehab", "referring_doctor": "Dr. X"}
+
+def test_create_client_without_bridal_fields(client):
+    # a non-bridal vertical omits wedding_date/days_until/garment entirely
+    r = client.post("/clients", json={
+        "name": "Minimal", "status": "prospect",
+        "appointments": [], "payments": [], "fabrics": []
+    })
+    assert r.status_code == 201
+    assert r.json()["custom"] == {}
+
 def test_patch_client_status(client):
     r = client.post("/clients", json={
         "name": "Test", "wedding_date": "01 Jun 2026", "days_until": 43,

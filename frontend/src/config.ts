@@ -16,12 +16,20 @@ export interface PackStatus {
 export interface PackField {
   key: string;
   type: 'text' | 'date' | 'select' | 'number' | 'textarea';
-  label: string;
+  label: string;         // row/form label
+  listLabel?: string;    // column header in the client list (defaults to label)
   storage: 'column' | 'custom';
   required?: boolean;
   isKeyDate?: boolean;
   showInList?: boolean;
+  editable?: boolean;    // default true; false = view-only (never an input)
+  hideWhenEmpty?: boolean; // in view mode, omit the row when the value is blank
   options?: string[];
+}
+
+export interface PackEntityFields {
+  fieldsLabel: string;   // section header for the item fields (e.g. "Peça")
+  fields: PackField[];
 }
 
 export interface PackNavItem {
@@ -65,7 +73,7 @@ export interface Pack {
   nav: PackNavItem[];
   features: Record<string, boolean>;
   statuses: { client: PackStatus[] };
-  entities: { client: { fields: PackField[] } };
+  entities: { client: PackEntityFields };
 }
 
 export const BASE: string = import.meta.env.VITE_API_URL ?? '';
@@ -109,6 +117,25 @@ export function clientStatuses(): PackStatus[] {
 
 export function statusByKey(key: string): PackStatus | undefined {
   return getPack().statuses.client.find((s) => s.key === key);
+}
+
+/** All declared client fields (item + key-date). */
+export function clientFields(): PackField[] {
+  return getPack().entities.client.fields;
+}
+
+/** Item fields shown in the "fields" section — everything except the key-date. */
+export function itemFields(): PackField[] {
+  return clientFields().filter((f) => !f.isKeyDate);
+}
+
+export function clientFieldsLabel(): string {
+  return getPack().entities.client.fieldsLabel;
+}
+
+/** Fields flagged to appear as columns in the client list. */
+export function listFields(): PackField[] {
+  return clientFields().filter((f) => f.showInList);
 }
 
 /** The enabled nav items, in display order, with resolved labels + step numbers.

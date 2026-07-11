@@ -36,6 +36,7 @@ export interface Client {
   phone: string;
   email: string;
   notes: string;
+  custom?: Record<string, string>;
   fabrics: Fabric[];
   appointments: Appointment[];
   payments: Payment[];
@@ -43,8 +44,8 @@ export interface Client {
 
 export interface ClientCreate {
   name: string;
-  wedding_date: string;
-  days_until: number;
+  wedding_date?: string;
+  days_until?: number;
   status: ClientStatus;
   wedding_date_iso?: string;
   garment?: string;
@@ -53,6 +54,7 @@ export interface ClientCreate {
   phone?: string;
   email?: string;
   notes?: string;
+  custom?: Record<string, string>;
 }
 
 export interface ShoppingItem extends Fabric {

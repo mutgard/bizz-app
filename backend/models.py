@@ -1,6 +1,7 @@
 import datetime
 from typing import Optional, List
 from sqlmodel import Field, SQLModel, Relationship
+from sqlalchemy import Column, JSON
 from pydantic import ConfigDict
 
 class Client(SQLModel, table=True):
@@ -8,7 +9,7 @@ class Client(SQLModel, table=True):
 
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
-    wedding_date: str                    # display string e.g. "17 Mai 2026"
+    wedding_date: str = ""               # key-date display string e.g. "17 Mai 2026"
     wedding_date_iso: Optional[str] = None  # ISO format "YYYY-MM-DD" for computation
     days_until: int = 0                  # cached; use .days_remaining for live value
     status: str                          # pack-defined vocabulary; validated in schemas.py
@@ -18,6 +19,7 @@ class Client(SQLModel, table=True):
     phone: str = ""
     email: str = ""
     notes: str = ""
+    custom: Optional[dict] = Field(default=None, sa_column=Column(JSON))  # pack-defined extra fields
     fabrics: List["Fabric"] = Relationship(back_populates="client")
     appointments: List["Appointment"] = Relationship(back_populates="client")
     payments: List["Payment"] = Relationship(back_populates="client")

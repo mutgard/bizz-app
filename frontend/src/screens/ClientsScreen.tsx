@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import type { Client } from '../types';
 import { T } from '../tokens';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PageHeader } from '../components/PageHeader';
 import { Badge, Mono } from '../components/primitives';
 import { initials, parsePayments } from '../lib/clientHelpers';
-import { t, formatCurrency, clientStatuses, statusByKey } from '../config';
+import { t, formatCurrency, clientStatuses, statusByKey, featureOn, listFields } from '../config';
+import type { PackField } from '../config';
 
 interface Props { clients: Client[]; onOpen: (id: number) => void; onCreate: () => void; }
 
@@ -56,11 +57,43 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
   const px = mobile ? 20 : 40;
 
   const urgency = (days: number, status: string): 'critical' | 'warning' | 'none' => {
+    if (!featureOn('keyDate')) return 'none';
     if (statusByKey(status)?.terminal) return 'none';
     if (days <= 14 && days >= 0) return 'critical';
     if (days <= 30 && days >= 0) return 'warning';
     return 'none';
   };
+
+  const fieldVal = (c: Client, f: PackField): string =>
+    String((f.storage === 'custom' ? c.custom?.[f.key] : (c as unknown as Record<string, unknown>)[f.key]) ?? '');
+
+  // First non-key-date list field becomes the "item" column (atelier: garment → "Peça").
+  const itemListField = listFields().find(f => !f.isKeyDate);
+
+  type Col = { label: string; sortKey: SortKey | null; render: (c: Client, past: boolean) => ReactNode };
+  const desktopCols: Col[] = [
+    { label: t('common.client'), sortKey: 'name', render: (c) => (
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+        <div style={{ width: 32, height: 32, borderRadius: '50%', background: T.paper3, border: `1px solid ${T.hairline}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: T.serif, fontSize: 13, fontStyle: 'italic', color: T.ink2, flexShrink: 0 }}>{initials(c.name)}</div>
+        <span style={{ fontFamily: T.sans, fontSize: 13, color: T.ink, fontWeight: 500 }}>{c.name}</span>
+      </div>
+    ) },
+    ...(itemListField ? [{ label: itemListField.listLabel ?? itemListField.label, sortKey: null, render: (c: Client) => <Mono size={11} color={T.ink2}>{fieldVal(c, itemListField) || '—'}</Mono> } as Col] : []),
+    { label: t('clients.colStatus'), sortKey: 'status', render: (c) => <Badge status={c.status} size="sm" /> },
+    ...(featureOn('keyDate') ? [
+      { label: t('event.keyDate'), sortKey: null, render: (c: Client) => <Mono size={11}>{c.wedding_date}</Mono> } as Col,
+      { label: t('clients.colDays'), sortKey: 'days_until', render: (c: Client, past: boolean) => <Mono size={11} color={past ? T.accent : T.ink2}>{past ? `−${Math.abs(c.days_until)}d` : `${c.days_until}d`}</Mono> } as Col,
+    ] : []),
+    ...(featureOn('fabrics') ? [{ label: t('nav.fabrics'), sortKey: null, render: (c: Client) => <Mono size={11} color={T.ink3}>{c.fabrics.length > 0 ? String(c.fabrics.length) : '—'}</Mono> } as Col] : []),
+    { label: t('common.pending'), sortKey: null, render: (c) => {
+      const { priceTotal, paid } = parsePayments(c.payments);
+      if (priceTotal === null || priceTotal === 0) return <Mono size={11} color={T.ink3}>—</Mono>;
+      const outstanding = Math.max(0, priceTotal - paid);
+      return outstanding > 0
+        ? <Mono size={11} color={T.gold}>{formatCurrency(outstanding)}</Mono>
+        : <Mono size={11} color={T.ink3}>✓</Mono>;
+    } },
+  ];
 
   const plusButton = (
     <button
@@ -116,15 +149,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16 }}>
             <thead>
               <tr>
-                {([
-                  { label: t('common.client'), key: 'name' as SortKey },
-                  { label: t('common.garment'), key: null },
-                  { label: t('clients.colStatus'), key: 'status' as SortKey },
-                  { label: t('event.keyDate'), key: null },
-                  { label: t('clients.colDays'), key: 'days_until' as SortKey },
-                  { label: t('nav.fabrics'), key: null },
-                  { label: t('common.pending'), key: null },
-                ]).map(({ label, key }) => (
+                {desktopCols.map(({ label, sortKey: key }) => (
                   <th key={label}
                     onClick={key ? () => toggleSort(key) : undefined}
                     style={{
@@ -160,31 +185,11 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
                     onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = T.paper2; }}
                     onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                   >
-                    <td style={{ padding: '13px 12px 13px 0' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: '50%', background: T.paper3, border: `1px solid ${T.hairline}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: T.serif, fontSize: 13, fontStyle: 'italic', color: T.ink2, flexShrink: 0 }}>{initials(c.name)}</div>
-                        <span style={{ fontFamily: T.sans, fontSize: 13, color: T.ink, fontWeight: 500 }}>{c.name}</span>
-                      </div>
-                    </td>
-                    <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11} color={T.ink2}>{c.garment || '—'}</Mono></td>
-                    <td style={{ padding: '13px 12px 13px 0' }}><Badge status={c.status} size="sm" /></td>
-                    <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>{c.wedding_date}</Mono></td>
-                    <td style={{ padding: '13px 12px 13px 0' }}>
-                      <Mono size={11} color={past ? T.accent : T.ink2}>{past ? `−${Math.abs(c.days_until)}d` : `${c.days_until}d`}</Mono>
-                    </td>
-                    <td style={{ padding: '13px 12px 13px 0' }}>
-                      <Mono size={11} color={T.ink3}>{c.fabrics.length > 0 ? String(c.fabrics.length) : '—'}</Mono>
-                    </td>
-                    <td style={{ padding: '13px 0' }}>
-                      {(() => {
-                        const { priceTotal, paid } = parsePayments(c.payments);
-                        if (priceTotal === null || priceTotal === 0) return <Mono size={11} color={T.ink3}>—</Mono>;
-                        const outstanding = Math.max(0, priceTotal - paid);
-                        return outstanding > 0
-                          ? <Mono size={11} color={T.gold}>{formatCurrency(outstanding)}</Mono>
-                          : <Mono size={11} color={T.ink3}>✓</Mono>;
-                      })()}
-                    </td>
+                    {desktopCols.map((col, idx) => (
+                      <td key={col.label} style={{ padding: idx === desktopCols.length - 1 ? '13px 0' : '13px 12px 13px 0' }}>
+                        {col.render(c, past)}
+                      </td>
+                    ))}
                   </tr>
                 );
               })}
@@ -227,18 +232,20 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
                 <div style={{ width: 40, height: 40, borderRadius: '50%', background: T.paper3, border: `1px solid ${T.hairline}`, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: T.serif, fontSize: 16, fontStyle: 'italic', color: T.ink2 }}>{initials(c.name)}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 500, color: T.ink }}>{c.name}</div>
-                  <Mono size={10} color={T.ink3}>{c.garment || '—'}</Mono>
+                  {itemListField && <Mono size={10} color={T.ink3}>{fieldVal(c, itemListField) || '—'}</Mono>}
                 </div>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <Mono size={11}>{c.wedding_date}</Mono>
-                  <div style={{ marginTop: 2 }}>
-                    <Mono size={9} color={past ? T.accent : T.ink3}>{past ? `−${Math.abs(c.days_until)}d` : `d−${c.days_until}`}</Mono>
+                {featureOn('keyDate') && (
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <Mono size={11}>{c.wedding_date}</Mono>
+                    <div style={{ marginTop: 2 }}>
+                      <Mono size={9} color={past ? T.accent : T.ink3}>{past ? `−${Math.abs(c.days_until)}d` : `d−${c.days_until}`}</Mono>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Badge status={c.status} size="sm" />
-                {c.fabrics.length > 0 && <Mono size={9} color={T.ink3}>{c.fabrics.length} {t('clients.fabricsCount')}</Mono>}
+                {featureOn('fabrics') && c.fabrics.length > 0 && <Mono size={9} color={T.ink3}>{c.fabrics.length} {t('clients.fabricsCount')}</Mono>}
               </div>
             </div>
           );

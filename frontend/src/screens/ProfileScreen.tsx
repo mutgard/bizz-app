@@ -7,8 +7,10 @@ import { Label, Mono, Serif, Swatch, Checkbox } from '../components/primitives';
 import { initials, parsePayments } from '../lib/clientHelpers';
 import { IntakeTab } from '../components/IntakeTab';
 import { EventList } from '../components/EventList';
+import { DynamicFields } from '../components/DynamicFields';
 import { isoToday } from '../lib/calendarHelpers';
-import { t, featureOn, clientStatuses, statusByKey } from '../config';
+import { t, featureOn, clientStatuses, statusByKey, itemFields, clientFieldsLabel } from '../config';
+import type { PackField } from '../config';
 
 interface Props {
   client: Client;
@@ -41,6 +43,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
     garment_style: c.garment_style,
     notes: c.notes,
     status: c.status,
+    custom: { ...(c.custom ?? {}) } as Record<string, string>,
   });
 
   const fetchClientEvents = () => {
@@ -101,6 +104,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       garment_style: c.garment_style,
       notes: c.notes,
       status: c.status,
+      custom: { ...(c.custom ?? {}) } as Record<string, string>,
     });
     setEditing(true);
   };
@@ -162,10 +166,14 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
         wedding_date,
         wedding_date_iso: draft.wedding_date_iso || undefined,
         days_until: days,
+        // NOTE: editable storage:"column" fields must be listed explicitly here
+        // (and seeded into `draft` above). New verticals should declare extra
+        // fields as storage:"custom" — those are sent generically via draft.custom.
         garment: draft.garment,
         garment_style: draft.garment_style,
         notes: draft.notes,
         status: draft.status,
+        custom: draft.custom,
       });
       const updated = await api.getClient(c.id);
       setC(updated);
@@ -477,36 +485,24 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
           </div>
         )}
 
-        {/* Peça */}
-        <div style={{ marginBottom: 24 }}>
-          <Label style={{ marginBottom: 10 }}>{t('common.garment')}</Label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            {([
-              [t('common.type'), 'garment', c.garment],
-              [t('common.style'), 'garment_style', c.garment_style],
-            ] as [string, 'garment' | 'garment_style', string][]).map(([label, key, val]) => (
-              <div key={key} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-                <Mono size={10} color={T.ink3}>{label}</Mono>
-                {editing ? (
-                  <input
-                    value={draft[key]}
-                    onChange={e => setDraft(d => ({ ...d, [key]: e.target.value }))}
-                    placeholder="—"
-                    style={{ border: 'none', background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, textAlign: 'right', width: '60%' }}
-                  />
-                ) : (
-                  val ? <Mono size={10} color={T.ink}>{val}</Mono> : null
-                )}
-              </div>
-            ))}
-            {!editing && c.measurements_date && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-                <Mono size={10} color={T.ink3}>{t('profile.measurementsDate')}</Mono>
-                <Mono size={10} color={T.ink}>{c.measurements_date}</Mono>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Item fields (pack-declared) */}
+        <DynamicFields
+          fields={itemFields()}
+          fieldsLabel={clientFieldsLabel()}
+          editing={editing}
+          getValue={(f: PackField) => {
+            const src = editing ? draft : (c as unknown as Record<string, unknown>);
+            const store = editing ? draft.custom : (c.custom ?? {});
+            return String((f.storage === 'custom' ? store[f.key] : (src as Record<string, unknown>)[f.key]) ?? '');
+          }}
+          setValue={(f: PackField, v: string) => {
+            if (f.storage === 'custom') {
+              setDraft(d => ({ ...d, custom: { ...d.custom, [f.key]: v } }));
+            } else {
+              setDraft(d => ({ ...d, [f.key]: v }));
+            }
+          }}
+        />
 
         {/* Teles */}
         {featureOn('fabrics') && c.fabrics.length > 0 && (

@@ -34,8 +34,8 @@ class FabricIn(BaseModel):
 
 class ClientCreate(BaseModel):
     name: str
-    wedding_date: str
-    days_until: int
+    wedding_date: str = ""
+    days_until: int = 0
     wedding_date_iso: Optional[str] = None
     status: str
     garment: str = ""
@@ -44,6 +44,7 @@ class ClientCreate(BaseModel):
     phone: str = ""
     email: str = ""
     notes: str = ""
+    custom: dict = {}
     appointments: List[AppointmentIn] = []
     payments: List[PaymentIn] = []
     fabrics: List[FabricIn] = []
@@ -62,6 +63,7 @@ class ClientPatch(BaseModel):
     measurements_date: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
+    custom: Optional[dict] = None
 
     _check_status = field_validator("status")(_validate_status)
 

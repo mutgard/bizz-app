@@ -5,7 +5,9 @@ import { T } from '../tokens';
 import { Label, Mono } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { initials } from '../lib/clientHelpers';
-import { t, clientStatuses } from '../config';
+import { DynamicFields } from '../components/DynamicFields';
+import { t, clientStatuses, featureOn, itemFields, clientFieldsLabel } from '../config';
+import type { PackField } from '../config';
 
 interface Props {
   onCancel: () => void;
@@ -29,13 +31,14 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
   const [email, setEmail] = useState('');
   const [weddingDateISO, setWeddingDateISO] = useState('');
   const [status, setStatus] = useState<ClientStatus>(clientStatuses()[0]?.key ?? '');
-  const [garment, setGarment] = useState('');
-  const [garmentStyle, setGarmentStyle] = useState('');
+  const [fieldVals, setFieldVals] = useState<Record<string, string>>({});
+  const [customVals, setCustomVals] = useState<Record<string, string>>({});
   const [notes, setNotes] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [nameError, setNameError] = useState(false);
   const [dateError, setDateError] = useState(false);
+  const keyDate = featureOn('keyDate');
 
   const px = mobile ? 20 : 40;
   const s = T.badge[status];
@@ -52,10 +55,16 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
 
   const handleSubmit = async () => {
     const nErr = !name.trim();
-    const dErr = !weddingDateISO;
+    const dErr = keyDate && !weddingDateISO;
     setNameError(nErr);
     setDateError(dErr);
-    if (nErr || dErr) return;
+    // required item fields (non-key-date) must be filled
+    const missingRequired = itemFields().some(f => {
+      if (!f.required) return false;
+      const v = f.storage === 'custom' ? customVals[f.key] : fieldVals[f.key];
+      return !v;
+    });
+    if (nErr || dErr || missingRequired) return;
 
     setSubmitting(true);
     setError('');
@@ -64,13 +73,15 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
         name: name.trim(),
         phone,
         email,
-        wedding_date: formatWeddingDate(weddingDateISO),
-        wedding_date_iso: weddingDateISO,
-        days_until: computeDaysUntil(weddingDateISO),
         status,
-        garment,
-        garment_style: garmentStyle,
         notes,
+        ...fieldVals,
+        custom: customVals,
+        ...(keyDate ? {
+          wedding_date: formatWeddingDate(weddingDateISO),
+          wedding_date_iso: weddingDateISO,
+          days_until: computeDaysUntil(weddingDateISO),
+        } : {}),
       });
       onSuccess(newClient.id);
     } catch {
@@ -140,34 +151,31 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
           </div>
         </div>
 
-        {/* Boda */}
-        <div style={{ marginBottom: 24 }}>
-          <Label style={{ marginBottom: 10 }}>{t('event.keyDate')}</Label>
-          <input
-            type="date"
-            value={weddingDateISO}
-            onChange={e => { setWeddingDateISO(e.target.value); if (e.target.value) setDateError(false); }}
-            style={{ ...fieldInput(dateError), fontFamily: T.mono, fontSize: 13, color: T.ink, padding: '6px 0' }}
-          />
-          {dateError && <Mono size={9} color={T.accent} style={{ marginTop: 4, display: 'block' }}>{t('newClient.dateRequired')}</Mono>}
-        </div>
-
-        {/* Peça */}
-        <div style={{ marginBottom: 24 }}>
-          <Label style={{ marginBottom: 10 }}>{t('common.garment')}</Label>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-              <Mono size={10} color={T.ink3}>{t('common.type')}</Mono>
-              <input value={garment} onChange={e => setGarment(e.target.value)} placeholder="—"
-                style={{ border: 'none', background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, textAlign: 'right', width: '60%' }} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '7px 0', borderBottom: `1px solid ${T.hairline}` }}>
-              <Mono size={10} color={T.ink3}>{t('common.style')}</Mono>
-              <input value={garmentStyle} onChange={e => setGarmentStyle(e.target.value)} placeholder="—"
-                style={{ border: 'none', background: 'transparent', outline: 'none', fontFamily: T.mono, fontSize: 10, color: T.ink, textAlign: 'right', width: '60%' }} />
-            </div>
+        {/* Key date */}
+        {keyDate && (
+          <div style={{ marginBottom: 24 }}>
+            <Label style={{ marginBottom: 10 }}>{t('event.keyDate')}</Label>
+            <input
+              type="date"
+              value={weddingDateISO}
+              onChange={e => { setWeddingDateISO(e.target.value); if (e.target.value) setDateError(false); }}
+              style={{ ...fieldInput(dateError), fontFamily: T.mono, fontSize: 13, color: T.ink, padding: '6px 0' }}
+            />
+            {dateError && <Mono size={9} color={T.accent} style={{ marginTop: 4, display: 'block' }}>{t('newClient.dateRequired')}</Mono>}
           </div>
-        </div>
+        )}
+
+        {/* Item fields (pack-declared) */}
+        <DynamicFields
+          fields={itemFields()}
+          fieldsLabel={clientFieldsLabel()}
+          editing={true}
+          getValue={(f: PackField) => (f.storage === 'custom' ? customVals[f.key] : fieldVals[f.key]) ?? ''}
+          setValue={(f: PackField, v: string) => {
+            if (f.storage === 'custom') setCustomVals(prev => ({ ...prev, [f.key]: v }));
+            else setFieldVals(prev => ({ ...prev, [f.key]: v }));
+          }}
+        />
 
         {/* Notes */}
         <div style={{ marginBottom: 32 }}>

@@ -22,6 +22,7 @@ def _serialize(c: Client, session: Session) -> dict:
         "garment_style": c.garment_style, "measurements_date": c.measurements_date,
         "phone": c.phone, "email": c.email, "notes": c.notes,
         "wedding_date_iso": c.wedding_date_iso,
+        "custom": c.custom or {},
         "appointments": [{"id": a.id, "label": a.label, "value": a.value} for a in appointments],
         "payments": [{"id": p.id, "label": p.label, "value": p.value} for p in payments],
         "fabrics": [{"id": f.id, "name": f.name, "use": f.use, "qty": f.qty,
@@ -41,7 +42,8 @@ def create_client(body: ClientCreate, session: Session = Depends(get_session)):
                wedding_date_iso=body.wedding_date_iso,
                garment=body.garment, garment_style=body.garment_style,
                measurements_date=body.measurements_date,
-               phone=body.phone, email=body.email, notes=body.notes)
+               phone=body.phone, email=body.email, notes=body.notes,
+               custom=body.custom or {})
     session.add(c); session.commit(); session.refresh(c)
     for a in body.appointments:
         session.add(Appointment(client_id=c.id, label=a.label, value=a.value))
@@ -63,7 +65,11 @@ def patch_client(client_id: int, body: ClientPatch,
                  session: Session = Depends(get_session)):
     c = _get_or_404(session, client_id)
     for field, val in body.model_dump(exclude_unset=True).items():
-        setattr(c, field, val)
+        if field == "custom" and val is not None:
+            # merge, assigning a fresh dict (SQLAlchemy JSON doesn't track in-place mutation)
+            c.custom = {**(c.custom or {}), **val}
+        else:
+            setattr(c, field, val)
     session.add(c); session.commit(); session.refresh(c)
     return _serialize(c, session)
 
