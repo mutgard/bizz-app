@@ -82,6 +82,13 @@ class Delivery(SQLModel, table=True):
     received: bool = False
     client: Optional[Client] = Relationship(back_populates="deliveries")
 
+class Note(SQLModel, table=True):
+    """Free-text interaction log entry (call, WhatsApp, email, in-person) for a client."""
+    id: Optional[int] = Field(default=None, primary_key=True)
+    client_id: int = Field(foreign_key="client.id", index=True)
+    ts: str = Field(default_factory=lambda: datetime.datetime.now().isoformat(timespec="seconds"))
+    text: str
+
 class Lead(SQLModel, table=True):
     """Unconverted inbound contact — phone/walk-in/whatsapp/email/booking —
     before it becomes a Client."""
