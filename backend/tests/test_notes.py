@@ -30,13 +30,26 @@ def _make_client(client):
 
 def test_create_and_list_note(client):
     cid = _make_client(client)
-    r = client.post("/notes", json={"client_id": cid, "text": "Truca: vol moure la prova"})
-    assert r.status_code == 201
-    note = r.json()
-    assert note["text"].startswith("Truca")
+    # Create three notes for the same client
+    note1 = client.post("/notes", json={"client_id": cid, "text": "Truca: vol moure la prova"}).json()
+    assert note1["text"].startswith("Truca")
+
+    note2 = client.post("/notes", json={"client_id": cid, "text": "Second note"}).json()
+    assert note2["text"] == "Second note"
+
+    note3 = client.post("/notes", json={"client_id": cid, "text": "Third note"}).json()
+    assert note3["text"] == "Third note"
+
+    # Get all notes for the client
     r = client.get(f"/clients/{cid}/notes")
     assert r.status_code == 200
-    assert r.json()[0]["id"] == note["id"]
+    notes = r.json()
+
+    # Should have three notes, newest first (note3, note2, note1)
+    assert len(notes) == 3
+    assert notes[0]["id"] == note3["id"]  # Latest created should be first
+    assert notes[1]["id"] == note2["id"]
+    assert notes[2]["id"] == note1["id"]  # Earliest created should be last
 
 def test_note_requires_existing_client(client):
     r = client.post("/notes", json={"client_id": 99999, "text": "x"})

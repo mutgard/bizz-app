@@ -30,7 +30,7 @@ def create_note(body: NoteCreate, session: Session = Depends(get_session)):
 @router.get("/clients/{client_id}/notes")
 def list_notes(client_id: int, session: Session = Depends(get_session)):
     notes = session.exec(
-        select(Note).where(Note.client_id == client_id).order_by(Note.ts.desc())
+        select(Note).where(Note.client_id == client_id).order_by(Note.ts.desc()).order_by(Note.id.desc())
     ).all()
     return [_serialize(n) for n in notes]
 
