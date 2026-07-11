@@ -3,10 +3,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 from sqlmodel import Session, create_engine, SQLModel
 from database import create_db
-from models import Client, STATUS_VALUES
-
-def test_client_statuses_are_valid():
-    assert set(STATUS_VALUES) == {'prospect', 'sense-paga', 'clienta', 'entregada'}
+from models import Client
 
 def test_create_client(tmp_path, monkeypatch):
     import database
@@ -43,14 +40,3 @@ def test_fabric_relationship(tmp_path, monkeypatch):
         assert len(fabrics) == 1
         assert fabrics[0].name == "Mikado"
         assert fabrics[0].to_buy is True
-
-def test_invalid_status_rejected():
-    from pydantic import ValidationError
-    try:
-        c = Client(name="X", wedding_date="17 Mai 2026", days_until=0,
-                   status="invalid_status", garment="")
-        # If SQLModel doesn't raise at construction, validation happens at API layer
-        # Check that the value doesn't silently match a valid status
-        assert c.status not in STATUS_VALUES, "Invalid status was silently accepted"
-    except (ValueError, Exception):
-        pass  # Any error here is acceptable — means validation is working

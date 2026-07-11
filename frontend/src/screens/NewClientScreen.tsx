@@ -5,19 +5,12 @@ import { T } from '../tokens';
 import { Label, Mono } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { initials } from '../lib/clientHelpers';
-import { t } from '../config';
+import { t, clientStatuses } from '../config';
 
 interface Props {
   onCancel: () => void;
   onSuccess: (clientId: number) => void;
 }
-
-const STATUS_OPTIONS: { value: ClientStatus; label: string }[] = [
-  { value: 'prospect',   label: 'Prospect' },
-  { value: 'sense-paga', label: 'Sense paga' },
-  { value: 'clienta',    label: 'Clienta' },
-  { value: 'entregada',  label: 'Entregada' },
-];
 
 function computeDaysUntil(iso: string): number {
   return Math.round((new Date(iso).getTime() - Date.now()) / 86400000);
@@ -30,11 +23,12 @@ function formatWeddingDate(iso: string): string {
 
 export function NewClientScreen({ onCancel, onSuccess }: Props) {
   const mobile = useIsMobile();
+  const STATUS_OPTIONS = clientStatuses().map(s => ({ value: s.key, label: s.shortLabel ?? s.label }));
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [weddingDateISO, setWeddingDateISO] = useState('');
-  const [status, setStatus] = useState<ClientStatus>('prospect');
+  const [status, setStatus] = useState<ClientStatus>(clientStatuses()[0]?.key ?? '');
   const [garment, setGarment] = useState('');
   const [garmentStyle, setGarmentStyle] = useState('');
   const [notes, setNotes] = useState('');

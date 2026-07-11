@@ -8,7 +8,7 @@ import { initials, parsePayments } from '../lib/clientHelpers';
 import { IntakeTab } from '../components/IntakeTab';
 import { EventList } from '../components/EventList';
 import { isoToday } from '../lib/calendarHelpers';
-import { t, featureOn } from '../config';
+import { t, featureOn, clientStatuses, statusByKey } from '../config';
 
 interface Props {
   client: Client;
@@ -107,12 +107,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
 
   const cancelEdit = () => setEditing(false);
 
-  const PIPELINE: { value: import('../types').ClientStatus; label: string }[] = [
-    { value: 'prospect',   label: 'Prospect' },
-    { value: 'sense-paga', label: 'Sense paga' },
-    { value: 'clienta',    label: 'Clienta' },
-    { value: 'entregada',  label: 'Entregada' },
-  ];
+  const PIPELINE = clientStatuses().map(s => ({ value: s.key, label: s.shortLabel ?? s.label }));
   const currentIdx = PIPELINE.findIndex(s => s.value === c.status);
   const nextStage = currentIdx < PIPELINE.length - 1 ? PIPELINE[currentIdx + 1] : null;
 
@@ -269,8 +264,8 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   borderRadius: 999, cursor: 'pointer', outline: 'none',
                 }}
               >
-                {(['prospect', 'sense-paga', 'clienta', 'entregada'] as const).map(s => (
-                  <option key={s} value={s}>{s}</option>
+                {clientStatuses().map(s => (
+                  <option key={s.key} value={s.key}>{s.key}</option>
                 ))}
               </select>
             </div>
@@ -393,7 +388,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
             />
           </div>
         )}
-        {!editing && featureOn('keyDate') && c.status !== 'entregada' && (
+        {!editing && featureOn('keyDate') && !statusByKey(c.status)?.terminal && (
           <div style={{ background: T.ink, color: T.paper, padding: '18px 22px', marginBottom: 24 }}>
             <Label style={{ color: 'rgba(246,241,232,0.55)', marginBottom: 8 }}>{t('profile.countdown')} · {t('event.keyDate')}</Label>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>

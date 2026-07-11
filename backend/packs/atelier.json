@@ -78,6 +78,7 @@
     "nav.finances": "Finances",
     "nav.section": "Taller",
     "event.keyDate": "Boda",
+    "status.all": "Totes",
 
     "common.email": "Email",
     "common.phone": "Telèfon",
@@ -234,10 +235,10 @@
   },
   "statuses": {
     "client": [
-      { "key": "prospect",   "label": "Prospect",             "bg": "transparent", "bd": "#8a7a64", "fg": "#5a4a38", "dot": "◌", "dash": true,  "terminal": false },
-      { "key": "sense-paga", "label": "Sense paga i senyal",  "bg": "#f6efdc",     "bd": "#c9a86a", "fg": "#6b5420", "dot": "◐", "dash": false, "terminal": false },
-      { "key": "clienta",    "label": "Clienta",              "bg": "#eadad5",     "bd": "#8a2a2f", "fg": "#6b1f22", "dot": "●", "dash": false, "terminal": false },
-      { "key": "entregada",  "label": "Entregada",            "bg": "#2a1f14",     "bd": "#2a1f14", "fg": "#f6f1e8", "dot": "✓", "dash": false, "terminal": true }
+      { "key": "prospect",   "label": "Prospect",             "shortLabel": "Prospect",   "bg": "transparent", "bd": "#8a7a64", "fg": "#5a4a38", "dot": "◌", "dash": true,  "terminal": false },
+      { "key": "sense-paga", "label": "Sense paga i senyal",  "shortLabel": "Sense paga", "bg": "#f6efdc",     "bd": "#c9a86a", "fg": "#6b5420", "dot": "◐", "dash": false, "terminal": false },
+      { "key": "clienta",    "label": "Clienta",              "shortLabel": "Clienta",    "bg": "#eadad5",     "bd": "#8a2a2f", "fg": "#6b1f22", "dot": "●", "dash": false, "terminal": false },
+      { "key": "entregada",  "label": "Entregada",            "shortLabel": "Entregada",  "bg": "#2a1f14",     "bd": "#2a1f14", "fg": "#f6f1e8", "dot": "✓", "dash": false, "terminal": true }
     ]
   },
   "entities": {

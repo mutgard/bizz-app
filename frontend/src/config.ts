@@ -4,6 +4,7 @@
 export interface PackStatus {
   key: string;
   label: string;
+  shortLabel?: string;
   bg: string;
   bd: string;
   fg: string;
@@ -99,6 +100,15 @@ export function formatCurrency(n: number): string {
 /** Is a named feature enabled in the active pack? Missing flag = disabled. */
 export function featureOn(name: string): boolean {
   return !!getPack().features[name];
+}
+
+/** The client status vocabulary, in pipeline order. */
+export function clientStatuses(): PackStatus[] {
+  return getPack().statuses.client;
+}
+
+export function statusByKey(key: string): PackStatus | undefined {
+  return getPack().statuses.client.find((s) => s.key === key);
 }
 
 /** The enabled nav items, in display order, with resolved labels + step numbers.

@@ -1,10 +1,7 @@
 import datetime
-from typing import Optional, List, Literal
+from typing import Optional, List
 from sqlmodel import Field, SQLModel, Relationship
-from pydantic import ConfigDict, validator
-
-STATUS_VALUES = ('prospect', 'sense-paga', 'clienta', 'entregada')
-ClientStatus = Literal['prospect', 'sense-paga', 'clienta', 'entregada']
+from pydantic import ConfigDict
 
 class Client(SQLModel, table=True):
     model_config = ConfigDict(ignored_types=(property,))
@@ -14,7 +11,7 @@ class Client(SQLModel, table=True):
     wedding_date: str                    # display string e.g. "17 Mai 2026"
     wedding_date_iso: Optional[str] = None  # ISO format "YYYY-MM-DD" for computation
     days_until: int = 0                  # cached; use .days_remaining for live value
-    status: str                          # enforced to ClientStatus values by validator
+    status: str                          # pack-defined vocabulary; validated in schemas.py
     garment: str = ""
     garment_style: str = ""
     measurements_date: str = ""
@@ -25,13 +22,6 @@ class Client(SQLModel, table=True):
     appointments: List["Appointment"] = Relationship(back_populates="client")
     payments: List["Payment"] = Relationship(back_populates="client")
     deliveries: List["Delivery"] = Relationship(back_populates="client")
-
-    @validator("status")
-    @classmethod
-    def status_must_be_valid(cls, v: str) -> str:
-        if v not in STATUS_VALUES:
-            raise ValueError(f"status must be one of {STATUS_VALUES}, got {v!r}")
-        return v
 
     @property
     def days_remaining(self) -> Optional[int]:

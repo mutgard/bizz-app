@@ -41,6 +41,27 @@ def test_create_and_get_client(client):
     assert r2.status_code == 200
     assert r2.json()["status"] == "clienta"
 
+def test_create_client_invalid_status_rejected(client):
+    payload = {
+        "name": "Bad Status", "wedding_date": "17 Mai 2026", "days_until": 28,
+        "status": "not-a-real-status", "garment": "",
+        "phone": "", "email": "", "garment_style": "", "measurements_date": "",
+        "notes": "", "appointments": [], "payments": [], "fabrics": []
+    }
+    r = client.post("/clients", json=payload)
+    assert r.status_code == 422
+
+def test_patch_client_invalid_status_rejected(client):
+    r = client.post("/clients", json={
+        "name": "Test", "wedding_date": "01 Jun 2026", "days_until": 43,
+        "status": "prospect", "garment": "", "phone": "", "email": "",
+        "garment_style": "", "measurements_date": "", "notes": "",
+        "appointments": [], "payments": [], "fabrics": []
+    })
+    cid = r.json()["id"]
+    r2 = client.patch(f"/clients/{cid}", json={"status": "bogus"})
+    assert r2.status_code == 422
+
 def test_patch_client_status(client):
     r = client.post("/clients", json={
         "name": "Test", "wedding_date": "01 Jun 2026", "days_until": 43,

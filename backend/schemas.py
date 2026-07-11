@@ -1,5 +1,20 @@
 from typing import List, Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
+
+from config import get_pack
+
+
+def _valid_status_keys() -> set:
+    return {s["key"] for s in get_pack()["statuses"]["client"]}
+
+
+def _validate_status(v: Optional[str]) -> Optional[str]:
+    if v is None:
+        return v
+    valid = _valid_status_keys()
+    if v not in valid:
+        raise ValueError(f"status must be one of {sorted(valid)}, got {v!r}")
+    return v
 
 class AppointmentIn(BaseModel):
     label: str
@@ -33,6 +48,8 @@ class ClientCreate(BaseModel):
     payments: List[PaymentIn] = []
     fabrics: List[FabricIn] = []
 
+    _check_status = field_validator("status")(_validate_status)
+
 class ClientPatch(BaseModel):
     name: Optional[str] = None
     status: Optional[str] = None
@@ -45,6 +62,8 @@ class ClientPatch(BaseModel):
     measurements_date: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
+
+    _check_status = field_validator("status")(_validate_status)
 
 class AppointmentCreate(BaseModel):
     client_id: Optional[int] = None

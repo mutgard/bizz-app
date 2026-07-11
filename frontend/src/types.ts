@@ -1,4 +1,5 @@
-export type ClientStatus = 'prospect' | 'sense-paga' | 'clienta' | 'entregada';
+// Status keys are pack-defined; the vocabulary lives in the active pack.
+export type ClientStatus = string;
 
 export interface Fabric {
   id: number;

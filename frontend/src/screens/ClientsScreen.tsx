@@ -5,20 +5,16 @@ import { useIsMobile } from '../hooks/useIsMobile';
 import { PageHeader } from '../components/PageHeader';
 import { Badge, Mono } from '../components/primitives';
 import { initials, parsePayments } from '../lib/clientHelpers';
-import { t, formatCurrency } from '../config';
+import { t, formatCurrency, clientStatuses, statusByKey } from '../config';
 
 interface Props { clients: Client[]; onOpen: (id: number) => void; onCreate: () => void; }
 
-const CHIPS = [
-  { id: 'totes', l: 'Totes' },
-  { id: 'prospect', l: 'Prospect' },
-  { id: 'sense-paga', l: 'Sense paga' },
-  { id: 'clienta', l: 'Clienta' },
-  { id: 'entregada', l: 'Entregada' },
-];
-
 export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
   const mobile = useIsMobile();
+  const statusChips = [
+    { id: 'totes', l: t('status.all') },
+    ...clientStatuses().map(s => ({ id: s.key, l: s.shortLabel ?? s.label })),
+  ];
   const [filter, setFilter] = useState('totes');
   const [search, setSearch] = useState('');
   type SortKey = 'days_until' | 'name' | 'status';
@@ -51,7 +47,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
       if (sortKey === 'days_until') cmp = a.days_until - b.days_until;
       if (sortKey === 'name') cmp = a.name.localeCompare(b.name);
       if (sortKey === 'status') {
-        const order = ['prospect', 'sense-paga', 'clienta', 'entregada'];
+        const order = clientStatuses().map(s => s.key);
         cmp = order.indexOf(a.status) - order.indexOf(b.status);
       }
       return sortDir === 'asc' ? cmp : -cmp;
@@ -60,7 +56,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
   const px = mobile ? 20 : 40;
 
   const urgency = (days: number, status: string): 'critical' | 'warning' | 'none' => {
-    if (status === 'entregada') return 'none';
+    if (statusByKey(status)?.terminal) return 'none';
     if (days <= 14 && days >= 0) return 'critical';
     if (days <= 30 && days >= 0) return 'warning';
     return 'none';
@@ -95,7 +91,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
 
   const chips = (
     <div style={{ display: 'flex', gap: 6, overflowX: 'auto', scrollbarWidth: 'none' }}>
-      {CHIPS.map(f => {
+      {statusChips.map(f => {
         const on = filter === f.id;
         return (
           <button key={f.id} onClick={() => setFilter(f.id)} style={{

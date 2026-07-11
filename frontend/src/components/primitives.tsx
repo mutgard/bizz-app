@@ -1,6 +1,7 @@
 import React from 'react';
 import { T, SWATCH_PATTERNS } from '../tokens';
 import type { ClientStatus } from '../types';
+import { statusByKey } from '../config';
 
 // ─── Typography ──────────────────────────────────────────────
 
@@ -49,13 +50,6 @@ export function Rule({ dashed = false, color = T.hairline, style = {} }: {
 
 // ─── Badge ───────────────────────────────────────────────────
 
-const BADGE_LABELS: Record<ClientStatus, string> = {
-  'prospect':   'Prospect',
-  'sense-paga': 'Sense paga i senyal',
-  'clienta':    'Clienta',
-  'entregada':  'Entregada',
-};
-
 export function Badge({ status, size = 'md' }: { status: ClientStatus; size?: 'sm' | 'md' }) {
   const s = T.badge[status];
   if (!s) return null;
@@ -71,7 +65,7 @@ export function Badge({ status, size = 'md' }: { status: ClientStatus; size?: 's
       borderRadius: 999, whiteSpace: 'nowrap', flexShrink: 0,
     }}>
       <span style={{ fontSize: sm ? 8 : 9 }}>{s.dot}</span>
-      <span>{BADGE_LABELS[status]}</span>
+      <span>{statusByKey(status)?.label ?? status}</span>
     </span>
   );
 }
