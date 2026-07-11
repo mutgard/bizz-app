@@ -100,6 +100,8 @@
     "common.edit": "Edit",
     "common.save": "Save",
     "common.cancel": "Cancel",
+    "common.done": "Done",
+    "common.undo": "Undo",
     "common.create": "Create",
     "common.new": "New",
     "common.creating": "Creating…",

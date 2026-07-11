@@ -4,6 +4,7 @@ import { api } from '../api';
 import { T, fabricVariant } from '../tokens';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { Label, Mono, Serif, Swatch, Checkbox } from '../components/primitives';
+import { StatusChip } from '../components/StatusChip';
 import { initials, parsePayments } from '../lib/clientHelpers';
 import { IntakeTab } from '../components/IntakeTab';
 import { EventList } from '../components/EventList';
@@ -287,17 +288,21 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                   const isLast = i === PIPELINE.length - 1;
                   return (
                     <div key={stage.value} style={{ display: 'flex', alignItems: 'center' }}>
-                      <div style={{
-                        padding: '3px 10px',
-                        border: `1px ${isCurrent ? 'solid' : isPast ? 'solid' : 'dashed'} ${isCurrent ? T.accent : isPast ? T.hairline2 : T.hairline}`,
-                        background: isCurrent ? T.accent : 'transparent',
-                        color: isCurrent ? T.paper : T.ink3,
-                        fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase',
-                        whiteSpace: 'nowrap',
-                        opacity: isPast ? 0.5 : 1,
-                      }}>
-                        {isPast ? '✓ ' : ''}{stage.label}
-                      </div>
+                      {isCurrent ? (
+                        <StatusChip statusKey={stage.value} size="sm" />
+                      ) : (
+                        <div style={{
+                          padding: '3px 10px',
+                          border: `1px ${isPast ? 'solid' : 'dashed'} ${isPast ? T.hairline2 : T.hairline}`,
+                          background: 'transparent',
+                          color: T.ink3,
+                          fontFamily: T.mono, fontSize: 9, letterSpacing: 0.8, textTransform: 'uppercase',
+                          whiteSpace: 'nowrap',
+                          opacity: isPast ? 0.5 : 1,
+                        }}>
+                          {isPast ? '✓ ' : ''}{stage.label}
+                        </div>
+                      )}
                       {!isLast && (
                         <div style={{ width: 12, height: 1, background: T.hairline, flexShrink: 0 }} />
                       )}

@@ -3,7 +3,8 @@ import type { Client } from '../types';
 import { T } from '../tokens';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PageHeader } from '../components/PageHeader';
-import { Badge, Mono } from '../components/primitives';
+import { StatusChip } from '../components/StatusChip';
+import { Mono } from '../components/primitives';
 import { initials, parsePayments } from '../lib/clientHelpers';
 import { t, formatCurrency, clientStatuses, statusByKey, featureOn, listFields } from '../config';
 import type { PackField } from '../config';
@@ -79,7 +80,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
       </div>
     ) },
     ...(itemListField ? [{ label: itemListField.listLabel ?? itemListField.label, sortKey: null, render: (c: Client) => <Mono size={11} color={T.ink2}>{fieldVal(c, itemListField) || '—'}</Mono> } as Col] : []),
-    { label: t('clients.colStatus'), sortKey: 'status', render: (c) => <Badge status={c.status} size="sm" /> },
+    { label: t('clients.colStatus'), sortKey: 'status', render: (c) => <StatusChip statusKey={c.status} size="sm" /> },
     ...(featureOn('keyDate') ? [
       { label: t('event.keyDate'), sortKey: null, render: (c: Client) => <Mono size={11}>{c.wedding_date}</Mono> } as Col,
       { label: t('clients.colDays'), sortKey: 'days_until', render: (c: Client, past: boolean) => <Mono size={11} color={past ? T.accent : T.ink2}>{past ? `−${Math.abs(c.days_until)}d` : `${c.days_until}d`}</Mono> } as Col,
@@ -244,7 +245,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
                 )}
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Badge status={c.status} size="sm" />
+                <StatusChip statusKey={c.status} size="sm" />
                 {featureOn('fabrics') && c.fabrics.length > 0 && <Mono size={9} color={T.ink3}>{c.fabrics.length} {t('clients.fabricsCount')}</Mono>}
               </div>
             </div>
