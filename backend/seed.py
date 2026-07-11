@@ -1,9 +1,11 @@
-"""Run once: python3 seed.py — inserts prototype sample data."""
+"""Run once: python3 seed.py — inserts prototype sample data.
+The seed set is chosen by the active pack (ACTIVE_PACK)."""
 from database import create_db, engine
 from models import Client, Fabric, Appointment, Payment, Delivery
+from config import active_pack_id
 from sqlmodel import Session
 
-SEED = [
+ATELIER_SEED = [
     {
         "client": Client(
             name="Aina Puig", wedding_date="17 Mai 2026",
@@ -134,8 +136,55 @@ SEED = [
     },
 ]
 
+PHYSIO_SEED = [
+    {
+        "client": Client(
+            name="Marta Vidal", status="active",
+            phone="+34 630 11 22 33", email="marta.vidal@mail.com",
+            notes="Referred after lumbar strain. Twice-weekly sessions.",
+            custom={"treatment": "Lower-back rehab", "first_visit_date": "2026-06-10", "referring_doctor": "Dr. Serra"}),
+        "fabrics": [], "deliveries": [],
+        "appointments": [
+            Appointment(label="Session 3", value="12 Jul — done",       date="2026-07-12", title="Rehab session 3"),
+            Appointment(label="Session 4", value="16 Jul — scheduled",  date="2026-07-16", title="Rehab session 4"),
+        ],
+        "payments": [
+            Payment(label="Session pack (10)", value="€300 · paid"),
+            Payment(label="Extension",         value="€120 outstanding"),
+        ],
+    },
+    {
+        "client": Client(
+            name="Jordi Camps", status="new",
+            phone="+34 645 88 12 90", email="jordi.camps@gmail.com",
+            notes="Post-surgery, cleared by surgeon for physio.",
+            custom={"treatment": "Post-op knee", "first_visit_date": "2026-07-08", "referring_doctor": "Dr. Bosch"}),
+        "fabrics": [], "deliveries": [],
+        "appointments": [
+            Appointment(label="Assessment", value="08 Jul — done", date="2026-07-08", title="Initial assessment"),
+        ],
+        "payments": [Payment(label="Assessment", value="€60 · paid")],
+    },
+    {
+        "client": Client(
+            name="Laia Font", status="discharged",
+            phone="+34 622 45 76 18", email="laia.font@outlook.com",
+            notes="Full recovery. Discharged with home exercise plan.",
+            custom={"treatment": "Sports massage", "first_visit_date": "2026-03-02", "referring_doctor": ""}),
+        "fabrics": [], "deliveries": [],
+        "appointments": [
+            Appointment(label="Session 6", value="20 May — completed", date="2026-05-20", title="Final session"),
+        ],
+        "payments": [
+            Payment(label="Session pack (6)", value="€180 · paid"),
+        ],
+    },
+]
+
+SEEDS = {"atelier": ATELIER_SEED, "physio": PHYSIO_SEED}
+
 def run_seed(s: Session):
-    for entry in SEED:
+    for entry in SEEDS.get(active_pack_id(), ATELIER_SEED):
         c = entry["client"]
         s.add(c); s.commit(); s.refresh(c)
         for f in entry["fabrics"]:

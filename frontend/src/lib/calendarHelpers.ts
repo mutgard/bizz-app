@@ -1,9 +1,14 @@
-export const MONTH_NAMES_CA = [
-  'Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny',
-  'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre',
-];
+import { getPack } from '../config';
 
-export const DAY_NAMES_CA = ['Dl', 'Dt', 'Dc', 'Dj', 'Dv', 'Ds', 'Dg'];
+/** Month names for the active pack locale (index 0 = January). */
+export function monthNames(): string[] {
+  return getPack().locale.monthNames;
+}
+
+/** Weekday headers for the active pack locale (Mon-first). */
+export function dayNames(): string[] {
+  return getPack().locale.dayNames;
+}
 
 /** Mon-first grid. Returns 35 or 42 Date|null entries. */
 export function getMonthCells(year: number, month: number): (Date | null)[] {
@@ -31,5 +36,5 @@ export function isoToday(): string {
 
 export function formatEventDate(iso: string): string {
   const [y, m, d] = iso.split('-').map(Number);
-  return `${d} ${MONTH_NAMES_CA[m - 1]} ${y}`;
+  return `${d} ${monthNames()[m - 1]} ${y}`;
 }

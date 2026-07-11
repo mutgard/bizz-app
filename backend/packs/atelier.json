@@ -34,7 +34,9 @@
     "numberLocale": "ca-ES",
     "currencySymbol": "€",
     "paidKeyword": "rebut",
-    "doneKeywords": ["feta", "entregat"]
+    "doneKeywords": ["feta", "entregat"],
+    "monthNames": ["Gener", "Febrer", "Març", "Abril", "Maig", "Juny", "Juliol", "Agost", "Setembre", "Octubre", "Novembre", "Desembre"],
+    "dayNames": ["Dl", "Dt", "Dc", "Dj", "Dv", "Ds", "Dg"]
   },
   "theme": {
     "cssVars": {
@@ -108,6 +110,7 @@
     "common.deliveries": "Entregues",
 
     "clients.eyebrow": "Atelier · Taller",
+    "clients.eyebrowMobile": "Atelier",
     "clients.search": "Cerca…",
     "clients.brides": "noives",
     "clients.colStatus": "Estat",

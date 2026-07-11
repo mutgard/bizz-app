@@ -7,7 +7,7 @@ import { EventChip } from '../components/EventChip';
 import { EventDialog } from '../components/EventDialog';
 import { Mono } from '../components/primitives';
 import {
-  getMonthCells, dateToIso, MONTH_NAMES_CA, DAY_NAMES_CA,
+  getMonthCells, dateToIso, monthNames, dayNames,
 } from '../lib/calendarHelpers';
 import { t } from '../config';
 
@@ -71,7 +71,7 @@ export function RoadmapScreen({ clients, onRefresh }: Props) {
         </button>
         <div style={{ flex: 1, textAlign: 'center' }}>
           <span style={{ fontFamily: T.serif, fontSize: 24, color: T.ink, letterSpacing: -0.5 }}>
-            {MONTH_NAMES_CA[month]}
+            {monthNames()[month]}
           </span>
           <span style={{ fontFamily: T.mono, fontSize: 13, color: T.ink3, marginLeft: 10 }}>
             {year}
@@ -110,7 +110,7 @@ export function RoadmapScreen({ clients, onRefresh }: Props) {
         borderBottom: `1px solid ${T.hairline}`, flexShrink: 0,
         padding: '0 4px',
       }}>
-        {DAY_NAMES_CA.map((d) => (
+        {dayNames().map((d) => (
           <div key={d} style={{ padding: '6px 8px', textAlign: 'center' }}>
             <Mono size={9} color={T.ink3}>{d}</Mono>
           </div>

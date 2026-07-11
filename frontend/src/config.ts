@@ -67,6 +67,8 @@ export interface Pack {
     currencySymbol: string;
     paidKeyword: string;
     doneKeywords: string[];
+    monthNames: string[];
+    dayNames: string[];
   };
   theme: { cssVars: Record<string, string> };
   strings: Record<string, string>;

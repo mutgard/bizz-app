@@ -4,7 +4,7 @@ import { Label, Mono, Serif } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { parsePayments } from '../lib/clientHelpers';
 import { initials } from '../lib/clientHelpers';
-import { t, formatCurrency } from '../config';
+import { t, formatCurrency, featureOn } from '../config';
 
 interface Props {
   clients: Client[];
@@ -88,7 +88,7 @@ export function FinancesScreen({ clients, onOpen }: Props) {
           <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: 16 }}>
             <thead>
               <tr>
-                {[t('common.client'), t('event.keyDate'), t('common.total'), t('common.paid'), t('common.pending'), t('finances.progress')].map(h => (
+                {[t('common.client'), ...(featureOn('keyDate') ? [t('event.keyDate')] : []), t('common.total'), t('common.paid'), t('common.pending'), t('finances.progress')].map(h => (
                   <th key={h} style={{ textAlign: 'left', padding: '8px 12px 8px 0', fontFamily: T.mono, fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: T.ink3, borderBottom: `1px solid ${T.hairline}`, fontWeight: 400 }}>{h}</th>
                 ))}
               </tr>
@@ -106,7 +106,7 @@ export function FinancesScreen({ clients, onOpen }: Props) {
                       <span style={{ fontFamily: T.sans, fontSize: 13, color: T.ink, fontWeight: 500 }}>{c.name}</span>
                     </div>
                   </td>
-                  <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>{c.wedding_date}</Mono></td>
+                  {featureOn('keyDate') && <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>{c.wedding_date}</Mono></td>}
                   <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11}>{formatCurrency(priceTotal)}</Mono></td>
                   <td style={{ padding: '13px 12px 13px 0' }}><Mono size={11} color={T.accent}>{formatCurrency(paid)}</Mono></td>
                   <td style={{ padding: '13px 12px 13px 0' }}>
@@ -133,7 +133,7 @@ export function FinancesScreen({ clients, onOpen }: Props) {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
               <div>
                 <div style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 500, color: T.ink }}>{c.name}</div>
-                <Mono size={10} color={T.ink3}>{c.wedding_date}</Mono>
+                {featureOn('keyDate') && <Mono size={10} color={T.ink3}>{c.wedding_date}</Mono>}
               </div>
               <div style={{ textAlign: 'right' }}>
                 <Mono size={10} color={outstanding > 0 ? T.gold : T.ink3} style={{ display: 'block' }}>

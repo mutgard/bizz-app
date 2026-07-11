@@ -205,7 +205,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
-      <PageHeader eyebrow="Atelier" title={t('nav.clients')} subtitle={`${clients.length}`} right={<>{searchBox}{plusButton}</>} />
+      <PageHeader eyebrow={t('clients.eyebrowMobile')} title={t('nav.clients')} subtitle={`${clients.length}`} right={<>{searchBox}{plusButton}</>} />
       <div style={{ padding: '10px 20px 0', flexShrink: 0 }}>{chips}</div>
       <div style={{ flex: 1, overflow: 'auto', padding: '10px 16px 24px' }}>
         {list.map(c => {
