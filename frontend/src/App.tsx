@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useParams, useLocation } from 'react-router-dom';
 import type { Client } from './types';
 import { T } from './tokens';
 import { useIsMobile } from './hooks/useIsMobile';
@@ -16,8 +17,7 @@ import { api } from './api';
 import { BriefPage } from './pages/BriefPage';
 import { AdminPage } from './pages/AdminPage';
 import { featureOn } from './config';
-
-type Screen = 'clients' | 'profile' | 'fabrics' | 'shop' | 'roadmap' | 'intake' | 'finances';
+import { pathForScreen, screenForPath } from './routes';
 
 export default function App() {
   const pathname = window.location.pathname;
@@ -33,8 +33,8 @@ export default function App() {
 
 function AtelierApp() {
   const mobile = useIsMobile();
-  const [screen, setScreen] = useState<Screen>('clients');
-  const [clientId, setClientId] = useState<number | null>(null);
+  const navigate = useNavigate();
+  const location = useLocation();
   const [clients, setClients] = useState<Client[]>([]);
   const [creating, setCreating] = useState(false);
 
@@ -50,58 +50,52 @@ function AtelierApp() {
     fabricsToBuy,
   };
 
-  const nav = (s: string) => { setScreen(s as Screen); setCreating(false); if (s !== 'profile') setClientId(null); };
-  const openClient = (id: number) => { setClientId(id); setScreen('profile'); };
-  const back = () => { setScreen('clients'); setClientId(null); };
+  const active = screenForPath(location.pathname);
+  const nav = (s: string) => { setCreating(false); navigate(pathForScreen(s)); };
+  const openClient = (id: number) => navigate(`/clients/${id}`);
 
   const handleCreateSuccess = (id: number) => {
     setCreating(false);
     refresh().then(() => openClient(id));
   };
 
-  const content = (
-    <>
-      {screen === 'clients' && !creating && <ClientsScreen clients={clients} onOpen={openClient} onCreate={() => setCreating(true)} />}
-      {screen === 'clients' && creating && mobile && (
-        <NewClientScreen onCancel={() => setCreating(false)} onSuccess={handleCreateSuccess} />
+  const routes = (
+    <Routes>
+      <Route path="/" element={<Navigate to="/clients" replace />} />
+      <Route path="/clients" element={<>
+        {!creating && <ClientsScreen clients={clients} onOpen={openClient} onCreate={() => setCreating(true)} />}
+        {creating && mobile && <NewClientScreen onCancel={() => setCreating(false)} onSuccess={handleCreateSuccess} />}
+      </>} />
+      <Route path="/clients/:id" element={<ProfileRoute clients={clients} onRefresh={refresh} onOpenFabrics={() => nav('fabrics')} />} />
+      {featureOn('fabrics') && <Route path="/fabrics" element={<FabricsScreen clients={clients} onRefresh={refresh} />} />}
+      {featureOn('shopping') && <Route path="/shop" element={<ShoppingScreen clients={clients} />} />}
+      <Route path="/agenda" element={<RoadmapScreen clients={clients} onRefresh={refresh} />} />
+      {featureOn('intake') && (
+        <Route path="/intake" element={
+          <InboxScreen
+            onClientCreated={(id) => refresh().then(() => openClient(id))}
+            onOpenClient={openClient}
+          />
+        } />
       )}
-      {screen === 'profile' && clientId !== null && (
-        <ProfileScreen
-          client={clients.find(c => c.id === clientId) ?? clients[0]}
-          onBack={back}
-          onOpenFabrics={() => nav('fabrics')}
-          onRefresh={refresh}
-          allClients={clients}
-        />
-      )}
-      {screen === 'fabrics'  && featureOn('fabrics')  && <FabricsScreen clients={clients} onRefresh={refresh} />}
-      {screen === 'shop'     && featureOn('shopping') && <ShoppingScreen clients={clients} />}
-      {screen === 'roadmap'  && <RoadmapScreen clients={clients} onRefresh={refresh} />}
-      {screen === 'intake' && featureOn('intake') && (
-        <InboxScreen
-          onClientCreated={(id) => refresh().then(() => openClient(id))}
-          onOpenClient={openClient}
-        />
-      )}
-      {screen === 'finances' && (
-        <FinancesScreen clients={clients} onOpen={openClient} />
-      )}
-    </>
+      <Route path="/caixa" element={<FinancesScreen clients={clients} onOpen={openClient} />} />
+      <Route path="*" element={<Navigate to="/clients" replace />} />
+    </Routes>
   );
 
   if (mobile) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100dvh', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-        <MobileHeader active={screen} onNav={nav} counts={counts} />
-        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', paddingBottom: 'env(safe-area-inset-bottom)' }}>{content}</div>
+        <MobileHeader active={active} onNav={nav} counts={counts} />
+        <div style={{ flex: 1, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', paddingBottom: 'env(safe-area-inset-bottom)' }}>{routes}</div>
       </div>
     );
   }
 
   return (
     <div style={{ display: 'grid', gridTemplateColumns: '232px 1fr', width: '100%', height: '100%', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-      <Sidebar active={screen} onNav={nav} counts={counts} />
-      <div style={{ minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{content}</div>
+      <Sidebar active={active} onNav={nav} counts={counts} />
+      <div style={{ minWidth: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{routes}</div>
       {creating && !mobile && (
         <div style={{
           position: 'fixed', inset: 0, zIndex: 100,
@@ -122,5 +116,26 @@ function AtelierApp() {
         </div>
       )}
     </div>
+  );
+}
+
+function ProfileRoute({ clients, onRefresh, onOpenFabrics }: {
+  clients: Client[];
+  onRefresh: () => Promise<void>;
+  onOpenFabrics: () => void;
+}) {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const client = clients.find(c => c.id === Number(id));
+  if (!clients.length) return null;              // still loading
+  if (!client) return <Navigate to="/clients" replace />;
+  return (
+    <ProfileScreen
+      client={client}
+      onBack={() => navigate('/clients')}
+      onOpenFabrics={onOpenFabrics}
+      onRefresh={onRefresh}
+      allClients={clients}
+    />
   );
 }

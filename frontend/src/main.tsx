@@ -1,5 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import { loadPack, applyTheme, type Pack } from './config'
 import { hydrateTokens } from './tokens'
@@ -62,7 +63,9 @@ async function boot() {
     const { default: App } = await import('./App.tsx')
     root.render(
       <StrictMode>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </StrictMode>
     )
   } catch (e) {
