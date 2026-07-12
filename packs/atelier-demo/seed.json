@@ -1,0 +1,241 @@
+{
+  "meta": {
+    "monthAbbrev": ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun",
+                    "Jul", "Ago", "Set", "Oct", "Nov", "Des"]
+  },
+  "clients": [
+    {
+      "client": {
+        "name": "Aina Puig",
+        "wedding_date": "{{disp:+25}}",
+        "wedding_date_iso": "{{iso:+25}}",
+        "days_until": "{{days:+25}}",
+        "status": "clienta",
+        "garment": "Vestit a mida",
+        "garment_style": "Princesa modern",
+        "measurements_date": "{{disp:-60}}",
+        "phone": "+34 639 42 18 05",
+        "email": "aina.puig@mail.cat",
+        "notes": "Vol escot en V profund. Ha de poder ballar."
+      },
+      "fabrics": [
+        {"name": "Mikado seda marfil", "use": "Cos", "qty": "3.2 m", "price": "€48/m", "to_buy": true, "supplier": "Gratacós"},
+        {"name": "Tul francès", "use": "Vel", "qty": "2.5 m", "price": "€22/m", "to_buy": true, "supplier": "Ribes & Casals"},
+        {"name": "Crepe georgette", "use": "Folre", "qty": "4.0 m", "price": "€18/m", "to_buy": false, "supplier": "Gratacós"},
+        {"name": "Puntilla Chantilly", "use": "Vora", "qty": "1.2 m", "price": "€95/m", "to_buy": false, "supplier": "Gratacós"}
+      ],
+      "appointments": [
+        {"label": "Prova 1", "value": "{{short:-40}} — feta", "date": "{{iso:-40}}", "title": "Primera prova", "time": "10:00", "outcome": "done"},
+        {"label": "Prova 2", "value": "{{short:-12}} — feta", "date": "{{iso:-12}}", "title": "Segona prova", "time": "11:30", "outcome": "done"},
+        {"label": "Última prova", "value": "{{short:+2}} — programada", "date": "{{iso:+2}}", "title": "Última prova", "time": "10:00", "duration_min": 60},
+        {"label": "Entrega", "value": "{{short:+23}}", "date": "{{iso:+23}}", "title": "Entrega vestit", "time": "09:00", "duration_min": 30}
+      ],
+      "payments": [
+        {"label": "Paga i senyal", "value": "€500 · rebut"},
+        {"label": "Saldo", "value": "€1.800 pendent"}
+      ],
+      "deliveries": [
+        {"supplier": "Gratacós", "description": "Mikado seda marfil 3.2m", "expected_date": "{{iso:+5}}", "received": false},
+        {"supplier": "Ribes & Casals", "description": "Tul francès 2.5m", "expected_date": "{{iso:+8}}", "received": false}
+      ],
+      "notes": [
+        {"ts": "{{ts:-12 11:45}}", "text": "Prova 2 feta: ajust cintura −2 cm, allargar cola 5 cm. Molt contenta amb el cos."},
+        {"ts": "{{ts:-8 17:20}}", "text": "WhatsApp: pregunta si pot venir la mare a l'última prova. Confirmat que sí."},
+        {"ts": "{{ts:-3 10:05}}", "text": "Trucada: recordat el saldo pendent abans de l'entrega. Farà bizum aquesta setmana."},
+        {"ts": "{{ts:-1 16:40}}", "text": "WhatsApp: envia foto de les sabates definitives (taló 7 cm) — ajustar baix del vestit."}
+      ]
+    },
+    {
+      "client": {
+        "name": "Berta Soler",
+        "wedding_date": "{{disp:+39}}",
+        "wedding_date_iso": "{{iso:+39}}",
+        "days_until": "{{days:+39}}",
+        "status": "sense-paga",
+        "garment": "Vestit + vel",
+        "garment_style": "Romàntic clàssic",
+        "measurements_date": "Pendent",
+        "phone": "+34 612 88 31 04",
+        "email": "berta.soler@gmail.com",
+        "notes": ""
+      },
+      "payments": [
+        {"label": "Pressupost", "value": "€2.400 pendent"}
+      ],
+      "notes": [
+        {"ts": "{{ts:-9 15:30}}", "text": "Consulta inicial feta: vol vestit + vel curt, línia romàntica. Ensenyades 3 teles."},
+        {"ts": "{{ts:-6 12:10}}", "text": "Pressupost enviat per email: €2.400 (vestit + vel). Pendent de resposta."},
+        {"ts": "{{ts:-2 18:55}}", "text": "WhatsApp: diu que ho està pensant, ho comenta amb la família aquest cap de setmana."}
+      ]
+    },
+    {
+      "client": {
+        "name": "Clara Ferrer",
+        "wedding_date": "{{disp:+53}}",
+        "wedding_date_iso": "{{iso:+53}}",
+        "days_until": "{{days:+53}}",
+        "status": "clienta",
+        "garment": "Vestit princesa",
+        "garment_style": "Royal / estructura",
+        "measurements_date": "{{disp:-75}}",
+        "phone": "+34 651 20 47 89",
+        "email": "clara.ferrer@mail.com",
+        "notes": ""
+      },
+      "fabrics": [
+        {"name": "Mikado seda marfil", "use": "Faldilla", "qty": "5.5 m", "price": "€48/m", "to_buy": false, "supplier": "Gratacós"},
+        {"name": "Organza de seda", "use": "Volants", "qty": "8.0 m", "price": "€32/m", "to_buy": false, "supplier": "Gratacós"},
+        {"name": "Tul de cotó", "use": "Enagua", "qty": "6.0 m", "price": "€12/m", "to_buy": false, "supplier": "Ribes & Casals"},
+        {"name": "Puntilla Chantilly", "use": "Escot", "qty": "0.8 m", "price": "€95/m", "to_buy": false, "supplier": "Gratacós"},
+        {"name": "Crepe georgette", "use": "Folre cos", "qty": "3.0 m", "price": "€18/m", "to_buy": false, "supplier": "Gratacós"},
+        {"name": "Entretela fusible", "use": "Estructura", "qty": "2.5 m", "price": "€8/m", "to_buy": false, "supplier": "Habilitació Marín"}
+      ],
+      "appointments": [
+        {"label": "Prova 1", "value": "{{short:-30}} — feta", "date": "{{iso:-30}}", "title": "Primera prova", "time": "10:30", "outcome": "done"},
+        {"label": "Prova 2", "value": "avui — programada", "date": "{{iso:+0}}", "title": "Segona prova", "time": "16:00", "duration_min": 60},
+        {"label": "Prova 3", "value": "{{short:+14}} — programada", "date": "{{iso:+14}}", "title": "Tercera prova", "time": "12:00", "duration_min": 60}
+      ],
+      "payments": [
+        {"label": "Paga i senyal", "value": "€800 · rebut"},
+        {"label": "Saldo", "value": "€2.200 pendent"}
+      ],
+      "notes": [
+        {"ts": "{{ts:-30 11:40}}", "text": "Prova 1: estructura del cos perfecta. Decidit afegir volant d'organza a la faldilla."},
+        {"ts": "{{ts:-15 09:25}}", "text": "Trucada: confirma prova 2. Demana si el vestit tindrà butxaques — sí, laterals amagades."}
+      ]
+    },
+    {
+      "client": {
+        "name": "Dolors Vidal",
+        "wedding_date": "{{disp:+67}}",
+        "wedding_date_iso": "{{iso:+67}}",
+        "days_until": "{{days:+67}}",
+        "status": "prospect",
+        "garment": "Consulta inicial",
+        "garment_style": "Per decidir",
+        "measurements_date": "No preses",
+        "phone": "+34 608 55 12 37",
+        "email": "dolors.vidal@outlook.com",
+        "notes": "Porta imatges de Pinterest. No vol cotilla."
+      },
+      "appointments": [
+        {"label": "Consulta", "value": "{{short:+1}} — programada", "date": "{{iso:+1}}", "title": "Consulta inicial", "time": "17:00", "duration_min": 45}
+      ],
+      "notes": [
+        {"ts": "{{ts:-3 13:15}}", "text": "Trucada inicial: boda en un celler del Penedès. Estil pendent de definir, porta moodboard."}
+      ]
+    },
+    {
+      "client": {
+        "name": "Elena Roca",
+        "wedding_date": "{{disp:+74}}",
+        "wedding_date_iso": "{{iso:+74}}",
+        "days_until": "{{days:+74}}",
+        "status": "clienta",
+        "garment": "Vestit bohemi",
+        "garment_style": "Fluix / natural",
+        "measurements_date": "{{disp:-20}}",
+        "phone": "+34 699 14 88 62",
+        "email": "elena.roca@gmail.com",
+        "notes": ""
+      },
+      "fabrics": [
+        {"name": "Gasa de cotó", "use": "Cos", "qty": "3.8 m", "price": "€14/m", "to_buy": false, "supplier": "Ribes & Casals"},
+        {"name": "Puntilla italiana", "use": "Màniga", "qty": "0.8 m", "price": "€78/m", "to_buy": true, "supplier": "Gratacós"},
+        {"name": "Setí de seda", "use": "Cinturó", "qty": "0.5 m", "price": "€36/m", "to_buy": false, "supplier": "Gratacós"}
+      ],
+      "appointments": [
+        {"label": "Prova 1", "value": "{{short:+6}} — programada", "date": "{{iso:+6}}", "title": "Primera prova", "time": "09:30", "duration_min": 60}
+      ],
+      "payments": [
+        {"label": "Paga i senyal", "value": "€400 · rebut"},
+        {"label": "Saldo", "value": "€1.100 pendent"}
+      ],
+      "deliveries": [
+        {"supplier": "Gratacós", "description": "Puntilla italiana 0.8m", "expected_date": "{{iso:+4}}", "received": false}
+      ],
+      "notes": [
+        {"ts": "{{ts:-20 10:50}}", "text": "Mides preses. Vol màniga llarga de puntilla i esquena descoberta."},
+        {"ts": "{{ts:-5 19:05}}", "text": "WhatsApp: envia referència de corona de flors — coordinar el vel amb la floristeria."}
+      ]
+    },
+    {
+      "client": {
+        "name": "Fina Batlle",
+        "wedding_date": "{{disp:-220}}",
+        "wedding_date_iso": "{{iso:-220}}",
+        "days_until": "{{days:-220}}",
+        "status": "entregada",
+        "garment": "Vestit sirena",
+        "garment_style": "Glamour / escot obert",
+        "measurements_date": "{{disp:-400}}",
+        "phone": "+34 634 77 23 91",
+        "email": "fina.batlle@yahoo.es",
+        "notes": "Bottons de perla a l'esquena. Clienta molt satisfeta."
+      },
+      "fabrics": [
+        {"name": "Crepe de seda", "use": "Cos", "qty": "4.5 m", "price": "€55/m", "to_buy": false, "supplier": "Gratacós"},
+        {"name": "Tul elàstic", "use": "Folre", "qty": "3.0 m", "price": "€16/m", "to_buy": false, "supplier": "Ribes & Casals"}
+      ],
+      "appointments": [
+        {"label": "Prova 1", "value": "{{short:-300}}", "date": "{{iso:-300}}", "title": "Primera prova", "time": "10:00", "outcome": "done"},
+        {"label": "Prova 2", "value": "{{short:-260}}", "date": "{{iso:-260}}", "title": "Segona prova", "time": "11:00", "outcome": "done"},
+        {"label": "Entrega", "value": "{{short:-235}} — feta", "date": "{{iso:-235}}", "title": "Entrega vestit", "time": "09:00", "outcome": "done"}
+      ],
+      "payments": [
+        {"label": "Paga i senyal", "value": "€600 · rebut"},
+        {"label": "Saldo", "value": "€2.200 · rebut"}
+      ],
+      "notes": [
+        {"ts": "{{ts:-200 12:30}}", "text": "Ens envia fotos de la boda — el vestit, espectacular. Autoritza publicar-les a Instagram."}
+      ]
+    }
+  ],
+  "today_appointments": [
+    {"label": "Cita d'avui", "value": "{{iso:+0}} — done", "date": "{{iso:+0}}", "title": "Cita d'avui", "time": "09:30", "duration_min": 30, "outcome": "done", "source": "manual"},
+    {"label": "Cita reservada online", "value": "{{iso:+0}} — booked", "date": "{{iso:+0}}", "title": "Cita reservada online", "time": "16:00", "duration_min": 45, "outcome": "", "source": "booking", "external_ref": "cal-2b7f9e1a",
+     "context": {"answers": {"event_type": "Primera visita", "note": "Reservat des del web"}}}
+  ],
+  "leads": [
+    {"channel": "whatsapp", "name": "Núria Bosch", "phone": "+34 655 90 21 47", "email": "",
+     "notes": "Busca vestit boho fluid per a cerimònia exterior en un mas (80 convidats), el novembre. Mànigues llargues de gasa, escot paraula d'honor i cola catedralícia. Pressupost al voltant de 2.000€.",
+     "fields": {"wedding_date_iso": "{{iso:+125}}", "garment": "Vestit a mida", "garment_style": "Boho fluid"},
+     "status": "open", "created_at": "{{ts:+0 09:12}}"},
+    {"channel": "whatsapp", "name": "Mireia Puigdevall", "phone": "+34 617 33 40 82", "email": "",
+     "notes": "URGENT: la boda és d'aquí a dos mesos i la botiga on tenia el vestit ha tancat. Busca vestit vintage anys 70, gasa i crochet, talla 40. Pot venir qualsevol tarda aquesta setmana. Pressupost màx 1.800€.",
+     "fields": {"wedding_date_iso": "{{iso:+60}}", "garment": "Vestit a mida", "garment_style": "Vintage anys 70"},
+     "status": "open", "created_at": "{{ts:+0 11:47}}"},
+    {"channel": "whatsapp", "name": "Carmen Iglesias", "phone": "+34 688 12 75 30", "email": "",
+     "notes": "Busca vestido clásico sirena con encaje para boda de junio (iglesia + finca). Escote en V con encaje, sin mangas, cola semilarga. Presupuesto entre 3.000 y 3.500€.",
+     "fields": {"wedding_date_iso": "{{iso:+330}}", "garment": "Vestit a mida", "garment_style": "Sirena clàssic"},
+     "status": "open", "created_at": "{{ts:-1 09:30}}"},
+    {"channel": "whatsapp", "name": "Alba Torrent", "phone": "+34 699 02 88 14", "email": "",
+     "notes": "Hola! Voldria saber preus orientatius i si teniu disponibilitat per una boda al juny 😊",
+     "fields": null,
+     "status": "open", "created_at": "{{ts:-1 20:15}}"},
+    {"channel": "email", "name": "Sophie Laurent", "phone": "+33 6 12 34 56 78", "email": "sophie.laurent@mail.fr",
+     "notes": "Destination wedding a la Costa Brava (platja exterior) el setembre. Busca un vestit columna minimalista, sense vol ni encaix. Pressupost 2.500–3.000€, ens ha conegut per Instagram.",
+     "fields": {"wedding_date_iso": "{{iso:+62}}", "garment": "Vestit a mida", "garment_style": "Columna minimalista"},
+     "status": "open", "created_at": "{{ts:-3 14:05}}"},
+    {"channel": "phone", "name": "Rosa Peix", "phone": "+34 972 20 41 55", "email": "",
+     "notes": "Truca la MARE de la núvia (la filla es diu Laura, viu a Brussel·les i torna al desembre). Boda a la primavera. Volen una primera consulta presencial durant les festes de Nadal. Deixa el seu telèfon de contacte.",
+     "fields": {"wedding_date_iso": "{{iso:+280}}"},
+     "status": "open", "created_at": "{{ts:-2 12:40}}"},
+    {"channel": "walkin", "name": "Judit Serra", "phone": "+34 626 74 19 03", "email": "",
+     "notes": "Ha entrat a la botiga sense cita. Té les mides preses d'una altra modista però no ha quedat contenta amb la proposta — vol segona opinió. Estil minimalista, crepe llis, res de brillants. Molt decidida.",
+     "fields": {"wedding_date_iso": "{{iso:+140}}", "garment": "Vestit a mida", "garment_style": "Minimalista crepe"},
+     "status": "open", "created_at": "{{ts:-1 17:35}}"},
+    {"channel": "booking", "name": "Emma Johansson", "phone": "+46 70 123 45 67", "email": "emma.johansson@mail.se",
+     "notes": "Online booking from the web widget. Destination wedding at an Empordà vineyard in three months. Wants a bias-cut slip dress in silk satin, minimal, open back. English-speaking. Budget ~2.800€.",
+     "fields": {"wedding_date_iso": "{{iso:+92}}", "garment": "Vestit a mida", "garment_style": "Slip dress seda"},
+     "status": "open", "created_at": "{{ts:+0 08:03}}"},
+    {"channel": "whatsapp", "name": "Paula Grau i Marta Vives", "phone": "+34 633 58 27 90", "email": "",
+     "notes": "Parella de núvies — volen DOS vestits coordinats però gens iguals: una estil sastre (pantaló + blazer) i l'altra vestit fluid. Boda civil al febrer. Demanen si fem assessorament conjunt. Pressupost total ~4.000€.",
+     "fields": {"wedding_date_iso": "{{iso:+210}}", "garment": "Dos vestits coordinats"},
+     "status": "open", "created_at": "{{ts:-4 19:22}}"},
+    {"channel": "email", "name": "Griselda Mas", "phone": "+34 654 11 38 76", "email": "griselda.mas@gmail.com",
+     "notes": "Vol TRANSFORMAR el vestit de núvia de la seva mare (any 1994, màniga de farol, setí gruixut) en un vestit actual per la seva boda d'aquí a mes i mig. Adjunta fotos. Sap que és un encàrrec especial.",
+     "fields": {"wedding_date_iso": "{{iso:+45}}", "garment": "Transformació vestit familiar"},
+     "status": "open", "created_at": "{{ts:-2 10:58}}"}
+  ]
+}

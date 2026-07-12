@@ -1,0 +1,61 @@
+{
+  "clients": [
+    {
+      "client": {
+        "name": "Marta Vidal", "status": "active",
+        "phone": "+34 630 11 22 33", "email": "marta.vidal@mail.com",
+        "notes": "Referred after lumbar strain. Twice-weekly sessions.",
+        "custom": {"treatment": "Lower-back rehab", "first_visit_date": "2026-06-10", "referring_doctor": "Dr. Serra"}
+      },
+      "appointments": [
+        {"label": "Session 3", "value": "12 Jul — done", "date": "2026-07-12", "title": "Rehab session 3", "time": "09:00"},
+        {"label": "Session 4", "value": "16 Jul — scheduled", "date": "2026-07-16", "title": "Rehab session 4", "time": "09:00"}
+      ],
+      "payments": [
+        {"label": "Session pack (10)", "value": "€300 · paid"},
+        {"label": "Extension", "value": "€120 outstanding"}
+      ]
+    },
+    {
+      "client": {
+        "name": "Jordi Camps", "status": "new",
+        "phone": "+34 645 88 12 90", "email": "jordi.camps@gmail.com",
+        "notes": "Post-surgery, cleared by surgeon for physio.",
+        "custom": {"treatment": "Post-op knee", "first_visit_date": "2026-07-08", "referring_doctor": "Dr. Bosch"}
+      },
+      "appointments": [
+        {"label": "Assessment", "value": "08 Jul — done", "date": "2026-07-08", "title": "Initial assessment", "time": "14:00"}
+      ],
+      "payments": [
+        {"label": "Assessment", "value": "€60 · paid"}
+      ]
+    },
+    {
+      "client": {
+        "name": "Laia Font", "status": "discharged",
+        "phone": "+34 622 45 76 18", "email": "laia.font@outlook.com",
+        "notes": "Full recovery. Discharged with home exercise plan.",
+        "custom": {"treatment": "Sports massage", "first_visit_date": "2026-03-02", "referring_doctor": ""}
+      },
+      "appointments": [
+        {"label": "Session 6", "value": "20 May — completed", "date": "2026-05-20", "title": "Final session", "time": "10:00"}
+      ],
+      "payments": [
+        {"label": "Session pack (6)", "value": "€180 · paid"}
+      ]
+    }
+  ],
+  "today_appointments": [
+    {"label": "Today's session", "value": "{{iso:+0}} — done", "date": "{{iso:+0}}", "title": "Today's session", "time": "09:30", "duration_min": 30, "outcome": "done", "source": "manual"},
+    {"label": "Online booking", "value": "{{iso:+0}} — booked", "date": "{{iso:+0}}", "title": "Online booking", "time": "16:00", "duration_min": 45, "outcome": "", "source": "booking", "external_ref": "cal-2b7f9e1a",
+     "context": {"answers": {"event_type": "Initial assessment", "note": "Booked via website"}}}
+  ],
+  "leads": [
+    {"channel": "phone", "name": "Pere Soler", "phone": "+34 611 22 33 44", "email": "",
+     "notes": "Knee pain after running, wants an assessment",
+     "fields": {"treatment": "Post-op knee"}, "status": "open", "created_at": "2026-07-10T10:00:00"},
+    {"channel": "walkin", "name": "Anna Riu", "phone": "", "email": "",
+     "notes": "Walked in asking about back pain sessions",
+     "fields": {"treatment": "Lower-back rehab"}, "status": "open", "created_at": "2026-07-11T11:20:00"}
+  ]
+}
