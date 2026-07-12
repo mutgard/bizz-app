@@ -136,6 +136,7 @@ function ProfileRoute({ clients, onRefresh, onOpenFabrics }: {
   if (!client) return <Navigate to="/clients" replace />;
   return (
     <ProfileScreen
+      key={client.id}
       client={client}
       onBack={() => navigate('/clients')}
       onOpenFabrics={onOpenFabrics}

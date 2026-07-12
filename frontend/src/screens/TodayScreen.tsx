@@ -43,10 +43,11 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
   const [leads, setLeads] = useState<Lead[]>([]);
 
   useEffect(() => {
+    if (!mobile) return; // desktop delegates to TodayDeskScreen, which fetches its own data
     const today = isoToday();
     api.listEvents(today, addDays(today, 30)).then(setEvents);
     if (featureOn('intake')) api.listLeads('open').then(setLeads);
-  }, []);
+  }, [mobile]);
 
   const groups = useMemo(() => groupEventsByDay(events, pack.locale), [events, pack.locale]);
   const finances = useMemo(() => buildFinances(clients), [clients]);

@@ -84,6 +84,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
   const [noteSaving, setNoteSaving] = useState(false);
 
   const handleSaveNote = async () => {
+    if (noteSaving) return;
     const text = noteText.trim();
     if (!text) return;
     setNoteSaving(true);

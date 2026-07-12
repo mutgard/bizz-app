@@ -173,6 +173,7 @@
     "finances.paymentLabel": "Payment received",
     "finances.register": "Register",
     "finances.registerPayment": "Register payment",
+    "finances.amountRequired": "A valid amount is required",
     "roadmap.today": "Today",
     "roadmap.more": "more",
 
@@ -199,6 +200,9 @@
     "avui.statPendingCollect": "Pending collection",
     "avui.statMaterialsToBuy": "Materials to buy",
     "avui.statKeyDatesSoon": "Key dates < 45d",
+
+    "intake.fieldName": "Name",
+    "intake.noData": "No intake data",
 
     "event.dateRequired": "The date is required",
     "event.titleRequired": "The title is required",
@@ -246,7 +250,7 @@
     "inbox.toClient": "→ client"
   },
   "nav": [
-    { "screen": "today",     "labelKey": "nav.today",     "countKey": "todosOpen" },
+    { "screen": "today",     "labelKey": "nav.today" },
     { "screen": "clients",   "labelKey": "nav.clients",   "countKey": "totalClients" },
     { "screen": "profile",   "labelKey": "nav.profile",   "sub": true },
     { "screen": "materials", "labelKey": "nav.materials", "feature": "fabrics", "accent": true, "countKey": "fabricsToBuy" },

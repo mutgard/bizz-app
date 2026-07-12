@@ -49,11 +49,11 @@ export function RegisterPaymentSheet({ client, open, onClose, onSaved }: Props) 
 
   const handleSubmit = async () => {
     const amt = Math.round(parseFloat(amount));
-    if (!amt || amt <= 0) { setError(t('event.dateRequired')); return; }
+    if (!amt || amt <= 0) { setError(t('finances.amountRequired')); return; }
 
     const { currencySymbol, numberLocale } = getPack().locale;
     const plan = planPaymentRegistration(client.payments, amt, paidKeyword, currencySymbol, numberLocale);
-    if (plan.clampedAmount <= 0) { setError(t('event.dateRequired')); return; }
+    if (plan.clampedAmount <= 0) { setError(t('finances.amountRequired')); return; }
 
     setSaving(true);
     setError('');

@@ -184,6 +184,7 @@
     "finances.paymentLabel": "Pagament rebut",
     "finances.register": "Registrar",
     "finances.registerPayment": "Registrar pagament",
+    "finances.amountRequired": "Cal indicar un import vàlid",
 
     "roadmap.today": "Avui",
     "roadmap.more": "més",
@@ -275,7 +276,7 @@
     "brief.proposal": "Proposta"
   },
   "nav": [
-    { "screen": "today",     "labelKey": "nav.today",     "countKey": "todosOpen" },
+    { "screen": "today",     "labelKey": "nav.today" },
     { "screen": "clients",   "labelKey": "nav.clients",   "countKey": "totalClients" },
     { "screen": "profile",   "labelKey": "nav.profile",   "sub": true },
     { "screen": "materials", "labelKey": "nav.materials", "feature": "fabrics", "accent": true, "countKey": "fabricsToBuy" },
