@@ -1,0 +1,12 @@
+.git
+docs
+tests
+scripts
+atelier
+.design-sync
+**/__pycache__
+backend/tests
+backend/*.db
+frontend/node_modules
+frontend/dist
+*.md
