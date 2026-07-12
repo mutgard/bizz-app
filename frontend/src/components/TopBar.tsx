@@ -1,14 +1,16 @@
-import React from 'react';
 import { T } from '../tokens';
 import { t, usePack, navItems } from '../config';
 import { useIsOperator } from '../hooks/useIsOperator';
+import { GlobalSearch } from './GlobalSearch';
+import type { Client } from '../types';
 
-export function TopBar({ active, onNav, counts, onNewClient, children }: {
+export function TopBar({ active, onNav, counts, onNewClient, clients, onOpenClient }: {
   active: string;
   onNav: (s: string) => void;
   counts: Record<string, number>;
   onNewClient: () => void;
-  children?: React.ReactNode;
+  clients: Client[];
+  onOpenClient: (id: number) => void;
 }) {
   const brand = usePack().brand;
   const items = navItems().filter(it => !it.sub);
@@ -51,7 +53,7 @@ export function TopBar({ active, onNav, counts, onNewClient, children }: {
 
       {/* right side: search slot, + Nova, operator-only admin link */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginLeft: 'auto' }}>
-        {children}
+        <GlobalSearch clients={clients} onOpen={onOpenClient} />
         <button onClick={onNewClient} style={{
           fontFamily: T.sans, fontWeight: 600, fontSize: 12,
           background: T.gold, color: T.ink, border: 'none', borderRadius: 7,

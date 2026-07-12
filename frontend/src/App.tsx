@@ -95,7 +95,7 @@ function AtelierApp() {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', background: T.paper, color: T.ink, fontFamily: T.sans }}>
-      <TopBar active={active} onNav={nav} counts={counts} onNewClient={() => setCreating(true)} />
+      <TopBar active={active} onNav={nav} counts={counts} onNewClient={() => setCreating(true)} clients={clients} onOpenClient={openClient} />
       <div style={{ flex: 1, minWidth: 0, minHeight: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>{routes}</div>
       {creating && !mobile && (
         <div style={{
