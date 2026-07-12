@@ -1,7 +1,7 @@
 import sys, os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
-from database import _normalize_url
+from database import DEFAULT_DATABASE_URL, _normalize_url, resolve_database_url
 
 
 def test_railway_postgres_scheme_rewritten():
@@ -28,11 +28,20 @@ def test_sqlite_url_untouched():
     assert _normalize_url(url) == url
 
 
-def test_empty_env_value_falls_back_to_default(monkeypatch):
-    monkeypatch.setenv("DATABASE_URL", "")
-    import importlib
-    import database
-    importlib.reload(database)
-    assert database.DATABASE_URL == database.DEFAULT_DATABASE_URL
-    monkeypatch.delenv("DATABASE_URL")
-    importlib.reload(database)
+# NOTE: never importlib.reload(database) here — a reload rebinds
+# database.engine/get_session for the rest of the pytest session while routes
+# keep the originals, silently bypassing dependency overrides (tests then
+# write into the real dev database).
+def test_empty_env_value_falls_back_to_default():
+    assert resolve_database_url("") == DEFAULT_DATABASE_URL
+
+
+def test_unset_env_value_falls_back_to_default():
+    assert resolve_database_url(None) == DEFAULT_DATABASE_URL
+
+
+def test_env_value_is_normalized():
+    assert (
+        resolve_database_url("postgres://user:pw@host:5432/db")
+        == "postgresql+psycopg://user:pw@host:5432/db"
+    )

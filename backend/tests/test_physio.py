@@ -5,14 +5,15 @@ import pytest
 from fastapi.testclient import TestClient
 from sqlmodel import create_engine, Session, SQLModel
 
+import config
+from main import app
+from database import get_session
+
 
 @pytest.fixture(name="physio_client")
 def physio_client_fixture(tmp_path, monkeypatch):
     monkeypatch.setenv("ACTIVE_PACK", "physio")
-    import config
     config.reset_pack_cache()
-    from main import app
-    from database import get_session
     eng = create_engine(f"sqlite:///{tmp_path}/physio.db")
     SQLModel.metadata.create_all(eng)
     def override():

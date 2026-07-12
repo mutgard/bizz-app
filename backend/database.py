@@ -20,7 +20,13 @@ def _normalize_url(url: str) -> str:
     return url
 
 
-DATABASE_URL = _normalize_url(os.getenv("DATABASE_URL") or DEFAULT_DATABASE_URL)
+def resolve_database_url(raw: str | None) -> str:
+    """Effective DB URL for a raw DATABASE_URL env value: empty/unset falls
+    back to the local compose Postgres, and the scheme is normalized."""
+    return _normalize_url(raw or DEFAULT_DATABASE_URL)
+
+
+DATABASE_URL = resolve_database_url(os.getenv("DATABASE_URL"))
 engine = create_engine(DATABASE_URL, echo=False)
 
 def create_db():
