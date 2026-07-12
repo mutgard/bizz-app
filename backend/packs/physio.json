@@ -171,6 +171,11 @@
     "roadmap.new": "New",
     "roadmap.more": "more",
 
+    "agenda.week": "Week",
+    "agenda.month": "Month",
+    "agenda.freeSlot": "free",
+    "agenda.newAppointment": "Appointment",
+
     "avui.greeting": "Good morning",
     "avui.todaySection": "Today",
     "avui.urgentSection": "Urgent",

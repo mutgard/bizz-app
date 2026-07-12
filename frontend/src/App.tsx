@@ -11,7 +11,7 @@ import { ProfileScreen } from './screens/ProfileScreen';
 import { TodayScreen } from './screens/TodayScreen';
 import { MaterialsScreen } from './screens/MaterialsScreen';
 import { NewClientScreen } from './screens/NewClientScreen';
-import { RoadmapScreen } from './screens/RoadmapScreen';
+import { AgendaScreen } from './screens/AgendaScreen';
 import { InboxScreen } from './screens/InboxScreen';
 import { FinancesScreen } from './screens/FinancesScreen';
 import { api } from './api';
@@ -69,7 +69,11 @@ function AtelierApp() {
       </>} />
       <Route path="/clients/:id" element={<ProfileRoute clients={clients} onRefresh={refresh} onOpenFabrics={() => nav('fabrics')} />} />
       {featureOn('fabrics') && <Route path="/materials" element={<MaterialsScreen clients={clients} onRefresh={refresh} />} />}
-      <Route path="/agenda" element={<RoadmapScreen clients={clients} onRefresh={refresh} />} />
+      <Route path="/agenda" element={
+        mobile
+          ? <Navigate to="/" replace />
+          : <AgendaScreen clients={clients} onOpenClient={openClient} onRefresh={refresh} />
+      } />
       {featureOn('intake') && (
         <Route path="/intake" element={
           <InboxScreen

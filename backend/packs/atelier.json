@@ -190,6 +190,11 @@
     "roadmap.new": "Nou",
     "roadmap.more": "més",
 
+    "agenda.week": "Setmana",
+    "agenda.month": "Mes",
+    "agenda.freeSlot": "lliure",
+    "agenda.newAppointment": "Cita",
+
     "avui.greeting": "Bon dia",
     "avui.todaySection": "Per avui",
     "avui.urgentSection": "Urgent",
