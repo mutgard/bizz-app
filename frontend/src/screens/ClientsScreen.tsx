@@ -68,6 +68,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
   useEffect(() => {
     if (mobile) return;
     const onKeyDown = (e: KeyboardEvent) => {
+      if (eventClient) return;
       if (isTypingTarget()) return;
       if (e.key === 'ArrowDown') {
         e.preventDefault();
@@ -84,7 +85,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [mobile, list, selectedIdx, onOpen]);
+  }, [mobile, list, selectedIdx, onOpen, eventClient]);
 
   useEffect(() => {
     rowRefs.current[selectedIdx]?.scrollIntoView({ block: 'nearest' });
