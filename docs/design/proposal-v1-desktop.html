@@ -57,6 +57,10 @@ kbd{font:600 10px/1 var(--mono);background:var(--paper2);color:var(--ink2);borde
 .chip.sensepaga{color:#7a5b1e;background:var(--gold-soft);border:1px solid #d9c08b}
 .chip.clienta{color:#fff;background:var(--accent);border:1px solid var(--accent)}
 .chip.entregada{color:var(--paper);background:var(--ink);border:1px solid var(--ink)}
+.chip.noshow{color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent)}
+tr.noshow .nm{text-decoration:line-through;color:var(--ink3)}
+tr.noshow td.num{color:var(--ink3);text-decoration:line-through}
+.ra.warn{color:var(--accent);border-color:var(--accent)}
 h3.sect{font:600 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);margin:4px 0 0;display:flex;align-items:center;gap:10px}
 h3.sect::after{content:"";flex:1;height:1px;background:var(--hairline)}
 .card{background:var(--sheet);border:1px solid var(--hairline);border-radius:10px}
@@ -147,12 +151,18 @@ tr.dim td{opacity:.5}
           <div class="stack">
             <h3 class="sect">Cites d'avui — divendres 11 jul</h3>
             <table class="t">
-              <tr><th style="width:64px">Hora</th><th>Cita</th><th>Clienta</th><th class="r" style="width:170px"></th></tr>
+              <tr><th style="width:64px">Hora</th><th>Cita</th><th>Clienta</th><th class="r" style="width:210px"></th></tr>
+              <tr class="noshow">
+                <td class="num">11:30</td>
+                <td><span class="nm">Prova de mides</span><div class="sub">Vestit + vel</div></td>
+                <td>Berta Soler <span class="chip noshow" style="margin-left:6px">No presentada</span></td>
+                <td class="r"><div class="rowacts"><span class="ra">Desfés</span></div></td>
+              </tr>
               <tr>
                 <td class="num">16:00</td>
                 <td><span class="nm">Prova · 2a</span><div class="sub">Vestit princesa</div></td>
                 <td>Clara Ferrer <span class="chip clienta" style="margin-left:6px"><span class="dot"></span>Clienta</span></td>
-                <td class="r"><div class="rowacts"><span class="ra">Fitxa</span><span class="ra">Fet ✓</span><span class="ra">Mou</span></div></td>
+                <td class="r"><div class="rowacts"><span class="ra">Fitxa</span><span class="ra">Fet ✓</span><span class="ra warn">No ve</span><span class="ra">Mou</span></div></td>
               </tr>
               <tr>
                 <td class="num">18:30</td>
@@ -199,6 +209,7 @@ tr.dim td{opacity:.5}
         <li>Cada fila porta les seves accions <b>visibles</b> (Fitxa · Fet · Registrar): res d'anar a buscar el botó a una altra pantalla.</li>
         <li><b>«Per fer» generat pel sistema</b>: proves sense agendar, pagues sense reclamar — la feina surt sola, no cal recordar-la.</li>
         <li>Nota ràpida «registrar interacció» sempre a mà: trucades logades en 5 segons.</li>
+        <li><b>«No ve» és un estat, no un esborrat</b>: la cita queda ratllada amb xip bordeus i «Desfés» uns segons. Cada no-show s'anota sol a l'activitat de la clienta — la base per cobrar recàrrec per no presentar-se.</li>
         <li><b>Finances i Ingrés ja no són seccions</b>: la caixa és la tessel·la «pendent cobrar» (obre l’informe complet) + la cua de cobraments; els ingressos nous entren per la cua «Per fer». La barra queda en 4: Avui · Clientes · Materials · Agenda.</li>
       </ul>
     </aside>
@@ -325,13 +336,14 @@ tr.dim td{opacity:.5}
           <div class="fact hot"><div class="k">Boda</div><div class="v due">25 dies</div><div class="s">17 mai 2026 · masia, exterior</div></div>
           <div class="fact"><div class="k">Pendent</div><div class="v due">€1.800 <span style="font:400 12px var(--sans);color:var(--ink3)">de €2.300</span></div><div class="bar"><i></i></div></div>
           <div class="fact"><div class="k">Peça</div><div class="v" style="font-size:15px">Vestit a mida</div><div class="s">Princesa modern · escot en V</div></div>
-          <div class="fact"><div class="k">Última prova</div><div class="v" style="font-size:15px">12 mar</div><div class="s" style="color:var(--accent);font-weight:600">Següent sense agendar →</div></div>
+          <div class="fact"><div class="k">Última prova</div><div class="v" style="font-size:15px">12 mar</div><div class="s"><span style="color:var(--accent);font-weight:600">Següent sense agendar →</span> · <span class="chip noshow" style="padding:2px 6px">1 no presentada</span></div></div>
         </div>
         <div class="cols">
           <div class="stack">
             <h3 class="sect">Activitat</h3>
             <div class="card kv">
               <div class="rr"><span class="k">Avui</span><span class="v">Trucada: vol moure la prova a dijous <a>· editar</a></span></div>
+              <div class="rr"><span class="k">08 abr</span><span class="v" style="color:var(--accent)">No presentada · Prova de mides · 11:30 <span style="font-weight:400;color:var(--ink3)">(anotat automàticament)</span></span></div>
               <div class="rr"><span class="k">12 mar</span><span class="v">Prova de mides · ajust cintura −2 cm</span></div>
               <div class="rr"><span class="k">02 mar</span><span class="v">Paga i senyal €500 · Bizum</span></div>
               <div class="rr"><span class="k">24 feb</span><span class="v">Alta per WhatsApp · brief automàtic</span></div>
@@ -343,6 +355,7 @@ tr.dim td{opacity:.5}
             <div class="card kv">
               <div class="rr"><span class="k">Paga i senyal</span><span class="v">€500 · rebut</span></div>
               <div class="rr"><span class="k">Saldo</span><span class="v" style="color:var(--accent)">€1.800 pendent <a>· registrar</a></span></div>
+              <div class="rr"><span class="k">Recàrrec no presentada · 08 abr</span><span class="v" style="color:#7a5b1e">€30 proposat <a>· registrar</a> <a style="color:var(--ink3)">· ometre</a></span></div>
             </div>
             <h3 class="sect">Teles (4)</h3>
             <div class="card kv">
@@ -363,6 +376,7 @@ tr.dim td{opacity:.5}
         <li><b>4 fets clau en franja fixa</b> — boda, diners, peça, última prova. El que la recepcionista respon per telèfon sense fer scroll.</li>
         <li><b>Activitat com a registre continu</b> (trucades, proves, pagaments) amb la caixa d'anotar sempre a sota: el comms-log es fa mentre es parla.</li>
         <li>Les pestanyes Fitxa/Ingrés desapareixen: tot en una pantalla escanejable en columnes.</li>
+        <li><b>No-shows per clienta, amb conseqüència</b>: comptador al fet «Última prova», entrada automàtica a l'activitat i línia de recàrrec proposada a Pagaments (registrar o ometre — mai es cobra sol). El recompte per clienta és la base per a tarifes de no presentació.</li>
       </ul>
     </aside>
   </section>
@@ -381,19 +395,30 @@ tr.dim td{opacity:.5}
   .wkhead .rng{font:600 19px/1 var(--serif)}
   .wkhead .nav2{display:flex;gap:4px}
   .nbtn{width:28px;height:28px;border-radius:6px;border:1px solid var(--hairline);background:var(--sheet);display:grid;place-items:center;color:var(--ink2)}
-  .wk{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;flex:1}
-  .wd{background:var(--sheet);border:1px solid var(--hairline);border-radius:10px;min-height:300px;padding:8px;display:flex;flex-direction:column;gap:6px}
-  .wd.today{border-color:var(--accent);box-shadow:inset 0 2px 0 var(--accent)}
-  .wd .dh{font:500 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);display:flex;justify-content:space-between;padding:2px 2px 6px}
-  .wd .dh b{color:var(--ink);font-size:12px}
-  .wd.today .dh b{color:var(--accent)}
-  .ev{border-left:3px solid var(--ink3);background:var(--paper2);border-radius:7px;padding:7px 8px;font-size:11.5px;line-height:1.35}
-  .ev b{display:block;font-size:11.5px}
-  .ev .h{font:600 10px var(--mono);color:var(--ink3)}
-  .ev.prova{border-left-color:var(--ink2)}
-  .ev.entrega{border-left-color:var(--gold);background:var(--gold-soft)}
-  .ev.boda{border-left-color:var(--accent);background:var(--accent-soft)}
-  .slot{border:1px dashed var(--hairline);border-radius:7px;padding:6px 8px;font:500 10px var(--mono);color:var(--ink3);text-align:center}
+  /* hourly week grid: 56px hour axis + 7 day columns; 1 h = 44px */
+  .hg{background:var(--sheet);border:1px solid var(--hairline);border-radius:10px;overflow:hidden}
+  .hgr{display:grid;grid-template-columns:56px repeat(7,1fr)}
+  .hgr.hd .c{font:500 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);padding:8px 6px 7px;border-bottom:1px solid var(--hairline);border-left:1px solid var(--hairline);text-align:center}
+  .hgr.hd .c:first-child{border-left:0}
+  .hgr.hd .c b{display:block;font:600 13px var(--serif);color:var(--ink);margin-top:2px}
+  .hgr.hd .c.tdy,.hgr.hd .c.tdy b{color:var(--accent)}
+  .hgr.ad .c{min-height:32px;border-bottom:1px solid var(--hairline);border-left:1px solid var(--hairline);padding:3px 4px}
+  .hgr.ad .lbl{display:grid;place-items:center;font:500 8.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);border-left:0}
+  .adev{font:600 11px/1.3 var(--sans);background:var(--accent-soft);border-left:3px solid var(--accent);border-radius:5px;padding:4px 7px;color:var(--ink)}
+  .adev span{font:500 10px var(--mono);color:var(--ink3);margin-left:4px}
+  .hrs span{display:block;height:44px;font:500 10px/1 var(--mono);color:var(--ink3);text-align:right;padding:3px 8px 0 0}
+  .dcol{position:relative;height:440px;border-left:1px solid var(--hairline);background:repeating-linear-gradient(to bottom,transparent 0 43px,var(--hairline) 43px 44px)}
+  .dcol.tdy{background-color:rgba(125,42,51,.035)}
+  .evb{position:absolute;left:4px;right:4px;border-left:3px solid var(--ink2);background:var(--paper2);border-radius:6px;padding:4px 7px;font-size:11px;line-height:1.3;overflow:hidden}
+  .evb .h{display:block;font:600 9.5px var(--mono);color:var(--ink3)}
+  .evb b{font-size:11.5px}
+  .evb.entrega{border-left-color:var(--gold);background:var(--gold-soft)}
+  .evb.noshow{border-left-color:var(--accent);background:var(--accent-soft)}
+  .evb.noshow b{text-decoration:line-through;color:var(--ink3)}
+  .evb.noshow .h{color:var(--accent)}
+  .slotb{position:absolute;left:4px;right:4px;border:1px dashed var(--ink3);border-radius:6px;display:grid;place-items:center;font:600 10px var(--mono);color:var(--ink3)}
+  .nowline{position:absolute;left:0;right:0;height:2px;background:var(--accent);z-index:2}
+  .nowline i{position:absolute;left:-1px;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
   </style>
 
   <!-- ══════════ 4 · MATERIALS ══════════ -->
@@ -490,34 +515,45 @@ tr.dim td{opacity:.5}
           <div class="seg2" style="margin-left:auto"><span class="s on">Setmana</span><span class="s">Mes</span></div>
           <span class="ra" style="color:var(--accent);border-color:var(--accent)">+ Cita</span>
         </div>
-        <div class="wk">
-          <div class="wd today"><div class="dh">Dilluns <b>14</b></div>
-            <div class="ev prova"><span class="h">10:00 · 1h</span><b>Última prova</b>Aina Puig</div>
-            <div class="slot">+ lliure</div>
+        <div class="hg">
+          <div class="hgr hd">
+            <div class="c"></div>
+            <div class="c tdy">Dl <b>14</b></div><div class="c">Dt <b>15</b></div><div class="c">Dc <b>16</b></div>
+            <div class="c">Dj <b>17</b></div><div class="c">Dv <b>18</b></div><div class="c">Ds <b>19</b></div><div class="c">Dg <b>20</b></div>
           </div>
-          <div class="wd"><div class="dh">Dimarts <b>15</b></div><div class="slot">+ lliure</div></div>
-          <div class="wd"><div class="dh">Dimecres <b>16</b></div>
-            <div class="ev prova"><span class="h">17:30 · 1h</span><b>1a prova</b>Dolors Vidal</div>
+          <div class="hgr ad">
+            <div class="c lbl">Tot el dia</div>
+            <div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div><div class="c"></div>
+            <div class="c"><div class="adev">Boda · Berta Soler <span>recordatori</span></div></div>
+            <div class="c"></div>
           </div>
-          <div class="wd"><div class="dh">Dijous <b>17</b></div>
-            <div class="ev entrega"><span class="h">17:00</span><b>Entrega</b>Elena Roca</div>
+          <div class="hgr">
+            <div class="hrs"><span>09:00</span><span>10:00</span><span>11:00</span><span>12:00</span><span>13:00</span><span>14:00</span><span>15:00</span><span>16:00</span><span>17:00</span><span>18:00</span></div>
+            <div class="dcol tdy">
+              <div class="evb" style="top:44px;height:42px"><span class="h">10:00 · 1h · fet ✓</span><b>Última prova</b> Aina Puig</div>
+              <div class="evb noshow" style="top:132px;height:42px"><span class="h">12:00 · no presentada</span><b>Prova de mides</b> Berta Soler</div>
+              <div class="nowline" style="top:207px"><i></i></div>
+            </div>
+            <div class="dcol"><div class="slotb" style="top:88px;height:42px">+ 11:00</div></div>
+            <div class="dcol"><div class="evb" style="top:374px;height:42px"><span class="h">17:30 · 1h</span><b>1a prova</b> Dolors Vidal</div></div>
+            <div class="dcol"><div class="evb entrega" style="top:352px;height:28px"><span class="h">17:00 · 30 m</span><b>Entrega</b> Elena Roca</div></div>
+            <div class="dcol"></div>
+            <div class="dcol"></div>
+            <div class="dcol"></div>
           </div>
-          <div class="wd"><div class="dh">Divendres <b>18</b></div><div class="slot">+ lliure</div></div>
-          <div class="wd"><div class="dh">Dissabte <b>19</b></div>
-            <div class="ev boda"><span class="h">Tot el dia</span><b>Boda</b>Berta Soler</div>
-          </div>
-          <div class="wd"><div class="dh">Diumenge <b>20</b></div></div>
         </div>
       </div>
     </div></div>
     <aside class="aside">
-      <h2>Agenda — setmana per reservar</h2>
-      <p class="why">Recepció necessita veure forats</p>
+      <h2>Agenda — setmana per hores</h2>
+      <p class="why">Els forats són hores, no dies</p>
       <ul class="notes">
-        <li><b>Setmana per defecte</b>: amb 6–10 esdeveniments/mes, el mes és buit i la setmana mostra els forats reals. El mes queda com a vista secundària al segmentat.</li>
-        <li><b>«+ lliure» a cada dia</b>: clicar un forat crea la cita amb dia i hora ja posats — el flux de reserva per telèfon és un clic i un nom.</li>
+        <li><b>Graella horària (09–19, 1 h = 44 px)</b>: els esdeveniments es col·loquen per hora i durada, així els forats reals es veuen d'un cop d'ull. La franja «tot el dia» de dalt recull bodes i entregues sense hora.</li>
+        <li><b>Clicar buit = reservar</b>: passar el ratolí per un forat mostra «+ 11:00»; el clic obre la cita amb dia <b>i hora</b> ja posats. El flux de telèfon segueix sent un clic i un nom.</li>
+        <li><b>La línia d'ara</b> (bordeus) travessa la columna d'avui: el «què hauria d'estar passant» es respon mirant la graella.</li>
+        <li><b>Els resultats es marquen aquí mateix</b>: fet ✓ al capçal de l'esdeveniment; no presentada = bloc ratllat bordeus (i anotació automàtica a la fitxa). El passat sense marcar és el que està «fora de pla».</li>
         <li>Colors per tipus, els mateixos del sistema: prova (tinta), entrega (or), boda (bordeus). Clicar un esdeveniment obre la fitxa.</li>
-        <li><b>Al mòbil aquesta secció no existeix</b>: la propietària consulta la línia de temps d’Avui; reservar en graella és feina d’escriptori.</li>
+        <li><b>Al mòbil aquesta secció no existeix</b>: la propietària consulta la línia de temps d'Avui; reservar en graella és feina d'escriptori.</li>
       </ul>
     </aside>
   </section>
