@@ -1,7 +1,26 @@
+import os
 from sqlmodel import SQLModel, create_engine, Session
 from sqlalchemy import text
 
-DATABASE_URL = "sqlite:///./atelier.db"
+# Local docker-compose Postgres (see docker-compose.yml). Railway injects its
+# own DATABASE_URL in production; tests build their own SQLite engines.
+DEFAULT_DATABASE_URL = "postgresql+psycopg://postgres:postgres@localhost:5432/atelier"
+
+
+def _normalize_url(url: str) -> str:
+    """Rewrite postgres:// / postgresql:// to the psycopg3 dialect.
+
+    Railway injects postgres://, which SQLAlchemy 2 rejects, and a bare
+    postgresql:// would select the (uninstalled) psycopg2 driver. Non-Postgres
+    URLs (sqlite) pass through untouched.
+    """
+    for prefix in ("postgres://", "postgresql://"):
+        if url.startswith(prefix):
+            return "postgresql+psycopg://" + url[len(prefix):]
+    return url
+
+
+DATABASE_URL = _normalize_url(os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL))
 engine = create_engine(DATABASE_URL, echo=False)
 
 def create_db():
@@ -27,7 +46,10 @@ def run_migrations():
                 conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {col} {typ}"))
                 conn.commit()
             except Exception:
-                pass  # column already exists
+                # Column already exists. On Postgres the failed statement also
+                # aborts the transaction; roll back or every later ALTER on
+                # this connection is silently skipped.
+                conn.rollback()
 
 def get_session():
     with Session(engine) as session:
