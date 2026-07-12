@@ -3,7 +3,6 @@ import type { IntakeData, WhatsAppIntake, WebFormIntake, LeadIntake, IntakeBrief
 import { api } from '../api';
 import { T } from '../tokens';
 import { Label, Mono, Rule } from './primitives';
-import { useIsMobile } from '../hooks/useIsMobile';
 import { formatEventDate } from '../lib/calendarHelpers';
 import { t } from '../config';
 
@@ -139,9 +138,18 @@ function LeadView({ intake }: { intake: LeadIntake }) {
   );
 }
 
+/**
+ * Renders a client's intake record — the conversation/form/lead it came from,
+ * plus the extracted brief.
+ *
+ * Originally its own full-height tab (with a two-column split on desktop);
+ * now embedded inline as a collapsed `<details>`-style section within Fitxa
+ * (see `ProfileScreen.tsx`), so it always lays out as a simple stacked
+ * column that flows with the rest of the page — no `height: 100%` split,
+ * no independent scroll container.
+ */
 export function IntakeTab({ clientId }: { clientId: number }) {
   const [data, setData] = useState<IntakeData | null | 'loading'>('loading');
-  const mobile = useIsMobile();
 
   useEffect(() => {
     api.getIntake(clientId)
@@ -150,12 +158,12 @@ export function IntakeTab({ clientId }: { clientId: number }) {
   }, [clientId]);
 
   if (data === 'loading') {
-    return <div style={{ padding: 40, fontFamily: T.mono, fontSize: 11, color: T.ink3 }}>{t('common.loading')}</div>;
+    return <div style={{ padding: '12px 0', fontFamily: T.mono, fontSize: 11, color: T.ink3 }}>{t('common.loading')}</div>;
   }
 
   if (data === null) {
     return (
-      <div style={{ padding: 40, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+      <div style={{ padding: '12px 0' }}>
         <Mono size={11} color={T.ink3}>{t('intake.noData')}</Mono>
       </div>
     );
@@ -169,31 +177,14 @@ export function IntakeTab({ clientId }: { clientId: number }) {
 
   // Lead intakes have no extracted brief — the source pane is the whole story.
   if (data.source === 'lead') {
-    return (
-      <div style={{ padding: mobile ? '20px 20px 40px' : '28px 32px 40px' }}>
-        {sourceView}
-      </div>
-    );
-  }
-
-  if (mobile) {
-    return (
-      <div style={{ padding: '20px 20px 40px', display: 'flex', flexDirection: 'column', gap: 28 }}>
-        {sourceView}
-        <Rule />
-        <BriefPanel brief={data.brief} />
-      </div>
-    );
+    return <div style={{ padding: '12px 0' }}>{sourceView}</div>;
   }
 
   return (
-    <div style={{ display: 'flex', height: '100%', gap: 0 }}>
-      <div style={{ flex: '0 0 60%', padding: '28px 32px 40px', overflowY: 'auto', borderRight: `1px solid ${T.hairline}` }}>
-        {sourceView}
-      </div>
-      <div style={{ flex: 1, padding: '28px 32px 40px', overflowY: 'auto' }}>
-        <BriefPanel brief={data.brief} />
-      </div>
+    <div style={{ padding: '12px 0', display: 'flex', flexDirection: 'column', gap: 24 }}>
+      {sourceView}
+      <Rule />
+      <BriefPanel brief={data.brief} />
     </div>
   );
 }

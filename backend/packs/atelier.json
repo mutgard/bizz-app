@@ -145,6 +145,16 @@
     "profile.paymentConcept": "Concepte",
     "profile.paymentExample": "€500 rebut",
     "profile.payment": "Pagament",
+    "profile.activity": "Activitat",
+    "profile.activityEmpty": "Encara no hi ha activitat registrada",
+    "profile.notesInputPlaceholder": "Afegir nota o trucada…",
+    "profile.nextUnscheduled": "Següent sense agendar →",
+    "profile.contact": "Contacte",
+
+    "status.advanceButton": "Avançar estat…",
+    "status.advanceConfirmTitle": "Avançar a {status}?",
+    "status.advanceConfirmBody": "La clienta passarà al següent estat del procés. Podràs desfer-ho durant 10 segons.",
+    "status.advanceConfirmAction": "Sí, avançar",
 
     "fabrics.eyebrow": "Inventari",
     "fabrics.pieces": "peces",
