@@ -166,9 +166,13 @@
     "shopping.piece": "peça",
     "shopping.for": "per",
     "shopping.ago": "fa",
+    "shopping.boughtToday": "comprada avui",
 
     "materials.toBuyTab": "Per comprar",
     "materials.inventoryTab": "Inventari",
+    "materials.colFabric": "Tela",
+    "materials.colUse": "Ús",
+    "materials.colEst": "Est.",
 
     "finances.eyebrow": "Atelier · Finances",
     "finances.activeOrders": "comandes actives",
