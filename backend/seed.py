@@ -1,18 +1,44 @@
 """Run once: python3 seed.py — inserts prototype sample data.
-The seed set is chosen by the active pack (ACTIVE_PACK)."""
+The seed set is chosen by the active pack (ACTIVE_PACK).
+
+Atelier dates are RELATIVE to today so the demo is evergreen: weddings land in
+the coming weeks/months, appointments populate today + the next two weeks, and
+the intake inbox always has fresh leads to convert. Offsets (not absolutes)
+are the source of truth here."""
 import datetime
 from database import create_db, engine
-from models import Client, Fabric, Appointment, Payment, Delivery, Lead
+from models import Client, Fabric, Appointment, Payment, Delivery, Lead, Note
 from config import active_pack_id
 from sqlmodel import Session
 
+TODAY = datetime.date.today()
+CAT_MONTHS = ["Gen", "Feb", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Oct", "Nov", "Des"]
+
+def _d(offset: int) -> datetime.date:
+    return TODAY + datetime.timedelta(days=offset)
+
+def _iso(offset: int) -> str:
+    return _d(offset).isoformat()
+
+def _disp(offset: int) -> str:
+    d = _d(offset)
+    return f"{d.day:02d} {CAT_MONTHS[d.month - 1]} {d.year}"
+
+def _short(offset: int) -> str:
+    d = _d(offset)
+    return f"{d.day:02d} {CAT_MONTHS[d.month - 1]}"
+
+def _ts(days_ago: int, hhmm: str) -> str:
+    return f"{_iso(-days_ago)}T{hhmm}:00"
+
 ATELIER_SEED = [
     {
+        # Urgent: wedding in 25 days, last fitting upcoming, saldo pendent.
         "client": Client(
-            name="Aina Puig", wedding_date="17 Mai 2026",
-            wedding_date_iso="2026-05-17", days_until=25,
+            name="Aina Puig", wedding_date=_disp(25),
+            wedding_date_iso=_iso(25), days_until=25,
             status="clienta", garment="Vestit a mida",
-            garment_style="Princesa modern", measurements_date="12 Mar 2026",
+            garment_style="Princesa modern", measurements_date=_disp(-60),
             phone="+34 639 42 18 05", email="aina.puig@mail.cat",
             notes="Vol escot en V profund. Ha de poder ballar."),
         "fabrics": [
@@ -22,39 +48,51 @@ ATELIER_SEED = [
             Fabric(name="Puntilla Chantilly", use="Vora",  qty="1.2 m", price="€95/m", to_buy=False, supplier="Gratacós"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="22 Mar — feta",      date="2026-03-22", title="Primera prova", time="10:00"),
-            Appointment(label="Prova 2", value="18 Abr — programada",date="2026-04-18", title="Segona prova", time="11:30"),
-            Appointment(label="Entrega", value="15 Mai",              date="2026-05-15", title="Entrega vestit", time="09:00"),
+            Appointment(label="Prova 1", value=f"{_short(-40)} — feta", date=_iso(-40), title="Primera prova", time="10:00", outcome="done"),
+            Appointment(label="Prova 2", value=f"{_short(-12)} — feta", date=_iso(-12), title="Segona prova",  time="11:30", outcome="done"),
+            Appointment(label="Última prova", value=f"{_short(2)} — programada", date=_iso(2), title="Última prova", time="10:00", duration_min=60),
+            Appointment(label="Entrega", value=_short(23), date=_iso(23), title="Entrega vestit", time="09:00", duration_min=30),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€500 · rebut"),
             Payment(label="Saldo",         value="€1.800 pendent"),
         ],
         "deliveries": [
-            Delivery(supplier="Gratacós",       description="Mikado seda marfil 3.2m", expected_date="2026-04-25", received=False),
-            Delivery(supplier="Ribes & Casals", description="Tul francès 2.5m",        expected_date="2026-04-28", received=False),
+            Delivery(supplier="Gratacós",       description="Mikado seda marfil 3.2m", expected_date=_iso(5), received=False),
+            Delivery(supplier="Ribes & Casals", description="Tul francès 2.5m",        expected_date=_iso(8), received=False),
+        ],
+        "notes_log": [
+            Note(ts=_ts(12, "11:45"), text="Prova 2 feta: ajust cintura −2 cm, allargar cola 5 cm. Molt contenta amb el cos."),
+            Note(ts=_ts(8, "17:20"),  text="WhatsApp: pregunta si pot venir la mare a l'última prova. Confirmat que sí."),
+            Note(ts=_ts(3, "10:05"),  text="Trucada: recordat el saldo pendent abans de l'entrega. Farà bizum aquesta setmana."),
+            Note(ts=_ts(1, "16:40"),  text="WhatsApp: envia foto de les sabates definitives (taló 7 cm) — ajustar baix del vestit."),
         ],
     },
     {
+        # Sense paga i senyal + cap cita futura → apareix DUES vegades a "Per fer"
+        # (schedule_fitting + collect_deposit) — el cas de treball de recepció.
         "client": Client(
-            name="Berta Soler", wedding_date="31 Mai 2026",
-            wedding_date_iso="2026-05-31", days_until=39,
+            name="Berta Soler", wedding_date=_disp(39),
+            wedding_date_iso=_iso(39), days_until=39,
             status="sense-paga", garment="Vestit + vel",
             garment_style="Romàntic clàssic", measurements_date="Pendent",
             phone="+34 612 88 31 04", email="berta.soler@gmail.com", notes=""),
         "fabrics": [],
-        "appointments": [
-            Appointment(label="Consulta", value="10 Abr — feta", date="2026-04-10", title="Consulta inicial", time="15:00"),
-        ],
-        "payments": [Payment(label="Paga i senyal", value="Pendent")],
+        "appointments": [],
+        "payments": [Payment(label="Pressupost", value="€2.400 pendent")],
         "deliveries": [],
+        "notes_log": [
+            Note(ts=_ts(9, "15:30"), text="Consulta inicial feta: vol vestit + vel curt, línia romàntica. Ensenyades 3 teles."),
+            Note(ts=_ts(6, "12:10"), text="Pressupost enviat per email: €2.400 (vestit + vel). Pendent de resposta."),
+            Note(ts=_ts(2, "18:55"), text="WhatsApp: diu que ho està pensant, ho comenta amb la família aquest cap de setmana."),
+        ],
     },
     {
         "client": Client(
-            name="Clara Ferrer", wedding_date="14 Jun 2026",
-            wedding_date_iso="2026-06-14", days_until=53,
+            name="Clara Ferrer", wedding_date=_disp(53),
+            wedding_date_iso=_iso(53), days_until=53,
             status="clienta", garment="Vestit princesa",
-            garment_style="Royal / estructura", measurements_date="05 Feb 2026",
+            garment_style="Royal / estructura", measurements_date=_disp(-75),
             phone="+34 651 20 47 89", email="clara.ferrer@mail.com", notes=""),
         "fabrics": [
             Fabric(name="Mikado seda marfil", use="Faldilla",  qty="5.5 m", price="€48/m", to_buy=False, supplier="Gratacós"),
@@ -65,36 +103,45 @@ ATELIER_SEED = [
             Fabric(name="Entretela fusible",  use="Estructura",qty="2.5 m", price="€8/m",  to_buy=False, supplier="Habilitació Marín"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="14 Mar — feta",      date="2026-03-14", title="Primera prova", time="10:30"),
-            Appointment(label="Prova 2", value="25 Abr — programada",date="2026-04-25", title="Segona prova", time="12:00"),
+            Appointment(label="Prova 1", value=f"{_short(-30)} — feta", date=_iso(-30), title="Primera prova", time="10:30", outcome="done"),
+            Appointment(label="Prova 2", value="avui — programada", date=_iso(0), title="Segona prova", time="16:00", duration_min=60),
+            Appointment(label="Prova 3", value=f"{_short(14)} — programada", date=_iso(14), title="Tercera prova", time="12:00", duration_min=60),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€800 · rebut"),
             Payment(label="Saldo",         value="€2.200 pendent"),
         ],
         "deliveries": [],
+        "notes_log": [
+            Note(ts=_ts(30, "11:40"), text="Prova 1: estructura del cos perfecta. Decidit afegir volant d'organza a la faldilla."),
+            Note(ts=_ts(15, "09:25"), text="Trucada: confirma prova 2. Demana si el vestit tindrà butxaques — sí, laterals amagades."),
+        ],
     },
     {
+        # Prospect amb consulta demà — per provar l'avanç d'estat complet.
         "client": Client(
-            name="Dolors Vidal", wedding_date="28 Jun 2026",
-            wedding_date_iso="2026-06-28", days_until=67,
+            name="Dolors Vidal", wedding_date=_disp(67),
+            wedding_date_iso=_iso(67), days_until=67,
             status="prospect", garment="Consulta inicial",
             garment_style="Per decidir", measurements_date="No preses",
             phone="+34 608 55 12 37", email="dolors.vidal@outlook.com",
             notes="Porta imatges de Pinterest. No vol cotilla."),
         "fabrics": [],
         "appointments": [
-            Appointment(label="Consulta", value="22 Abr — pendent", date="2026-04-22", title="Consulta inicial", time="16:00"),
+            Appointment(label="Consulta", value=f"{_short(1)} — programada", date=_iso(1), title="Consulta inicial", time="17:00", duration_min=45),
         ],
         "payments": [],
         "deliveries": [],
+        "notes_log": [
+            Note(ts=_ts(3, "13:15"), text="Trucada inicial: boda en un celler del Penedès. Estil pendent de definir, porta moodboard."),
+        ],
     },
     {
         "client": Client(
-            name="Elena Roca", wedding_date="05 Jul 2026",
-            wedding_date_iso="2026-07-05", days_until=74,
+            name="Elena Roca", wedding_date=_disp(74),
+            wedding_date_iso=_iso(74), days_until=74,
             status="clienta", garment="Vestit bohemi",
-            garment_style="Fluix / natural", measurements_date="18 Mar 2026",
+            garment_style="Fluix / natural", measurements_date=_disp(-20),
             phone="+34 699 14 88 62", email="elena.roca@gmail.com", notes=""),
         "fabrics": [
             Fabric(name="Gasa de cotó",      use="Cos",     qty="3.8 m", price="€14/m", to_buy=False, supplier="Ribes & Casals"),
@@ -102,22 +149,27 @@ ATELIER_SEED = [
             Fabric(name="Setí de seda",      use="Cinturó", qty="0.5 m", price="€36/m", to_buy=False, supplier="Gratacós"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="02 Mai — programada", date="2026-05-02", title="Primera prova", time="09:30"),
+            Appointment(label="Prova 1", value=f"{_short(6)} — programada", date=_iso(6), title="Primera prova", time="09:30", duration_min=60),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€400 · rebut"),
             Payment(label="Saldo",         value="€1.100 pendent"),
         ],
         "deliveries": [
-            Delivery(supplier="Gratacós", description="Puntilla italiana 0.8m", expected_date="2026-05-05", received=False),
+            Delivery(supplier="Gratacós", description="Puntilla italiana 0.8m", expected_date=_iso(4), received=False),
+        ],
+        "notes_log": [
+            Note(ts=_ts(20, "10:50"), text="Mides preses. Vol màniga llarga de puntilla i esquena descoberta."),
+            Note(ts=_ts(5, "19:05"),  text="WhatsApp: envia referència de corona de flors — coordinar el vel amb la floristeria."),
         ],
     },
     {
+        # Entregada fa mesos — cas tancat per a l'arxiu.
         "client": Client(
-            name="Fina Batlle", wedding_date="12 Set 2025",
-            wedding_date_iso="2025-09-12", days_until=-220,
+            name="Fina Batlle", wedding_date=_disp(-220),
+            wedding_date_iso=_iso(-220), days_until=-220,
             status="entregada", garment="Vestit sirena",
-            garment_style="Glamour / escot obert", measurements_date="10 Oct 2024",
+            garment_style="Glamour / escot obert", measurements_date=_disp(-400),
             phone="+34 634 77 23 91", email="fina.batlle@yahoo.es",
             notes="Bottons de perla a l'esquena. Clienta molt satisfeta."),
         "fabrics": [
@@ -125,15 +177,18 @@ ATELIER_SEED = [
             Fabric(name="Tul elàstic",   use="Folre", qty="3.0 m", price="€16/m", to_buy=False, supplier="Ribes & Casals"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="15 Nov 2024", date="2024-11-15", title="Primera prova", time="10:00"),
-            Appointment(label="Prova 2", value="14 Des 2024", date="2024-12-14", title="Segona prova", time="11:00"),
-            Appointment(label="Entrega", value="28 Ago 2025 — feta", date="2025-08-28", title="Entrega vestit", time="09:00"),
+            Appointment(label="Prova 1", value=_short(-300), date=_iso(-300), title="Primera prova", time="10:00", outcome="done"),
+            Appointment(label="Prova 2", value=_short(-260), date=_iso(-260), title="Segona prova",  time="11:00", outcome="done"),
+            Appointment(label="Entrega", value=f"{_short(-235)} — feta", date=_iso(-235), title="Entrega vestit", time="09:00", outcome="done"),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€600 · rebut"),
             Payment(label="Saldo",         value="€2.200 · rebut"),
         ],
         "deliveries": [],
+        "notes_log": [
+            Note(ts=_ts(200, "12:30"), text="Ens envia fotos de la boda — el vestit, espectacular. Autoritza publicar-les a Instagram."),
+        ],
     },
 ]
 
@@ -184,36 +239,101 @@ PHYSIO_SEED = [
 
 SEEDS = {"atelier": ATELIER_SEED, "physio": PHYSIO_SEED}
 
-# Leads: open inbound contacts not yet converted to clients. Atelier leads are
-# condensed from the retired demo-scenario threads (boho/classic/destination).
+# Leads: the intake inbox. Deliberately varied so the conversion flow can be
+# exercised end-to-end: rich vs sparse extraction, every channel, urgent vs
+# far-out dates, and non-standard cases (contact≠client, double order,
+# alteration of an heirloom dress).
 ATELIER_LEAD_SEEDS = [
     Lead(
-        channel="whatsapp", name="Núria Bosch", phone="", email="",
+        channel="whatsapp", name="Núria Bosch", phone="+34 655 90 21 47", email="",
         notes=("Busca vestit boho fluid per a cerimònia exterior en un mas "
                "(80 convidats), el novembre. Mànigues llargues de gasa, escot "
                "paraula d'honor i cola catedralícia. Pressupost al voltant de 2.000€."),
-        fields={"wedding_date_iso": "2026-11-14", "garment": "Vestit a mida",
-                "garment_style": "Boho fluido"},
-        status="open", created_at="2026-07-10T18:12:00",
+        fields={"wedding_date_iso": _iso(125), "garment": "Vestit a mida",
+                "garment_style": "Boho fluid"},
+        status="open", created_at=_ts(0, "09:12"),
     ),
     Lead(
-        channel="whatsapp", name="Carmen Iglesias", phone="", email="",
+        channel="whatsapp", name="Mireia Puigdevall", phone="+34 617 33 40 82", email="",
+        notes=("URGENT: la boda és d'aquí a dos mesos i la botiga on tenia el vestit "
+               "ha tancat. Busca vestit vintage anys 70, gasa i crochet, talla 40. "
+               "Pot venir qualsevol tarda aquesta setmana. Pressupost màx 1.800€."),
+        fields={"wedding_date_iso": _iso(60), "garment": "Vestit a mida",
+                "garment_style": "Vintage anys 70"},
+        status="open", created_at=_ts(0, "11:47"),
+    ),
+    Lead(
+        channel="whatsapp", name="Carmen Iglesias", phone="+34 688 12 75 30", email="",
         notes=("Busca vestido clásico sirena con encaje para boda de junio "
                "(iglesia + finca). Escote en V con encaje, sin mangas, cola "
                "semilarga. Presupuesto entre 3.000 y 3.500€."),
-        fields={"wedding_date_iso": "2026-06-20", "garment": "Vestit a mida",
+        fields={"wedding_date_iso": _iso(330), "garment": "Vestit a mida",
                 "garment_style": "Sirena clàssic"},
-        status="open", created_at="2026-07-11T09:30:00",
+        status="open", created_at=_ts(1, "09:30"),
+    ),
+    Lead(
+        # Sparse on purpose: no extracted fields — tests the incomplete-intake path.
+        channel="whatsapp", name="Alba Torrent", phone="+34 699 02 88 14", email="",
+        notes="Hola! Voldria saber preus orientatius i si teniu disponibilitat per una boda al juny 😊",
+        fields=None,
+        status="open", created_at=_ts(1, "20:15"),
     ),
     Lead(
         channel="email", name="Sophie Laurent",
         phone="+33 6 12 34 56 78", email="sophie.laurent@mail.fr",
-        notes=("Destination wedding a la Costa Brava (platja exterior) el 12 "
-               "de setembre. Busca un vestit columna minimalista, sense vol ni "
-               "encaix. Pressupost 2.500–3.000€, ens ha conegut per Instagram."),
-        fields={"wedding_date_iso": "2026-09-12", "garment": "Vestit a mida",
+        notes=("Destination wedding a la Costa Brava (platja exterior) el setembre. "
+               "Busca un vestit columna minimalista, sense vol ni encaix. "
+               "Pressupost 2.500–3.000€, ens ha conegut per Instagram."),
+        fields={"wedding_date_iso": _iso(62), "garment": "Vestit a mida",
                 "garment_style": "Columna minimalista"},
-        status="open", created_at="2026-07-09T14:05:00",
+        status="open", created_at=_ts(3, "14:05"),
+    ),
+    Lead(
+        # Contact ≠ client: la mare truca per la filla.
+        channel="phone", name="Rosa Peix", phone="+34 972 20 41 55", email="",
+        notes=("Truca la MARE de la núvia (la filla es diu Laura, viu a Brussel·les i "
+               "torna al desembre). Boda a la primavera. Volen una primera consulta "
+               "presencial durant les festes de Nadal. Deixa el seu telèfon de contacte."),
+        fields={"wedding_date_iso": _iso(280)},
+        status="open", created_at=_ts(2, "12:40"),
+    ),
+    Lead(
+        channel="walkin", name="Judit Serra", phone="+34 626 74 19 03", email="",
+        notes=("Ha entrat a la botiga sense cita. Té les mides preses d'una altra "
+               "modista però no ha quedat contenta amb la proposta — vol segona "
+               "opinió. Estil minimalista, crepe llis, res de brillants. Molt decidida."),
+        fields={"wedding_date_iso": _iso(140), "garment": "Vestit a mida",
+                "garment_style": "Minimalista crepe"},
+        status="open", created_at=_ts(1, "17:35"),
+    ),
+    Lead(
+        channel="booking", name="Emma Johansson",
+        phone="+46 70 123 45 67", email="emma.johansson@mail.se",
+        notes=("Online booking from the web widget. Destination wedding at an "
+               "Empordà vineyard in three months. Wants a bias-cut slip dress in "
+               "silk satin, minimal, open back. English-speaking. Budget ~2.800€."),
+        fields={"wedding_date_iso": _iso(92), "garment": "Vestit a mida",
+                "garment_style": "Slip dress seda"},
+        status="open", created_at=_ts(0, "08:03"),
+    ),
+    Lead(
+        # Encàrrec doble: dues núvies, dos vestits coordinats.
+        channel="whatsapp", name="Paula Grau i Marta Vives", phone="+34 633 58 27 90", email="",
+        notes=("Parella de núvies — volen DOS vestits coordinats però gens iguals: "
+               "una estil sastre (pantaló + blazer) i l'altra vestit fluid. Boda "
+               "civil al febrer. Demanen si fem assessorament conjunt. Pressupost total ~4.000€."),
+        fields={"wedding_date_iso": _iso(210), "garment": "Dos vestits coordinats"},
+        status="open", created_at=_ts(4, "19:22"),
+    ),
+    Lead(
+        # No és un vestit nou: transformació d'un vestit familiar.
+        channel="email", name="Griselda Mas",
+        phone="+34 654 11 38 76", email="griselda.mas@gmail.com",
+        notes=("Vol TRANSFORMAR el vestit de núvia de la seva mare (any 1994, "
+               "màniga de farol, setí gruixut) en un vestit actual per la seva boda "
+               "d'aquí a mes i mig. Adjunta fotos. Sap que és un encàrrec especial."),
+        fields={"wedding_date_iso": _iso(45), "garment": "Transformació vestit familiar"},
+        status="open", created_at=_ts(2, "10:58"),
     ),
 ]
 
@@ -277,6 +397,8 @@ def run_seed(s: Session):
             p.client_id = c.id; s.add(p)
         for d in entry["deliveries"]:
             d.client_id = c.id; s.add(d)
+        for n in entry.get("notes_log", []):
+            n.client_id = c.id; s.add(n)
         s.commit()
     if first_client_id is not None:
         for a in _today_appointments():
