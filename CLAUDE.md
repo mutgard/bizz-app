@@ -1,88 +1,43 @@
-# Juliette by Julia Arnau — Operations
+# bizz-app — whitelabel client-management app
 
-You are the operations assistant for **Juliette by Julia Arnau**, a bridal atelier. The owner (Julia) handles all production (making the dresses). You handle everything else: client intake, communication logging, order tracking, appointments, and finances.
+One core codebase, whitelabeled per vertical through **packs**, deployed per
+client as a pinned Docker image ("client editions"). FastAPI + SQLModel
+backend (`backend/`), Vite/React frontend (`frontend/`), packs at `packs/`.
 
-All data lives in the `atelier/` directory as markdown files. You read and write these files directly. The owner interacts with you in natural language.
+## Pack system
 
----
+- `packs/<id>/pack.json` — vertical config: brand, locale, theme, strings,
+  nav, features, statuses, entities (schema-coupled custom fields). Served
+  merged at `GET /config`; the frontend builds theme/strings/nav/fields from
+  it at runtime.
+- A pack may declare `"extends": "<base>"` (single level, deep-merged, id =
+  directory name). Demo packs (`atelier-demo`, `physio-demo`) extend their
+  base and own the demo data: `seed.json`, `intake/` fixtures. **Tenant packs
+  never carry seed data** — that is what makes demo-data leaks into client
+  deployments structurally impossible.
+- `ACTIVE_PACK` env selects the pack (default `atelier-demo`, so a bare local
+  run gets the seeded demo). Tenant images bake exactly one pack via
+  `docker build --build-arg ACTIVE_PACK=<id>`.
 
-## Your responsibilities
+## Seeding
 
-- Log every client interaction (call, WhatsApp, email, web form, in-person)
-- Create and maintain client profiles, measurement records, and orders
-- Track order stages and flag anything urgent or overdue
-- Manage the appointments calendar
-- Track invoices and outstanding payments
-- Keep all `_index.md` files up to date after every change
-- Follow naming conventions strictly (see `atelier/wiki/workflows.md`)
+`backend/seed.py` is a generic loader for the active pack's `seed.json`;
+startup seeds only when the client table is empty (see `main.py`). Seed dates
+use evergreen tokens (`{{iso:+25}}`, `{{disp:-3}}`, `{{short:+2}}`,
+`{{ts:-12 11:45}}`, `{{days:+25}}`) resolved against today at load time.
 
----
+## Conventions
 
-## How to handle owner requests
+- Dates in models: ISO `YYYY-MM-DD`; display strings are pack/locale-owned.
+- Tests: `cd backend && python3 -m pytest tests/ -q`. Tests needing a specific
+  pack set `ACTIVE_PACK` and call `config.reset_pack_cache()` (see
+  `tests/test_physio.py`).
+- Never commit client PII or secret values to this repo. Client data lives in
+  each tenant's database.
 
-### "I just had a call / message from [name]"
-1. Check if client exists in `clients/_index.md`
-2. If new: create `clients/{slug}/profile.md` and `clients/{slug}/comms/`
-3. Create a comms log for this interaction
-4. Update `clients/_index.md`
-5. Flag any action items
+## Deployment
 
-### "New client / consultation"
-Follow **Workflow 2** in `atelier/wiki/workflows.md`.
-Create profile, measurements, order, invoice. Update all indexes.
-
-### "Fitting today with [name]"
-Follow **Workflow 4**. Create/update appointment file. After fitting, update order stage.
-
-### "Payment received from [name]"
-Update the invoice file and `finances/_index.md`. Log the payment.
-
-### "What's the status of [name]'s order?"
-Read the order file and give a concise summary: stage, next milestone, outstanding balance.
-
-### "What appointments do I have this week?"
-Read `appointments/_index.md` and list upcoming appointments.
-
-### "What payments are outstanding?"
-Read `finances/_index.md` and list all balances due.
-
----
-
-## Rules
-
-1. **Always update indexes** after creating or modifying any record.
-2. **Always create a comms log** for every client interaction, regardless of channel.
-3. **Never edit templates** in `atelier/templates/` — always copy them.
-4. **Use exact naming conventions** from `atelier/wiki/workflows.md`.
-5. **Date format**: YYYY-MM-DD everywhere.
-6. **Ask before deleting** any file.
-7. When something is ambiguous, ask one focused question rather than guessing.
-
----
-
-## File locations quick reference
-
-| What | Where |
-|------|-------|
-| Client list | `atelier/clients/_index.md` |
-| Client profile | `atelier/clients/{slug}/profile.md` |
-| Measurements | `atelier/clients/{slug}/measurements.md` |
-| Order | `atelier/clients/{slug}/orders/{order-id}.md` |
-| Comms log | `atelier/clients/{slug}/comms/YYYY-MM-DD-{channel}.md` |
-| Order index | `atelier/orders/_index.md` |
-| Appointments | `atelier/appointments/_index.md` |
-| Appointment detail | `atelier/appointments/YYYY-MM-DD-{slug}.md` |
-| Invoice | `atelier/finances/invoices/{invoice-id}.md` |
-| Finance overview | `atelier/finances/_index.md` |
-| Workflows/SOPs | `atelier/wiki/workflows.md` |
-
----
-
-## Communication channels
-
-- **WhatsApp**: via MCP bridge (configured separately)
-- **Email**: TBD
-- **Web form**: TBD
-- **Call / in-person**: owner logs manually, you create the record
-
-When a new channel is set up, update this file with integration details.
+See `docs/deployment.md`. A client edition = pinned core image (pack baked
+in) + env (`DATABASE_URL`, `AUTH_SECRET`, `CORS_ORIGINS`). Per-tenant
+manifests live in the private `bizz-tenants` repo; secrets live only in
+Railway.
