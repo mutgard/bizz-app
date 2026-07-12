@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { T } from '../tokens';
 import { Label, Mono } from '../components/primitives';
 import { StatusChip } from '../components/StatusChip';
 import { EventDialog } from '../components/EventDialog';
 import { RegisterPaymentSheet } from '../components/RegisterPaymentSheet';
+import { useUndoable } from '../hooks/useUndoable';
 import { api } from '../api';
 import type { AtelierEvent, Client, Todo } from '../types';
 import { buildFinances } from '../lib/finance';
@@ -46,6 +47,25 @@ const actionBtnStyle: React.CSSProperties = {
   color: T.ink2, background: 'none', border: `1px solid ${T.hairline2}`,
   borderRadius: 3, padding: '4px 9px', cursor: 'pointer', whiteSpace: 'nowrap',
 };
+
+const warnActionBtnStyle: React.CSSProperties = {
+  ...actionBtnStyle, color: T.accent, borderColor: T.accent,
+};
+
+/** Accent chip for a struck-through no-show appointment row, per the design
+ *  mock's `.chip.noshow` (docs/design/proposal-v1-desktop.html section 1). */
+function NoShowChip() {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+      padding: '2px 8px', borderRadius: 999,
+      border: `1px solid ${T.accent}`, background: `${T.accent}14`, color: T.accent,
+      fontFamily: T.mono, fontSize: 9, letterSpacing: 0.6, textTransform: 'uppercase',
+    }}>
+      {t('chip.noShow')}
+    </span>
+  );
+}
 
 function Stat({ value, label, warn, goLabel, onClick }: {
   value: string; label: string; warn?: boolean; goLabel: string; onClick: () => void;
@@ -103,6 +123,33 @@ export function TodayDeskScreen({ clients, onOpenClient, onRefresh }: Props) {
   const [eventDialogClientId, setEventDialogClientId] = useState<number | null>(null);
   const [showEventDialog, setShowEventDialog] = useState(false);
   const [payClient, setPayClient] = useState<Client | null>(null);
+
+  // Outcome actions (Fet ✓ / No ve) — one undo window at a time, keyed by
+  // which appointment was last marked; see ProfileScreen's status-advance
+  // flow for the same fire/undo-ref pattern.
+  const outcomeRef = useRef<{ id: number; prevOutcome: string | null; next: string } | null>(null);
+  const [pendingOutcomeId, setPendingOutcomeId] = useState<number | null>(null);
+
+  const outcomeUndoable = useUndoable(
+    async () => {
+      const target = outcomeRef.current;
+      if (!target) return;
+      await api.updateAppointment(target.id, { outcome: target.next });
+      await refreshEvents();
+    },
+    async () => {
+      const target = outcomeRef.current;
+      if (!target) return;
+      await api.updateAppointment(target.id, { outcome: target.prevOutcome ?? '' });
+      await refreshEvents();
+    },
+  );
+
+  const markOutcome = (event: AtelierEvent, next: 'done' | 'no_show') => {
+    outcomeRef.current = { id: event.id, prevOutcome: event.outcome ?? '', next };
+    setPendingOutcomeId(event.id);
+    outcomeUndoable.fire();
+  };
 
   const [noteClientId, setNoteClientId] = useState<number | ''>('');
   const [noteText, setNoteText] = useState('');
@@ -181,27 +228,54 @@ export function TodayDeskScreen({ clients, onOpenClient, onRefresh }: Props) {
             )}
             {events.map(e => {
               const client = e.client_id != null ? clients.find(c => c.id === e.client_id) : undefined;
+              const isAppt = e.type === 'appointment';
+              const noShow = isAppt && e.outcome === 'no_show';
+              const done = isAppt && e.outcome === 'done';
+              const undoOpen = pendingOutcomeId === e.id && outcomeUndoable.pending;
               return (
                 <div key={`${e.type}-${e.id}`} style={rowStyle}>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: T.sans, fontSize: 13, fontWeight: 500, color: T.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{
+                      fontFamily: T.sans, fontSize: 13, fontWeight: 500,
+                      color: noShow ? T.ink3 : T.ink,
+                      textDecoration: noShow ? 'line-through' : 'none',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
                       {e.title}
                     </div>
                     <Mono size={9.5} color={T.ink3} style={{ display: 'block', marginTop: 1, textTransform: 'uppercase', letterSpacing: 0.5 }}>
-                      {eventTypeLabel(e.type)}
+                      {eventTypeLabel(e.type)}{done ? ` · ${t('avui.markDone')}` : ''}
                     </Mono>
                   </div>
                   {client && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                       <Mono size={11.5} color={T.ink}>{client.name}</Mono>
                       <StatusChip statusKey={client.status} size="sm" />
+                      {noShow && <NoShowChip />}
                     </div>
                   )}
-                  {client && (
-                    <button style={actionBtnStyle} onClick={() => onOpenClient(client.id)}>
-                      {t('nav.profile')}
-                    </button>
-                  )}
+                  <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+                    {isAppt && !noShow && !done && (
+                      <>
+                        <button style={actionBtnStyle} onClick={() => markOutcome(e, 'done')}>
+                          {t('avui.markDone')}
+                        </button>
+                        <button style={warnActionBtnStyle} onClick={() => markOutcome(e, 'no_show')}>
+                          {t('avui.markNoShow')}
+                        </button>
+                      </>
+                    )}
+                    {isAppt && undoOpen && (
+                      <button style={actionBtnStyle} onClick={() => outcomeUndoable.undoNow()}>
+                        {t('common.undo')}
+                      </button>
+                    )}
+                    {client && (
+                      <button style={actionBtnStyle} onClick={() => onOpenClient(client.id)}>
+                        {t('nav.profile')}
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}

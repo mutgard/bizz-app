@@ -133,6 +133,7 @@
     "profile.activityEmpty": "No activity logged yet",
     "profile.notesInputPlaceholder": "Log a call or interaction…",
     "profile.nextUnscheduled": "Next visit not scheduled →",
+    "profile.noShows": "no-shows",
 
     "status.advanceButton": "Advance stage…",
     "status.advanceConfirmTitle": "Advance to {status}?",
@@ -181,6 +182,7 @@
     "agenda.month": "Month",
     "agenda.freeSlot": "free",
     "agenda.newAppointment": "Appointment",
+    "agenda.allDay": "All day",
 
     "avui.greeting": "Good morning",
     "avui.todaySection": "Today",
@@ -200,6 +202,8 @@
     "avui.statPendingCollect": "Pending collection",
     "avui.statMaterialsToBuy": "Materials to buy",
     "avui.statKeyDatesSoon": "Key dates < 45d",
+    "avui.markDone": "Done ✓",
+    "avui.markNoShow": "No-show",
 
     "intake.fieldName": "Name",
     "intake.noData": "No intake data",
@@ -217,6 +221,8 @@
     "event.noClient": "— No patient —",
     "event.order": "Case (optional)",
     "event.orderPlaceholder": "e.g. CASE-2026-001",
+    "event.time": "Time",
+    "event.duration": "Duration",
     "event.saving": "Saving...",
     "event.events": "Events",
     "event.empty": "No upcoming events",
@@ -247,7 +253,10 @@
     "inbox.channel.whatsapp": "WhatsApp",
     "inbox.channel.email": "Email",
     "inbox.channel.booking": "Booking",
-    "inbox.toClient": "→ client"
+    "inbox.toClient": "→ client",
+
+    "chip.noShow": "No-show",
+    "note.noShowLog": "No-show · {title} · {date} {time}"
   },
   "nav": [
     { "screen": "today",     "labelKey": "nav.today" },

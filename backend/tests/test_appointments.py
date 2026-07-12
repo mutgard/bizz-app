@@ -147,6 +147,61 @@ def test_appointment_duration_min_zero_422(client):
     })
     assert r.status_code == 422
 
+def test_patch_appointment_no_show_creates_note(client):
+    cid = _make_client(client)
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Primera prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    r = client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    assert r.status_code == 200
+    notes = client.get(f"/clients/{cid}/notes").json()
+    assert len(notes) == 1
+    assert "Primera prova" in notes[0]["text"]
+
+def test_patch_appointment_no_show_repatch_no_duplicate(client):
+    cid = _make_client(client)
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    r = client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    assert r.status_code == 200
+    notes = client.get(f"/clients/{cid}/notes").json()
+    assert len(notes) == 1
+
+def test_patch_appointment_no_show_done_no_show_nets_one_note(client):
+    # Correcting no_show -> done removes that transition's evidence (symmetric
+    # cleanup); the later fresh no_show logs again. Same appointment flip-flops
+    # net exactly one note — two real no-shows are two different appointments.
+    cid = _make_client(client)
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    client.patch(f"/appointments/{aid}", json={"outcome": "done"})
+    r = client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    assert r.status_code == 200
+    notes = client.get(f"/clients/{cid}/notes").json()
+    assert len(notes) == 1
+
+def test_patch_appointment_done_creates_no_note(client):
+    cid = _make_client(client)
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    r = client.patch(f"/appointments/{aid}", json={"outcome": "done"})
+    assert r.status_code == 200
+    notes = client.get(f"/clients/{cid}/notes").json()
+    assert len(notes) == 0
+
+def test_patch_appointment_no_show_without_client_no_crash(client):
+    aid = client.post("/appointments", json={
+        "client_id": None, "title": "Reunió estudi", "date": "2026-04-30", "order_id": None
+    }).json()["id"]
+    r = client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    assert r.status_code == 200
+    assert r.json()["outcome"] == "no_show"
+
 def test_patch_appointment_context_merges_not_replaces(client):
     cid = _make_client(client)
     aid = client.post("/appointments", json={
@@ -156,3 +211,34 @@ def test_patch_appointment_context_merges_not_replaces(client):
     r = client.patch(f"/appointments/{aid}", json={"context": {"b": 3, "c": 4}})
     assert r.status_code == 200
     assert r.json()["context"] == {"a": 1, "b": 3, "c": 4}
+
+def test_undo_no_show_removes_note(client):
+    # misclick + undo must not leave billing evidence behind
+    cid = _make_client(client)
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    assert len(client.get(f"/clients/{cid}/notes").json()) == 1
+    client.patch(f"/appointments/{aid}", json={"outcome": ""})
+    assert len(client.get(f"/clients/{cid}/notes").json()) == 0
+
+def test_correct_no_show_to_done_removes_note(client):
+    cid = _make_client(client)
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    client.patch(f"/appointments/{aid}", json={"outcome": "done"})
+    assert len(client.get(f"/clients/{cid}/notes").json()) == 0
+
+def test_undo_no_show_keeps_unrelated_notes(client):
+    cid = _make_client(client)
+    client.post("/notes", json={"client_id": cid, "text": "Trucada: tot bé"})
+    aid = client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-04-15", "order_id": None
+    }).json()["id"]
+    client.patch(f"/appointments/{aid}", json={"outcome": "no_show"})
+    client.patch(f"/appointments/{aid}", json={"outcome": ""})
+    notes = client.get(f"/clients/{cid}/notes").json()
+    assert len(notes) == 1 and notes[0]["text"] == "Trucada: tot bé"

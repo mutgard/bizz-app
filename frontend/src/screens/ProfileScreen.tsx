@@ -27,8 +27,9 @@ interface Props {
 }
 
 /** One tile in the pinned facts strip. */
-function Fact({ label, value, valueColor, sub, subColor, bar }: {
+function Fact({ label, value, valueColor, sub, subColor, bar, chip }: {
   label: string; value: string; valueColor?: string; sub?: string; subColor?: string; bar?: number;
+  chip?: React.ReactNode;
 }) {
   return (
     <div style={{ padding: '14px 16px', minWidth: 0 }}>
@@ -44,10 +45,28 @@ function Fact({ label, value, valueColor, sub, subColor, bar }: {
           <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, bar))}%`, background: T.gold, borderRadius: 2 }} />
         </div>
       )}
-      {sub && (
-        <Mono size={10} color={subColor ?? T.ink3} style={{ display: 'block', marginTop: 4 }}>{sub}</Mono>
+      {(sub || chip) && (
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 4, flexWrap: 'wrap' }}>
+          {sub && <Mono size={10} color={subColor ?? T.ink3}>{sub}</Mono>}
+          {chip}
+        </div>
       )}
     </div>
+  );
+}
+
+/** Small accent chip for a client's no-show count, next to the "Última
+ *  prova" fact — per the design mock's `.chip.noshow` on the Fitxa screen. */
+function NoShowChip({ count }: { count: number }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+      padding: '2px 6px', borderRadius: 999,
+      border: `1px solid ${T.accent}`, background: `${T.accent}14`, color: T.accent,
+      fontFamily: T.mono, fontSize: 9, letterSpacing: 0.4,
+    }}>
+      {count} {t('profile.noShows')}
+    </span>
   );
 }
 
@@ -325,6 +344,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       sub={secondaryField ? fieldValue(secondaryField) : undefined}
     />
   );
+  const noShowCount = allEvents.filter(e => e.outcome === 'no_show').length;
   facts.push(
     <Fact
       key="lastmeasurement"
@@ -332,6 +352,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       value={c.measurements_date || '—'}
       sub={currentStatus?.terminal ? undefined : (futureEvents.length > 0 ? formatEventDate(futureEvents[0].date) : t('profile.nextUnscheduled'))}
       subColor={futureEvents.length > 0 ? T.ink3 : T.accent}
+      chip={noShowCount > 0 ? <NoShowChip count={noShowCount} /> : undefined}
     />
   );
 

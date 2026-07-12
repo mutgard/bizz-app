@@ -143,6 +143,7 @@
     "profile.activityEmpty": "Encara no hi ha activitat registrada",
     "profile.notesInputPlaceholder": "Afegir nota o trucada…",
     "profile.nextUnscheduled": "Següent sense agendar →",
+    "profile.noShows": "no presentades",
 
     "status.advanceButton": "Avançar estat…",
     "status.advanceConfirmTitle": "Avançar a {status}?",
@@ -193,6 +194,7 @@
     "agenda.month": "Mes",
     "agenda.freeSlot": "lliure",
     "agenda.newAppointment": "Cita",
+    "agenda.allDay": "Tot el dia",
 
     "avui.greeting": "Bon dia",
     "avui.todaySection": "Per avui",
@@ -212,6 +214,8 @@
     "avui.statPendingCollect": "Pendent cobrar",
     "avui.statMaterialsToBuy": "Teles per comprar",
     "avui.statKeyDatesSoon": "Bodes < 45 dies",
+    "avui.markDone": "Fet ✓",
+    "avui.markNoShow": "No ve",
 
     "intake.fieldName": "Nom",
     "intake.weddingDateShort": "Data boda",
@@ -264,6 +268,8 @@
     "event.supplierPlaceholder": "Ex: Gratacós",
     "event.order": "Comanda (opcional)",
     "event.orderPlaceholder": "Ex: ORD-2026-001",
+    "event.time": "Hora",
+    "event.duration": "Durada",
     "event.saving": "Guardant...",
     "event.events": "Esdeveniments",
     "event.empty": "Cap esdeveniment pendent",
@@ -273,7 +279,10 @@
     "event.deletePromptPost": "? Aquesta acció no es pot desfer.",
 
     "brief.invalid": "Aquest link no és vàlid.",
-    "brief.proposal": "Proposta"
+    "brief.proposal": "Proposta",
+
+    "chip.noShow": "No presentada",
+    "note.noShowLog": "No presentada · {title} · {date} {time}"
   },
   "nav": [
     { "screen": "today",     "labelKey": "nav.today" },

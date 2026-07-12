@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { T } from '../tokens';
 import { Serif, Mono, Label } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
+import { useUndoable } from '../hooks/useUndoable';
 import { api } from '../api';
 import type { AtelierEvent, Client, Lead } from '../types';
 import { groupEventsByDay } from '../lib/timeline';
@@ -34,6 +35,31 @@ function eventTypeLabel(type: AtelierEvent['type']): string {
   return t('event.typeAppointment');
 }
 
+const compactActionStyle: React.CSSProperties = {
+  fontFamily: T.mono, fontSize: 8.5, letterSpacing: 0.5, textTransform: 'uppercase',
+  color: T.ink2, background: 'none', border: `1px solid ${T.hairline2}`,
+  borderRadius: 3, padding: '3px 7px', cursor: 'pointer', whiteSpace: 'nowrap',
+};
+
+const compactWarnActionStyle: React.CSSProperties = {
+  ...compactActionStyle, color: T.accent, borderColor: T.accent,
+};
+
+/** Compact accent chip for a struck no-show row, mobile timeline version of
+ *  TodayDeskScreen's `NoShowChip`. */
+function NoShowChip() {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', flexShrink: 0,
+      padding: '2px 7px', borderRadius: 999,
+      border: `1px solid ${T.accent}`, background: `${T.accent}14`, color: T.accent,
+      fontFamily: T.mono, fontSize: 8.5, letterSpacing: 0.5, textTransform: 'uppercase',
+    }}>
+      {t('chip.noShow')}
+    </span>
+  );
+}
+
 export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
   const mobile = useIsMobile();
   const px = mobile ? 20 : 40;
@@ -42,12 +68,42 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
   const [events, setEvents] = useState<AtelierEvent[]>([]);
   const [leads, setLeads] = useState<Lead[]>([]);
 
+  const refreshEvents = () => {
+    const from = isoToday();
+    api.listEvents(from, addDays(from, 30)).then(setEvents);
+  };
+
   useEffect(() => {
     if (!mobile) return; // desktop delegates to TodayDeskScreen, which fetches its own data
-    const today = isoToday();
-    api.listEvents(today, addDays(today, 30)).then(setEvents);
+    refreshEvents();
     if (featureOn('intake')) api.listLeads('open').then(setLeads);
   }, [mobile]);
+
+  // Outcome actions (Fet ✓ / No ve) on today's pending appointments — same
+  // fire/undo-ref pattern as TodayDeskScreen's desktop version, compacted.
+  const outcomeRef = useRef<{ id: number; prevOutcome: string | null; next: string } | null>(null);
+  const [pendingOutcomeId, setPendingOutcomeId] = useState<number | null>(null);
+
+  const outcomeUndoable = useUndoable(
+    async () => {
+      const target = outcomeRef.current;
+      if (!target) return;
+      await api.updateAppointment(target.id, { outcome: target.next });
+      refreshEvents();
+    },
+    async () => {
+      const target = outcomeRef.current;
+      if (!target) return;
+      await api.updateAppointment(target.id, { outcome: target.prevOutcome ?? '' });
+      refreshEvents();
+    },
+  );
+
+  const markOutcome = (event: AtelierEvent, next: 'done' | 'no_show') => {
+    outcomeRef.current = { id: event.id, prevOutcome: event.outcome ?? '', next };
+    setPendingOutcomeId(event.id);
+    outcomeUndoable.fire();
+  };
 
   const groups = useMemo(() => groupEventsByDay(events, pack.locale), [events, pack.locale]);
   const finances = useMemo(() => buildFinances(clients), [clients]);
@@ -155,6 +211,11 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
             {group.events.map(e => {
               const chip = EVENT_CHIP[e.type] ?? EVENT_CHIP.appointment;
               const clickable = e.client_id != null;
+              const isAppt = e.type === 'appointment';
+              const noShow = isAppt && e.outcome === 'no_show';
+              const done = isAppt && e.outcome === 'done';
+              const undoOpen = pendingOutcomeId === e.id && outcomeUndoable.pending;
+              const showActions = group.isToday && isAppt && !noShow && !done;
               return (
                 <div
                   key={`${e.type}-${e.id}`}
@@ -165,13 +226,45 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
                   }}
                 >
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ fontFamily: T.sans, fontSize: 13.5, fontWeight: 500, color: T.ink, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    <div style={{
+                      fontFamily: T.sans, fontSize: 13.5, fontWeight: 500,
+                      color: noShow ? T.ink3 : T.ink,
+                      textDecoration: noShow ? 'line-through' : 'none',
+                      overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                    }}>
                       {e.title}
                     </div>
                     {e.client_name && (
-                      <Mono size={10} color={T.ink3} style={{ display: 'block', marginTop: 2 }}>{e.client_name}</Mono>
+                      <Mono size={10} color={T.ink3} style={{ display: 'block', marginTop: 2 }}>
+                        {e.client_name}{done ? ` · ${t('avui.markDone')}` : ''}
+                      </Mono>
                     )}
                   </div>
+                  {noShow && <NoShowChip />}
+                  {group.isToday && isAppt && undoOpen && (
+                    <button
+                      style={compactActionStyle}
+                      onClick={(ev) => { ev.stopPropagation(); outcomeUndoable.undoNow(); }}
+                    >
+                      {t('common.undo')}
+                    </button>
+                  )}
+                  {showActions && (
+                    <>
+                      <button
+                        style={compactActionStyle}
+                        onClick={(ev) => { ev.stopPropagation(); markOutcome(e, 'done'); }}
+                      >
+                        {t('avui.markDone')}
+                      </button>
+                      <button
+                        style={compactWarnActionStyle}
+                        onClick={(ev) => { ev.stopPropagation(); markOutcome(e, 'no_show'); }}
+                      >
+                        {t('avui.markNoShow')}
+                      </button>
+                    </>
+                  )}
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', flexShrink: 0,
                     padding: '2px 8px', borderRadius: 999,

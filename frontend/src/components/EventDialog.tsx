@@ -11,14 +11,17 @@ import { t, featureOn } from '../config';
 interface Props {
   event?: AtelierEvent;         // undefined → create mode
   defaultDate?: string;         // ISO pre-fill
+  defaultTime?: string;         // "HH:MM" pre-fill (e.g. from an hour-grid slot click)
   defaultClientId?: number;     // locked when provided
   clients: Client[];
   onSuccess: () => void;
   onClose: () => void;
 }
 
+const DURATION_OPTIONS = [30, 45, 60, 90];
+
 export function EventDialog({
-  event, defaultDate, defaultClientId, clients, onSuccess, onClose,
+  event, defaultDate, defaultTime, defaultClientId, clients, onSuccess, onClose,
 }: Props) {
   const isEdit = Boolean(event);
   const [type, setType] = useState<EventType>(event?.type ?? 'appointment');
@@ -29,6 +32,8 @@ export function EventDialog({
   );
   const [orderId, setOrderId] = useState<string>(event?.order_id ?? '');
   const [supplier, setSupplier] = useState<string>(event?.supplier ?? '');
+  const [time, setTime] = useState<string>(event?.time ?? defaultTime ?? '');
+  const [durationMin, setDurationMin] = useState<number>(event?.duration_min ?? 60);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
@@ -55,6 +60,7 @@ export function EventDialog({
         if (type === 'appointment') {
           await api.updateAppointment(event.id, {
             title, date, order_id: orderId || null,
+            time: time || null, duration_min: durationMin,
           });
         } else if (type === 'delivery') {
           await api.updateDelivery(event.id, {
@@ -70,6 +76,7 @@ export function EventDialog({
         if (type === 'appointment') {
           await api.createAppointment({
             title, date, client_id: cid, order_id: orderId || null,
+            time: time || null, duration_min: durationMin,
           });
         } else if (type === 'delivery') {
           await api.createDelivery({
@@ -196,6 +203,32 @@ export function EventDialog({
                 placeholder={t('event.supplierPlaceholder')}
                 style={inputStyle}
               />
+            </div>
+          )}
+
+          {/* Time + duration — appointment only */}
+          {type === 'appointment' && (
+            <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>{t('event.time')}</label>
+                <input
+                  type="time" value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  style={inputStyle}
+                />
+              </div>
+              <div style={{ flex: 1 }}>
+                <label style={labelStyle}>{t('event.duration')}</label>
+                <select
+                  value={durationMin}
+                  onChange={(e) => setDurationMin(Number(e.target.value))}
+                  style={{ ...inputStyle, cursor: 'pointer' }}
+                >
+                  {DURATION_OPTIONS.map((d) => (
+                    <option key={d} value={d}>{d} min</option>
+                  ))}
+                </select>
+              </div>
             </div>
           )}
 
