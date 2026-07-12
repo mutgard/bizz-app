@@ -14,3 +14,4 @@ Mark each item `[x]` when the plan has been fully implemented and tested.
 | 8 | Day-plan drift UI on the redesigned Avui/Agenda (confirm/no-show actions with undo, per-client no-show trail via auto-notes, hourly week grid with slot booking) | design: artifact da78970c §1/3/5 | [x] |
 | 9 | No-show fee proposal row in Fitxa payments ("€30 proposat · registrar/ometre" per unbilled no-show) — designed in artifact §3, implementation deferred | no plan yet | [ ] |
 | 10 | Link affordance: distinct icon on clickable links (beyond obvious buttons) so tappable text is recognizable | [spec](superpowers/specs/2026-07-13-nav-affordance-chevron-design.md) | [x] |
+| 11 | Activity table scrolls inside its own container (overflow-y) so the screen itself never scrolls | no plan yet | [ ] |
