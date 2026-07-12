@@ -5,10 +5,8 @@ describe('pathForScreen', () => {
   it('maps current and legacy screen keys to paths', () => {
     expect(pathForScreen('clients')).toBe('/clients');
     expect(pathForScreen('agenda')).toBe('/agenda');
-    expect(pathForScreen('roadmap')).toBe('/agenda');
     expect(pathForScreen('materials')).toBe('/materials');
     expect(pathForScreen('fabrics')).toBe('/materials');
-    expect(pathForScreen('shop')).toBe('/materials');
     expect(pathForScreen('finances')).toBe('/caixa');
     expect(pathForScreen('today')).toBe('/');
   });

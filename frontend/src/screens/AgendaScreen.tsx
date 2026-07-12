@@ -19,9 +19,14 @@ interface Props {
   onRefresh: () => void;
 }
 
-// Left-border color per event type — same vocabulary as EventChip (Task-3
-// month grid / Avui timeline), just expressed as a border instead of a fill
-// so several events stack legibly inside a narrow week column.
+// Left-border color per event type for the week view's stacked rows, per
+// the design mock's week-view spec (docs/superpowers/plans/2026-07-11-redesign-v1-ia.md,
+// Task 12 Step 3: "appointment T.ink2, delivery T.gold, key date T.accent").
+// This intentionally does NOT match EventChip's solid-fill vocabulary
+// (appointment T.accent, delivery T.gold, wedding T.ink, used in the month
+// grid / Avui timeline) — only `delivery` happens to land on the same color
+// in both. The week column needs a quieter thin-border treatment so several
+// stacked rows stay legible in a narrow column.
 const TYPE_BORDER: Record<string, string> = {
   appointment: T.ink2,
   delivery: T.gold,

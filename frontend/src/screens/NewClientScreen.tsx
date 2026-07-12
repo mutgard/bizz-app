@@ -6,7 +6,7 @@ import { Label, Mono } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { initials, computeDaysUntil, formatWeddingDate } from '../lib/clientHelpers';
 import { DynamicFields } from '../components/DynamicFields';
-import { t, clientStatuses, featureOn, itemFields, clientFieldsLabel } from '../config';
+import { t, clientStatuses, featureOn, itemFields, clientFieldsLabel, statusByKey } from '../config';
 import type { PackField } from '../config';
 
 interface Props {
@@ -32,7 +32,7 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
   const keyDate = featureOn('keyDate');
 
   const px = mobile ? 20 : 40;
-  const s = T.badge[status];
+  const s = statusByKey(status);
 
   const fieldInput = (hasError = false) => ({
     border: 'none',
@@ -120,8 +120,8 @@ export function NewClientScreen({ onCancel, onSuccess }: Props) {
                 onChange={e => setStatus(e.target.value as ClientStatus)}
                 style={{
                   appearance: 'none', WebkitAppearance: 'none',
-                  border: `1px ${s.dash ? 'dashed' : 'solid'} ${s.bd}`,
-                  background: s.bg, color: s.fg,
+                  border: `1px ${s?.dash ? 'dashed' : 'solid'} ${s?.bd}`,
+                  background: s?.bg, color: s?.fg,
                   fontFamily: T.mono, fontSize: 10, letterSpacing: 0.8,
                   textTransform: 'uppercase', padding: '3px 24px 3px 10px',
                   borderRadius: 999, cursor: 'pointer', outline: 'none',

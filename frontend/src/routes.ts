@@ -13,10 +13,8 @@ export const SCREEN_PATHS: Record<string, string> = {
   agenda: '/agenda',
   intake: '/intake',
   caixa: '/caixa',
-  fabrics: '/materials',    // legacy alias — collapsed into /materials
-  shop: '/materials',       // legacy alias — collapsed into /materials
-  roadmap: '/agenda',       // legacy alias — renamed to /agenda
-  finances: '/caixa',       // legacy alias
+  fabrics: '/materials',    // still called via nav('fabrics') — ProfileScreen's "view all" fabrics link
+  finances: '/caixa',       // legacy alias — no current caller, kept for back-compat
 };
 
 export function pathForScreen(screen: string): string {

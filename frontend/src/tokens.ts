@@ -22,14 +22,6 @@ export const T = {
   serif: '"Instrument Serif", Georgia, serif',
   mono:  '"IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
   sans:  '"Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
-
-  // badge config
-  badge: {
-    'prospect':   { bg: 'transparent', bd: '#8a7a64', fg: '#5a4a38', dot: '◌', dash: true },
-    'sense-paga': { bg: '#f6efdc',     bd: '#c9a86a', fg: '#6b5420', dot: '◐', dash: false },
-    'clienta':    { bg: '#eadad5',     bd: '#8a2a2f', fg: '#6b1f22', dot: '●', dash: false },
-    'entregada':  { bg: '#2a1f14',     bd: '#2a1f14', fg: '#f6f1e8', dot: '✓', dash: false },
-  } as Record<string, { bg: string; bd: string; fg: string; dot: string; dash: boolean }>,
 } as const;
 
 // Fabric swatch patterns
@@ -61,12 +53,6 @@ export function hydrateTokens(pack: Pack): void {
   m.serif = f.serif;
   m.mono = f.mono;
   m.sans = f.sans;
-
-  const badge: Record<string, { bg: string; bd: string; fg: string; dot: string; dash: boolean }> = {};
-  for (const s of pack.statuses.client) {
-    badge[s.key] = { bg: s.bg, bd: s.bd, fg: s.fg, dot: s.dot, dash: s.dash };
-  }
-  m.badge = badge;
 
   // SWATCH_PATTERNS is evaluated at import time (when tokens.ts loads, before
   // this runs) so its baked-in colors must be rewritten in place.

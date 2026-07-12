@@ -11,7 +11,8 @@ interface Props {
  * Solid, color-coded status chip driven entirely by the active pack's
  * `statusByKey(key)` — bg/bd/fg/dot/dash come straight from the pack config,
  * so the same component renders every vertical's status vocabulary without
- * a hardcoded color map (replaces `T.badge`, see tokens.ts).
+ * a hardcoded color map (the old `T.badge` map in tokens.ts has since been
+ * removed; its remaining consumers were migrated to `statusByKey` directly).
  */
 export function StatusChip({ statusKey, size = 'md' }: Props) {
   const s = statusByKey(statusKey);

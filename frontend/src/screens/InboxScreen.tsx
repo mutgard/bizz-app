@@ -8,7 +8,7 @@ import { DynamicFields } from '../components/DynamicFields';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { computeDaysUntil, formatWeddingDate } from '../lib/clientHelpers';
 import { formatEventDate } from '../lib/calendarHelpers';
-import { t, featureOn, clientStatuses, clientFields, clientFieldsLabel } from '../config';
+import { t, featureOn, clientStatuses, clientFields, clientFieldsLabel, statusByKey } from '../config';
 import type { PackField } from '../config';
 
 interface Props {
@@ -361,7 +361,7 @@ function ConvertForm({ lead, px, mobile, onBack, onConverted, onDismissed }: {
   const [error, setError] = useState('');
   const [nameError, setNameError] = useState(false);
 
-  const s = T.badge[status];
+  const s = statusByKey(status);
 
   const handleConvert = async () => {
     const nErr = !name.trim();

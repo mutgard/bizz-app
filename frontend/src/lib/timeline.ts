@@ -1,19 +1,16 @@
 import type { AtelierEvent } from '../types';
 import type { Pack } from '../config';
+// `isoToday` itself is pure (no pack coupling) even though calendarHelpers.ts
+// also exports pack-driven helpers (monthNames/dayNames) — importing just
+// this one keeps a single source of truth without pulling any pack
+// dependency into this module's own logic.
+import { isoToday } from './calendarHelpers';
 
 export interface DayGroup {
   dayLabel: string;
   iso: string;
   isToday: boolean;
   events: AtelierEvent[];
-}
-
-function isoToday(): string {
-  const d = new Date();
-  const y = d.getFullYear();
-  const m = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${y}-${m}-${dd}`;
 }
 
 /**
