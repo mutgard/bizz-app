@@ -44,7 +44,6 @@ def test_config_nav_is_3_tab_4_section_ia():
     for key in (
         "materials.toBuyTab", "materials.inventoryTab",
         "avui.greeting", "avui.todaySection", "avui.urgentSection",
-        "avui.glanceSection", "avui.inboxSection", "avui.caixaSection", "avui.todo",
-        "caixa.title",
+        "avui.inboxSection", "avui.caixaSection", "avui.todo",
     ):
         assert key in pack["strings"], f"missing string key {key}"

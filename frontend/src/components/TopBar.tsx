@@ -63,8 +63,8 @@ export function TopBar({ active, onNav, counts, onNewClient, clients, onOpenClie
         </button>
         {/* Operator-only: visible when the browser holds a valid ADMIN_TOKEN */}
         {isOperator && (
-          <a href="/admin" title="Backoffice" style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: T.gold, textDecoration: 'none', border: `1px solid rgba(246,241,232,0.25)`, padding: '3px 8px', borderRadius: 2 }}>
-            Admin
+          <a href="/admin" title={t('common.backoffice')} style={{ fontFamily: T.mono, fontSize: 9, letterSpacing: 1, textTransform: 'uppercase', color: T.gold, textDecoration: 'none', border: `1px solid rgba(246,241,232,0.25)`, padding: '3px 8px', borderRadius: 2 }}>
+            {t('common.admin')}
           </a>
         )}
       </div>
