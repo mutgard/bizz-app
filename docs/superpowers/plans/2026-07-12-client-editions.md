@@ -1061,9 +1061,11 @@ Expected: no output. Then `cd backend && python3 -m pytest tests/ -q` → all pa
 - [ ] **Step 4: Commit**
 
 ```bash
-git add -A
+git add -A atelier docs/business scripts tests CLAUDE.md
 git commit -m "chore: retire legacy atelier/ markdown workspace; CLAUDE.md becomes a dev guide"
 ```
+
+(Stage explicit paths only — never bare `git add -A`: a parallel design session shares this working tree via `.design-sync/` and `docs/design/`.)
 
 ---
 
