@@ -14,6 +14,12 @@ def run_migrations():
         ("appointment", "title",    "TEXT"),
         ("appointment", "order_id", "TEXT"),
         ("client",      "custom",   "JSON"),
+        ("appointment", "time",         "TEXT"),
+        ("appointment", "duration_min", "INTEGER"),
+        ("appointment", "outcome",      "TEXT"),
+        ("appointment", "source",      "TEXT"),
+        ("appointment", "external_ref","TEXT"),
+        ("appointment", "context",     "JSON"),
     ]
     with engine.connect() as conn:
         for table, col, typ in new_cols:

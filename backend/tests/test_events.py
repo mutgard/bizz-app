@@ -71,6 +71,37 @@ def test_events_client_id_filter(client):
     for e in events:
         assert e["client_id"] == cid1
 
+def test_events_include_new_appointment_fields(client):
+    cid = _make_client(client, "2026-08-01")
+    client.post("/appointments", json={
+        "client_id": cid, "title": "Prova", "date": "2026-05-01", "order_id": None,
+        "time": "10:00", "duration_min": 30, "source": "manual", "context": {"note": "x"},
+    })
+    events = client.get("/events?from=2026-01-01&to=2026-12-31").json()
+    appt = next(e for e in events if e["type"] == "appointment")
+    assert appt["time"] == "10:00"
+    assert appt["duration_min"] == 30
+    assert appt["outcome"] is None
+    assert appt["source"] == "manual"
+    assert appt["context"] == {"note": "x"}
+
+def test_events_other_types_emit_none_new_fields(client):
+    cid = _make_client(client, "2026-08-01")
+    client.post("/deliveries", json={"supplier": "Gratacós", "description": "Seda", "expected_date": "2026-05-10", "client_id": cid, "received": False})
+    events = client.get("/events?from=2026-01-01&to=2026-12-31").json()
+    for e in events:
+        if e["type"] != "appointment":
+            assert e["time"] is None
+            assert e["outcome"] is None
+
+def test_events_same_day_sorted_by_time_untimed_first(client):
+    cid = _make_client(client, "2026-08-01")
+    client.post("/appointments", json={"client_id": cid, "title": "Late", "date": "2026-05-05", "order_id": None, "time": "15:00"})
+    client.post("/appointments", json={"client_id": cid, "title": "Untimed", "date": "2026-05-05", "order_id": None})
+    client.post("/appointments", json={"client_id": cid, "title": "Early", "date": "2026-05-05", "order_id": None, "time": "08:00"})
+    events = [e for e in client.get("/events?from=2026-01-01&to=2026-12-31").json() if e["date"] == "2026-05-05"]
+    assert [e["title"] for e in events] == ["Untimed", "Early", "Late"]
+
 def test_wedding_excluded_without_iso(client):
     # Client with no wedding_date_iso should not produce a wedding event
     client.post("/clients", json={

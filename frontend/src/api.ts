@@ -59,7 +59,7 @@ export const api = {
 
   createAppointment: (body: AppointmentCreate) =>
     post<AtelierEvent>('/appointments', body),
-  updateAppointment: (id: number, body: Partial<AppointmentCreate>) =>
+  updateAppointment: (id: number, body: Partial<AppointmentCreate> & { outcome?: string }) =>
     patch<AtelierEvent>(`/appointments/${id}`, body),
   deleteAppointment: (id: number) =>
     del(`/appointments/${id}`),

@@ -134,6 +134,11 @@ export interface AtelierEvent {
   order_id?: string | null;
   supplier?: string | null;
   received?: boolean | null;
+  time?: string | null;          // "HH:MM" 24h
+  duration_min?: number | null;
+  outcome?: string | null;       // ''/undefined = pending · 'done' · 'no_show'
+  source?: string | null;
+  context?: Record<string, unknown> | null;
 }
 
 export interface AppointmentCreate {
@@ -141,6 +146,11 @@ export interface AppointmentCreate {
   title: string;
   date: string;
   order_id?: string | null;
+  time?: string | null;
+  duration_min?: number | null;
+  source?: string | null;
+  external_ref?: string | null;
+  context?: Record<string, unknown>;
 }
 
 export interface DeliveryCreate {

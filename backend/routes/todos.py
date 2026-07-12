@@ -36,7 +36,9 @@ def list_todos(session: Session = Depends(get_session)):
        terminal, and zero Appointment rows. (Appointment.value is a free-form
        display string, not a parseable date in the current data model, so
        "no appointments scheduled" is approximated as "zero rows" rather than
-       "no future-dated row".)
+       "no future-dated row". Appointment.time/outcome now give a precise
+       "future-dated and not done/no_show" test — a future precision upgrade,
+       not done here.)
     2. collect_deposit — client with parsed payments priceTotal > 0 and
        paid == 0, status not terminal.
     3. review_lead — one entry per Lead with status == "open"; client_id is

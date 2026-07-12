@@ -15,6 +15,8 @@ def _appt_to_event(a: Appointment, session: Session) -> dict:
         "client_id": a.client_id,
         "client_name": c.name if c else None,
         "order_id": a.order_id, "supplier": None, "received": None,
+        "time": a.time, "duration_min": a.duration_min,
+        "outcome": a.outcome, "source": a.source, "context": a.context,
     }
 
 def _delivery_to_event(d: Delivery, session: Session) -> dict:
@@ -25,6 +27,8 @@ def _delivery_to_event(d: Delivery, session: Session) -> dict:
         "client_id": d.client_id,
         "client_name": c.name if c else None,
         "order_id": None, "supplier": d.supplier, "received": d.received,
+        "time": None, "duration_min": None,
+        "outcome": None, "source": None, "context": None,
     }
 
 @router.get("")
@@ -71,7 +75,9 @@ def list_events(
                     "title": f"{key_date_label} · {c.name}",
                     "client_id": c.id, "client_name": c.name,
                     "order_id": None, "supplier": None, "received": None,
+                    "time": None, "duration_min": None,
+                    "outcome": None, "source": None, "context": None,
                 })
 
-    results.sort(key=lambda e: e["date"])
+    results.sort(key=lambda e: (e["date"], e.get("time") or ""))
     return results

@@ -10,5 +10,5 @@ Mark each item `[x]` when the plan has been fully implemented and tested.
 | 4 | Outstanding payments screen | [plan](superpowers/plans/2026-04-22-outstanding-payments.md) | [x] |
 | 5 | Client list enhancements | [plan](superpowers/plans/2026-04-22-client-list-enhancements.md) | [x] |
 | 6 | Order status workflow UI | [plan](superpowers/plans/2026-04-22-order-status-workflow.md) | [x] |
-| 7 | Day-plan schema groundwork (appointment time/outcome/booking context) — **after screen redesign** | [plan](superpowers/plans/2026-07-11-day-plan-schema.md) | [ ] |
-| 8 | Day-plan dashboard UI ("Today" screen: now/next, drift confirm/no-show) — **after screen redesign**; placement + no-show decisions pending | no plan yet | [ ] |
+| 7 | Day-plan schema groundwork (appointment time/outcome/booking context) | [plan](superpowers/plans/2026-07-11-day-plan-schema.md) | [x] |
+| 8 | Day-plan drift UI on the redesigned Avui/Agenda (confirm/no-show actions, now/next from times, hourly week slots) — no-show side-effect decision pending (user: "wait") | no plan yet | [ ] |

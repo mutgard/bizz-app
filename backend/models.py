@@ -55,6 +55,14 @@ class Appointment(SQLModel, table=True):
     date: Optional[str] = None       # ISO YYYY-MM-DD — roadmap field
     title: Optional[str] = None      # display title — roadmap field
     order_id: Optional[str] = None   # e.g. "ORD-2026-001"
+    time: Optional[str] = None          # "HH:MM" 24h — optional; untimed events remain valid
+    duration_min: Optional[int] = None  # length; lets a dashboard compute "in progress now"
+    outcome: Optional[str] = None       # None/'' = pending · 'done' · 'no_show'
+    source: Optional[str] = None        # None/'manual' · 'booking' (open set: calendly/cal.com/…)
+    external_ref: Optional[str] = Field(default=None, index=True)  # scheduling-app booking UID
+    context: Optional[dict] = Field(default=None, sa_column=Column(JSON))
+                                        # scheduling-app payload: event type, invitee answers, notes…
+                                        # (same JSON-column pattern as Client.custom / Lead.fields)
     client: Optional[Client] = Relationship(back_populates="appointments")
 
 class Payment(SQLModel, table=True):

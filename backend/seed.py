@@ -1,5 +1,6 @@
 """Run once: python3 seed.py — inserts prototype sample data.
 The seed set is chosen by the active pack (ACTIVE_PACK)."""
+import datetime
 from database import create_db, engine
 from models import Client, Fabric, Appointment, Payment, Delivery, Lead
 from config import active_pack_id
@@ -21,9 +22,9 @@ ATELIER_SEED = [
             Fabric(name="Puntilla Chantilly", use="Vora",  qty="1.2 m", price="€95/m", to_buy=False, supplier="Gratacós"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="22 Mar — feta",      date="2026-03-22", title="Primera prova"),
-            Appointment(label="Prova 2", value="18 Abr — programada",date="2026-04-18", title="Segona prova"),
-            Appointment(label="Entrega", value="15 Mai",              date="2026-05-15", title="Entrega vestit"),
+            Appointment(label="Prova 1", value="22 Mar — feta",      date="2026-03-22", title="Primera prova", time="10:00"),
+            Appointment(label="Prova 2", value="18 Abr — programada",date="2026-04-18", title="Segona prova", time="11:30"),
+            Appointment(label="Entrega", value="15 Mai",              date="2026-05-15", title="Entrega vestit", time="09:00"),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€500 · rebut"),
@@ -43,7 +44,7 @@ ATELIER_SEED = [
             phone="+34 612 88 31 04", email="berta.soler@gmail.com", notes=""),
         "fabrics": [],
         "appointments": [
-            Appointment(label="Consulta", value="10 Abr — feta", date="2026-04-10", title="Consulta inicial"),
+            Appointment(label="Consulta", value="10 Abr — feta", date="2026-04-10", title="Consulta inicial", time="15:00"),
         ],
         "payments": [Payment(label="Paga i senyal", value="Pendent")],
         "deliveries": [],
@@ -64,8 +65,8 @@ ATELIER_SEED = [
             Fabric(name="Entretela fusible",  use="Estructura",qty="2.5 m", price="€8/m",  to_buy=False, supplier="Habilitació Marín"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="14 Mar — feta",      date="2026-03-14", title="Primera prova"),
-            Appointment(label="Prova 2", value="25 Abr — programada",date="2026-04-25", title="Segona prova"),
+            Appointment(label="Prova 1", value="14 Mar — feta",      date="2026-03-14", title="Primera prova", time="10:30"),
+            Appointment(label="Prova 2", value="25 Abr — programada",date="2026-04-25", title="Segona prova", time="12:00"),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€800 · rebut"),
@@ -83,7 +84,7 @@ ATELIER_SEED = [
             notes="Porta imatges de Pinterest. No vol cotilla."),
         "fabrics": [],
         "appointments": [
-            Appointment(label="Consulta", value="22 Abr — pendent", date="2026-04-22", title="Consulta inicial"),
+            Appointment(label="Consulta", value="22 Abr — pendent", date="2026-04-22", title="Consulta inicial", time="16:00"),
         ],
         "payments": [],
         "deliveries": [],
@@ -101,7 +102,7 @@ ATELIER_SEED = [
             Fabric(name="Setí de seda",      use="Cinturó", qty="0.5 m", price="€36/m", to_buy=False, supplier="Gratacós"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="02 Mai — programada", date="2026-05-02", title="Primera prova"),
+            Appointment(label="Prova 1", value="02 Mai — programada", date="2026-05-02", title="Primera prova", time="09:30"),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€400 · rebut"),
@@ -124,9 +125,9 @@ ATELIER_SEED = [
             Fabric(name="Tul elàstic",   use="Folre", qty="3.0 m", price="€16/m", to_buy=False, supplier="Ribes & Casals"),
         ],
         "appointments": [
-            Appointment(label="Prova 1", value="15 Nov 2024", date="2024-11-15", title="Primera prova"),
-            Appointment(label="Prova 2", value="14 Des 2024", date="2024-12-14", title="Segona prova"),
-            Appointment(label="Entrega", value="28 Ago 2025 — feta", date="2025-08-28", title="Entrega vestit"),
+            Appointment(label="Prova 1", value="15 Nov 2024", date="2024-11-15", title="Primera prova", time="10:00"),
+            Appointment(label="Prova 2", value="14 Des 2024", date="2024-12-14", title="Segona prova", time="11:00"),
+            Appointment(label="Entrega", value="28 Ago 2025 — feta", date="2025-08-28", title="Entrega vestit", time="09:00"),
         ],
         "payments": [
             Payment(label="Paga i senyal", value="€600 · rebut"),
@@ -145,8 +146,8 @@ PHYSIO_SEED = [
             custom={"treatment": "Lower-back rehab", "first_visit_date": "2026-06-10", "referring_doctor": "Dr. Serra"}),
         "fabrics": [], "deliveries": [],
         "appointments": [
-            Appointment(label="Session 3", value="12 Jul — done",       date="2026-07-12", title="Rehab session 3"),
-            Appointment(label="Session 4", value="16 Jul — scheduled",  date="2026-07-16", title="Rehab session 4"),
+            Appointment(label="Session 3", value="12 Jul — done",       date="2026-07-12", title="Rehab session 3", time="09:00"),
+            Appointment(label="Session 4", value="16 Jul — scheduled",  date="2026-07-16", title="Rehab session 4", time="09:00"),
         ],
         "payments": [
             Payment(label="Session pack (10)", value="€300 · paid"),
@@ -161,7 +162,7 @@ PHYSIO_SEED = [
             custom={"treatment": "Post-op knee", "first_visit_date": "2026-07-08", "referring_doctor": "Dr. Bosch"}),
         "fabrics": [], "deliveries": [],
         "appointments": [
-            Appointment(label="Assessment", value="08 Jul — done", date="2026-07-08", title="Initial assessment"),
+            Appointment(label="Assessment", value="08 Jul — done", date="2026-07-08", title="Initial assessment", time="14:00"),
         ],
         "payments": [Payment(label="Assessment", value="€60 · paid")],
     },
@@ -173,7 +174,7 @@ PHYSIO_SEED = [
             custom={"treatment": "Sports massage", "first_visit_date": "2026-03-02", "referring_doctor": ""}),
         "fabrics": [], "deliveries": [],
         "appointments": [
-            Appointment(label="Session 6", value="20 May — completed", date="2026-05-20", title="Final session"),
+            Appointment(label="Session 6", value="20 May — completed", date="2026-05-20", title="Final session", time="10:00"),
         ],
         "payments": [
             Payment(label="Session pack (6)", value="€180 · paid"),
@@ -233,10 +234,41 @@ PHYSIO_LEAD_SEEDS = [
 
 LEAD_SEEDS = {"atelier": ATELIER_LEAD_SEEDS, "physio": PHYSIO_LEAD_SEEDS}
 
+_TODAY_TITLES = {
+    # pack id → (done title, pending/booking title, booking event_type, booking note)
+    "atelier": ("Cita d'avui", "Cita reservada online", "Primera visita", "Reservat des del web"),
+    "physio": ("Today's session", "Online booking", "Initial assessment", "Booked via website"),
+}
+
+def _today_appointments() -> list[Appointment]:
+    """Two appointments dated today so a future day-plan dashboard always has
+    something to demo: one already resolved, one still pending. The pending
+    one carries scheduling-app (booking) provenance. Titles follow the active
+    pack's language."""
+    today = datetime.date.today().isoformat()
+    done_title, booked_title, event_type, note = _TODAY_TITLES.get(
+        active_pack_id(), _TODAY_TITLES["atelier"])
+    return [
+        Appointment(
+            label=done_title, value=f"{today} — done", date=today,
+            title=done_title, time="09:30", duration_min=30,
+            outcome="done", source="manual",
+        ),
+        Appointment(
+            label=booked_title, value=f"{today} — booked", date=today,
+            title=booked_title, time="16:00", duration_min=45,
+            outcome="", source="booking", external_ref="cal-2b7f9e1a",
+            context={"answers": {"event_type": event_type, "note": note}},
+        ),
+    ]
+
 def run_seed(s: Session):
+    first_client_id = None
     for entry in SEEDS.get(active_pack_id(), ATELIER_SEED):
         c = entry["client"]
         s.add(c); s.commit(); s.refresh(c)
+        if first_client_id is None:
+            first_client_id = c.id
         for f in entry["fabrics"]:
             f.client_id = c.id; s.add(f)
         for a in entry["appointments"]:
@@ -245,6 +277,10 @@ def run_seed(s: Session):
             p.client_id = c.id; s.add(p)
         for d in entry["deliveries"]:
             d.client_id = c.id; s.add(d)
+        s.commit()
+    if first_client_id is not None:
+        for a in _today_appointments():
+            a.client_id = first_client_id; s.add(a)
         s.commit()
     for lead in LEAD_SEEDS.get(active_pack_id(), ATELIER_LEAD_SEEDS):
         s.add(lead)
