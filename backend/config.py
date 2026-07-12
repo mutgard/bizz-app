@@ -37,7 +37,13 @@ def pack_dir(pack_id: str | None = None) -> Path:
 
 
 def _read_pack_json(pack_id: str) -> dict:
-    with open(pack_dir(pack_id) / "pack.json", encoding="utf-8") as f:
+    path = pack_dir(pack_id) / "pack.json"
+    if not path.exists():
+        available = sorted(p.name for p in packs_root().iterdir()
+                           if (p / "pack.json").exists())
+        raise FileNotFoundError(
+            f"pack '{pack_id}' not found ({path}) — available packs: {available}")
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 

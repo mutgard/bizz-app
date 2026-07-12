@@ -115,3 +115,21 @@ def test_run_seed_from_seed_json(monkeypatch, tmp_path):
         assert all(a.client_id == c.id for a in appts)   # today_appointments attach to first client
         assert s.exec(select(Note)).one().ts == f"{_d(-1).isoformat()}T10:00:00"
         assert s.exec(select(Lead)).one().created_at == f"{_d(0).isoformat()}T09:00:00"
+
+
+def test_ts_token_requires_time():
+    with pytest.raises(ValueError, match="HH:MM"):
+        resolve_value("{{ts:+0}}")
+
+
+def test_unknown_top_level_seed_key_rejected(monkeypatch, tmp_path):
+    import config
+    pack = tmp_path / "typo-demo"
+    pack.mkdir()
+    (pack / "pack.json").write_text("{}")
+    (pack / "seed.json").write_text(json.dumps({"clientz": [], "leads": []}))
+    monkeypatch.setenv("PACKS_DIR", str(tmp_path))
+    monkeypatch.setenv("ACTIVE_PACK", "typo-demo")
+    config.reset_pack_cache()
+    with pytest.raises(ValueError, match="clientz"):
+        load_seed()

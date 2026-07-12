@@ -57,3 +57,9 @@ def test_pack_dir_points_at_active_pack(monkeypatch):
     monkeypatch.setenv("ACTIVE_PACK", "physio-demo")
     assert config.pack_dir().name == "physio-demo"
     assert (config.pack_dir("atelier") / "pack.json").exists()
+
+
+def test_missing_pack_gives_guided_error(monkeypatch):
+    monkeypatch.setenv("ACTIVE_PACK", "atelierr")   # typo
+    with pytest.raises(FileNotFoundError, match=r"atelierr.*available packs.*atelier"):
+        config.get_pack()

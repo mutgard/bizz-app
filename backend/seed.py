@@ -27,6 +27,8 @@ def _resolve_token(kind: str, offset: int, hhmm: str | None,
     if kind == "iso":
         return d.isoformat()
     if kind == "ts":
+        if hhmm is None:
+            raise ValueError("ts token requires an HH:MM time, e.g. {{ts:-12 11:45}}")
         return f"{d.isoformat()}T{hhmm}:00"
     if kind == "days":
         return offset
@@ -68,6 +70,9 @@ def load_seed() -> dict | None:
     with open(path, encoding="utf-8") as f:
         raw = json.load(f)
     month_abbrev = raw.pop("meta", {}).get("monthAbbrev")
+    unknown = set(raw) - {"clients", "today_appointments", "leads"}
+    if unknown:
+        raise ValueError(f"unknown top-level seed.json keys: {sorted(unknown)}")
     return resolve_value(raw, month_abbrev)
 
 

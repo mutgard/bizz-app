@@ -39,7 +39,8 @@ Tests do not need Docker — the suite builds its own SQLite engines:
    set to the tenant's pack (e.g. `atelier`). Railway exposes service
    variables to the Docker build, so the `ACTIVE_PACK` build arg bakes that
    one pack into the image and the same value is set at runtime.
-4. Deploy. First boot seeds only if the database is empty.
+4. Deploy. First boot seeds only if the database is empty *and* the active
+   pack is a demo pack (tenant packs carry no seed data).
 5. DB access: Railway dashboard → Postgres service → **Data** tab, or
    connect any client (psql/TablePlus) with the public connection string.
 
