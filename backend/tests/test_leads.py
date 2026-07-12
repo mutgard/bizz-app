@@ -120,9 +120,9 @@ def test_match_leads_by_phone_and_email(client):
     assert r_none.json() == []
 
 def _burn_intake_fixture_ids(client):
-    # backend/data/intake/client_{1..6}.json are real fixtures on disk (read by
-    # path, not mocked) — advance the id sequence past them so a fresh test
-    # client/lead doesn't collide with pre-existing intake data.
+    # packs/atelier-demo/intake/client_{1..6}.json are real fixtures on disk
+    # (read by path, not mocked) — advance the id sequence past them so a fresh
+    # test client/lead doesn't collide with pre-existing intake data.
     for i in range(6):
         client.post("/clients", json=_client_payload(f"Filler {i}"))
 
