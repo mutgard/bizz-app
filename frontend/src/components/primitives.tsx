@@ -46,6 +46,19 @@ export function Rule({ dashed = false, color = T.hairline, style = {} }: {
   );
 }
 
+// ─── Navigation affordance ───────────────────────────────────
+
+/** Muted `›` marking a row/card that navigates somewhere on tap. Render it
+ * only on elements that actually navigate — the icon must never lie. */
+export function NavChevron({ style = {} }: { style?: React.CSSProperties }) {
+  return (
+    <span aria-hidden style={{
+      color: T.ink3, fontSize: 15, lineHeight: 1, flexShrink: 0,
+      opacity: 0.7, fontFamily: T.sans, ...style,
+    }}>›</span>
+  );
+}
+
 // ─── Swatch ──────────────────────────────────────────────────
 
 export function Swatch({ size = 44, variant = 'stripe' }: { size?: number; variant?: string }) {

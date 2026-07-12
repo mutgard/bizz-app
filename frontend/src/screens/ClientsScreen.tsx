@@ -4,7 +4,7 @@ import { T } from '../tokens';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { PageHeader } from '../components/PageHeader';
 import { StatusChip } from '../components/StatusChip';
-import { Mono } from '../components/primitives';
+import { Mono, NavChevron } from '../components/primitives';
 import { EventDialog } from '../components/EventDialog';
 import { initials, parsePayments } from '../lib/clientHelpers';
 import { searchClients } from '../lib/search';
@@ -226,8 +226,8 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
                         {col.render(c)}
                       </td>
                     ))}
-                    <td style={{ padding: '13px 0' }}>
-                      {active && rowActions(c)}
+                    <td style={{ padding: '13px 0', textAlign: 'right' }}>
+                      {active ? rowActions(c) : <NavChevron />}
                     </td>
                   </tr>
                 );
@@ -294,6 +294,7 @@ export function ClientsScreen({ clients, onOpen, onCreate }: Props) {
                   </Mono>
                 </div>
               )}
+              <NavChevron />
             </div>
           );
         })}

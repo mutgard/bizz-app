@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { T } from '../tokens';
-import { Serif, Mono, Label } from '../components/primitives';
+import { Serif, Mono, Label, NavChevron } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { useUndoable } from '../hooks/useUndoable';
 import { api } from '../api';
@@ -180,14 +180,17 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
                 {formatCurrency(urgent.outstanding)} {t('common.pending').toLowerCase()}
               </Mono>
             </div>
-            {featureOn('keyDate') && (
-              <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                <Serif size={30} italic style={{ color: T.accent }}>{urgent.client.days_until}</Serif>
-                <Mono size={9} color={T.ink3} style={{ display: 'block', textTransform: 'uppercase', letterSpacing: 0.8 }}>
-                  {t('common.days')} · {t('event.keyDate')}
-                </Mono>
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+              {featureOn('keyDate') && (
+                <div style={{ textAlign: 'right' }}>
+                  <Serif size={30} italic style={{ color: T.accent }}>{urgent.client.days_until}</Serif>
+                  <Mono size={9} color={T.ink3} style={{ display: 'block', textTransform: 'uppercase', letterSpacing: 0.8 }}>
+                    {t('common.days')} · {t('event.keyDate')}
+                  </Mono>
+                </div>
+              )}
+              <NavChevron />
+            </div>
           </div>
         </div>
       )}
@@ -273,6 +276,7 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
                   }}>
                     {eventTypeLabel(e.type)}
                   </span>
+                  {clickable && <NavChevron />}
                 </div>
               );
             })}
@@ -295,7 +299,10 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
               <span style={{ fontFamily: T.sans, fontSize: 14, fontWeight: 600, color: T.ink }}>
                 {latestLead.name || t('inbox.unknown')}
               </span>
-              <Mono size={9} color={T.ink3}>{t('inbox.waiting')} {leadAgo(latestLead.created_at)}</Mono>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                <Mono size={9} color={T.ink3}>{t('inbox.waiting')} {leadAgo(latestLead.created_at)}</Mono>
+                <NavChevron />
+              </span>
             </div>
             {latestLead.notes && (
               <div style={{
@@ -316,7 +323,7 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
           onClick={() => navigate('/caixa')}
           style={{ background: T.sheet, border: `1px solid ${T.hairline}`, borderRadius: 4, padding: '14px 16px', cursor: 'pointer' }}
         >
-          <div style={{ display: 'flex', gap: mobile ? 20 : 32, flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: mobile ? 20 : 32, flexWrap: 'wrap', alignItems: 'center' }}>
             <div>
               <Serif size={21} italic style={{ color: T.accent }}>{formatCurrency(totalPaid)}</Serif>
               <Mono size={9} color={T.ink3} style={{ display: 'block', marginTop: 2, textTransform: 'uppercase', letterSpacing: 0.8 }}>{t('common.paid')}</Mono>
@@ -329,6 +336,7 @@ export function TodayScreen({ clients, onOpenClient, onRefresh }: Props) {
               <Serif size={21} italic>{overallPct}%</Serif>
               <Mono size={9} color={T.ink3} style={{ display: 'block', marginTop: 2, textTransform: 'uppercase', letterSpacing: 0.8 }}>{t('finances.progress')}</Mono>
             </div>
+            <NavChevron style={{ marginLeft: 'auto' }} />
           </div>
           <div style={{ marginTop: 12, height: 5, background: T.hairline, borderRadius: 3 }}>
             <div style={{ height: '100%', width: `${overallPct}%`, background: overallPct >= 100 ? T.accent : T.gold, borderRadius: 3, transition: 'width 0.3s' }} />

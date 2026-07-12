@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Client } from '../types';
 import { T } from '../tokens';
-import { Label, Mono, Serif } from '../components/primitives';
+import { Label, Mono, NavChevron, Serif } from '../components/primitives';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { initials } from '../lib/clientHelpers';
 import { buildFinances } from '../lib/finance';
@@ -99,6 +99,7 @@ export function CaixaScreen({ clients, onOpen, onRefresh }: Props) {
                         {initials(c.name)}
                       </div>
                       <span style={{ fontFamily: T.sans, fontSize: 13, color: T.ink, fontWeight: 500 }}>{c.name}</span>
+                      <NavChevron />
                     </div>
                   </td>
                   {featureOn('keyDate') && <td onClick={() => onOpen(c.id)} style={{ padding: '13px 12px 13px 0', cursor: 'pointer' }}><Mono size={11}>{c.wedding_date}</Mono></td>}
@@ -150,6 +151,7 @@ export function CaixaScreen({ clients, onOpen, onRefresh }: Props) {
                 </Mono>
                 <Mono size={9} color={T.ink3}>{t('common.total')} {formatCurrency(priceTotal)}</Mono>
               </div>
+              <NavChevron style={{ alignSelf: 'center', marginLeft: 8 }} />
             </div>
             <div style={{ height: 4, background: T.hairline, borderRadius: 2 }}>
               <div style={{ height: '100%', width: `${pct}%`, background: pct >= 100 ? T.accent : T.gold, borderRadius: 2 }} />

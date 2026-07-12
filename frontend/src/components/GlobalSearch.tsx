@@ -4,6 +4,7 @@ import { T } from '../tokens';
 import { t } from '../config';
 import { searchClients } from '../lib/search';
 import { StatusChip } from './StatusChip';
+import { NavChevron } from './primitives';
 
 interface Props {
   clients: Client[];
@@ -123,6 +124,7 @@ export function GlobalSearch({ clients, onOpen }: Props) {
                 <div style={{ fontFamily: T.mono, fontSize: 10.5, color: T.ink3, marginTop: 1, whiteSpace: 'nowrap' }}>{c.phone || '—'}</div>
               </div>
               <StatusChip statusKey={c.status} size="sm" />
+              <NavChevron />
             </div>
           ))}
         </div>

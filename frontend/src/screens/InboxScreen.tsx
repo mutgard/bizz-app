@@ -3,7 +3,7 @@ import type { Lead, LeadMatch, ClientCreate, LeadConvert } from '../types';
 import { api } from '../api';
 import { T } from '../tokens';
 import { PageHeader } from '../components/PageHeader';
-import { Label, Mono, Serif, Segment } from '../components/primitives';
+import { Label, Mono, NavChevron, Serif, Segment } from '../components/primitives';
 import { DynamicFields } from '../components/DynamicFields';
 import { useIsMobile } from '../hooks/useIsMobile';
 import { computeDaysUntil, formatWeddingDate } from '../lib/clientHelpers';
@@ -100,6 +100,7 @@ function LeadCard({ lead, onOpen, onDismiss, onOpenClient }: {
             {t('inbox.toClient')}
           </button>
         )}
+        {clickable && <NavChevron />}
       </div>
     </div>
   );

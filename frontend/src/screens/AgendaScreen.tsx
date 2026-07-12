@@ -6,7 +6,7 @@ import type { AtelierEvent, Client } from '../types';
 import { EventChip } from '../components/EventChip';
 import { EventDialog } from '../components/EventDialog';
 import { SegmentedControl } from '../components/SegmentedControl';
-import { Mono } from '../components/primitives';
+import { Mono, NavChevron } from '../components/primitives';
 import {
   getMonthCells, dateToIso, monthNames, dayNames,
 } from '../lib/calendarHelpers';
@@ -365,10 +365,11 @@ export function AgendaScreen({ clients, onOpenClient, onRefresh }: Props) {
                           background: T.paper2, borderLeft: `3px solid ${TYPE_BORDER[ev.type] ?? T.ink2}`,
                           borderRadius: 2, padding: '3px 6px',
                           cursor: ev.client_id != null ? 'pointer' : 'default',
-                          overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                          display: 'flex', alignItems: 'center', gap: 4,
                         }}
                       >
-                        {ev.title}
+                        <span style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ev.title}</span>
+                        {ev.client_id != null && <NavChevron style={{ fontSize: 11 }} />}
                       </div>
                     ))}
                   </div>
