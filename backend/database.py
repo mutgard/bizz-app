@@ -20,7 +20,7 @@ def _normalize_url(url: str) -> str:
     return url
 
 
-DATABASE_URL = _normalize_url(os.getenv("DATABASE_URL", DEFAULT_DATABASE_URL))
+DATABASE_URL = _normalize_url(os.getenv("DATABASE_URL") or DEFAULT_DATABASE_URL)
 engine = create_engine(DATABASE_URL, echo=False)
 
 def create_db():

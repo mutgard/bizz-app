@@ -15,6 +15,9 @@ No env vars needed: when `DATABASE_URL` is unset the backend uses
 boot against an empty database, startup creates tables, applies column
 migrations, and seeds demo data; on later boots the seed is skipped.
 
+No Docker available? Set DATABASE_URL=sqlite:///./atelier.db to run against
+a local SQLite file instead.
+
 Data persists in the `pgdata` Docker volume. `docker compose down -v` wipes it.
 
 Inspect the DB: `docker compose exec postgres psql -U postgres -d atelier`.

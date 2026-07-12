@@ -26,3 +26,13 @@ def test_explicit_psycopg_scheme_untouched():
 def test_sqlite_url_untouched():
     url = "sqlite:///./atelier.db"
     assert _normalize_url(url) == url
+
+
+def test_empty_env_value_falls_back_to_default(monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", "")
+    import importlib
+    import database
+    importlib.reload(database)
+    assert database.DATABASE_URL == database.DEFAULT_DATABASE_URL
+    monkeypatch.delenv("DATABASE_URL")
+    importlib.reload(database)
