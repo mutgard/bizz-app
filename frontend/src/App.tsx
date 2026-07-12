@@ -13,7 +13,7 @@ import { MaterialsScreen } from './screens/MaterialsScreen';
 import { NewClientScreen } from './screens/NewClientScreen';
 import { AgendaScreen } from './screens/AgendaScreen';
 import { InboxScreen } from './screens/InboxScreen';
-import { FinancesScreen } from './screens/FinancesScreen';
+import { CaixaScreen } from './screens/CaixaScreen';
 import { api } from './api';
 import { BriefPage } from './pages/BriefPage';
 import { AdminPage } from './pages/AdminPage';
@@ -82,7 +82,7 @@ function AtelierApp() {
           />
         } />
       )}
-      <Route path="/caixa" element={<FinancesScreen clients={clients} onOpen={openClient} />} />
+      <Route path="/caixa" element={<CaixaScreen clients={clients} onOpen={openClient} onRefresh={refresh} />} />
       <Route path="*" element={<Navigate to="/clients" replace />} />
     </Routes>
   );
