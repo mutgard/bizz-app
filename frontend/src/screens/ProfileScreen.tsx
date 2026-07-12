@@ -27,8 +27,8 @@ interface Props {
 }
 
 /** One tile in the pinned facts strip. */
-function Fact({ label, value, valueColor, sub, subColor }: {
-  label: string; value: string; valueColor?: string; sub?: string; subColor?: string;
+function Fact({ label, value, valueColor, sub, subColor, bar }: {
+  label: string; value: string; valueColor?: string; sub?: string; subColor?: string; bar?: number;
 }) {
   return (
     <div style={{ padding: '14px 16px', minWidth: 0 }}>
@@ -39,6 +39,11 @@ function Fact({ label, value, valueColor, sub, subColor }: {
       }}>
         {value}
       </div>
+      {bar !== undefined && (
+        <div style={{ height: 4, background: T.paper2, borderRadius: 2, marginTop: 6 }}>
+          <div style={{ height: '100%', width: `${Math.max(0, Math.min(100, bar))}%`, background: T.gold, borderRadius: 2 }} />
+        </div>
+      )}
       {sub && (
         <Mono size={10} color={subColor ?? T.ink3} style={{ display: 'block', marginTop: 4 }}>{sub}</Mono>
       )}
@@ -224,6 +229,15 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
     setC(updated);
   };
 
+  const [pendingDeletePayment, setPendingDeletePayment] = useState<{ id: number; label: string; value: string } | null>(null);
+
+  const handleConfirmDeletePayment = async () => {
+    if (!pendingDeletePayment) return;
+    const id = pendingDeletePayment.id;
+    setPendingDeletePayment(null);
+    await deletePayment(id);
+  };
+
   const addPayment = async () => {
     if (!newPayment.label.trim() || !newPayment.value.trim()) return;
     await api.createPayment({ client_id: c.id, label: newPayment.label, value: newPayment.value });
@@ -298,6 +312,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
       label={t('common.pending')}
       value={finance.outstanding > 0 ? `€${finance.outstanding.toLocaleString()}` : '—'}
       valueColor={finance.outstanding > 0 ? T.accent : T.ink3}
+      bar={finance.priceTotal > 0 ? finance.pct : undefined}
       sub={finance.priceTotal > 0 ? `${finance.pct}% ${t('finances.progress').toLowerCase()}` : undefined}
     />
   );
@@ -538,7 +553,7 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
                         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
                           <Mono size={10} color={T.ink}>{p.value}</Mono>
                           <button onClick={() => startEditPayment(p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.ink3, padding: 0, opacity: 0.6 }}>{t('common.edit')}</button>
-                          <button onClick={() => deletePayment(p.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.accent, padding: 0, opacity: 0.7 }}>✕</button>
+                          <button onClick={() => setPendingDeletePayment(p)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontFamily: T.mono, fontSize: 9, color: T.accent, padding: 0, opacity: 0.7 }}>✕</button>
                         </div>
                       </div>
                     )}
@@ -711,6 +726,17 @@ export function ProfileScreen({ client: initial, onBack, onOpenFabrics, onRefres
           confirmLabel={t('status.advanceConfirmAction')}
           onConfirm={handleConfirmAdvance}
           onCancel={() => setConfirmAdvanceOpen(false)}
+        />
+      )}
+
+      {pendingDeletePayment && (
+        <ConfirmSheet
+          open={!!pendingDeletePayment}
+          title={t('payments.deleteConfirmTitle')}
+          body={t('payments.deleteConfirmBody').replace('{payment}', `${pendingDeletePayment.label} · ${pendingDeletePayment.value}`)}
+          confirmLabel={t('payments.deleteConfirmAction')}
+          onConfirm={handleConfirmDeletePayment}
+          onCancel={() => setPendingDeletePayment(null)}
         />
       )}
 

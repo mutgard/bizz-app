@@ -142,6 +142,10 @@
     "status.advanceConfirmTitle": "Advance to {status}?",
     "status.advanceConfirmBody": "The patient will move to the next stage of the process. You can undo this within 10 seconds.",
     "status.advanceConfirmAction": "Yes, advance",
+
+    "payments.deleteConfirmTitle": "Delete this payment?",
+    "payments.deleteConfirmBody": "This will delete \"{payment}\". This action cannot be undone.",
+    "payments.deleteConfirmAction": "Yes, delete",
     "materials.toBuyTab": "To buy",
     "materials.inventoryTab": "Inventory",
     "materials.colFabric": "Item",

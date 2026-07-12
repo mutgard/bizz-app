@@ -156,6 +156,10 @@
     "status.advanceConfirmBody": "La clienta passarà al següent estat del procés. Podràs desfer-ho durant 10 segons.",
     "status.advanceConfirmAction": "Sí, avançar",
 
+    "payments.deleteConfirmTitle": "Eliminar el pagament?",
+    "payments.deleteConfirmBody": "S'eliminarà «{payment}». Aquesta acció no es pot desfer.",
+    "payments.deleteConfirmAction": "Sí, eliminar",
+
     "fabrics.eyebrow": "Inventari",
     "fabrics.pieces": "peces",
     "fabrics.toBuyLabel": "per comprar",
