@@ -52,7 +52,7 @@ def test_kpis_totals(client):
         "appointments": [], "fabrics": [],
     })
     k = client.get("/admin/kpis", headers=HDR).json()
-    assert k["pack"] == "atelier"
+    assert k["pack"] == "atelier-demo"
     assert k["clients_total"] == 1
     assert k["clients_by_status"]["clienta"] == 1
     assert k["payments_count"] == 2
@@ -73,7 +73,7 @@ def test_errors_captured(client):
 
 def test_config_returns_pack_and_runtime(client):
     body = client.get("/admin/config", headers=HDR).json()
-    assert body["pack_id"] == "atelier"
+    assert body["pack_id"] == "atelier-demo"
     assert body["pack"]["brand"]["name"] == "Juliette Atelier"
     assert body["runtime"]["backoffice_phase"].startswith("1")
     assert "uptime_seconds" in body["runtime"]

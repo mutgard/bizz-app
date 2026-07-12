@@ -11,7 +11,7 @@ def test_config_returns_active_pack():
     r = client.get("/config")
     assert r.status_code == 200
     pack = r.json()
-    assert pack["id"] == "atelier"
+    assert pack["id"] == "atelier-demo"
     assert pack["brand"]["name"] == "Juliette Atelier"
 
 
